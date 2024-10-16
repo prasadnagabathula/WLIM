@@ -61,5 +61,5 @@ jobs:
         with:
           app-name: 'PracticeManagementTool'
           slot-name: 'Production'
-          package: .
+          package: build/
           
