@@ -251,7 +251,7 @@ const HomePage = () => {
                   Top Matches for Your Uploaded Image
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  Below are the top matches based on your uploaded image. Click on a match for more details.
+                  Below are the top matches based on your uploaded image. 
                 </Typography>
                 {displayedResults.map((result) => (
                   <ResultItem key={result.id}>
@@ -262,6 +262,7 @@ const HomePage = () => {
                     </Box>
                   </ResultItem>
                 ))}
+                <Box display="flex" justifyContent="center" marginTop="20px">
                 <Pagination
                   count={totalPages}
                   page={currentPage}
@@ -270,6 +271,7 @@ const HomePage = () => {
                   shape="rounded"
                   style={{ marginTop: '20px' }}
                 />
+                </Box>
               </Box>
             </CSSTransition>
           </ResultsBox>
