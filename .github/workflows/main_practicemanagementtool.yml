@@ -60,6 +60,6 @@ jobs:
         id: deploy-to-webapp
         with:
           app-name: 'PracticeManagementTool'
-          slot-name: 'Production'
+          slot-name: 'production'
           package: build/
           
