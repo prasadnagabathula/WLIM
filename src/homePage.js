@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button, Typography, Box, AppBar, Toolbar, Container, Pagination, LinearProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import { CSSTransition } from 'react-transition-group'; // Import CSSTransition for animation
@@ -11,6 +11,7 @@ const HomePage = () => {
   const [fadeIn, setFadeIn] = useState(false); // State to manage fade-in effect
   const [loading, setLoading] = useState(false); // State to manage loading progress
   const resultsPerPage = 4;
+  const resultSectionRef = useRef(null); // Reference for results section
 
   // Simulated result data (you would replace this with actual search results)
   const simulatedResults = [
@@ -56,8 +57,23 @@ const HomePage = () => {
         setResults(simulatedResults); // Replace with actual results fetching
         setFadeIn(true); // Trigger fade-in effect
         setLoading(false); // Hide the progress bar after processing
+         // Scroll to the results section when results are retrieved
+         // Scroll to the result section after results are rendered
+      setTimeout(() => {
+        if (resultSectionRef.current) {
+          console.log('Scrolling to results...');
+          resultSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100); // Delay the scroll to ensure results are visible
       }, 2000); // Simulate a 2-second loading time
     }
+  };
+
+  const handleClear = () => {
+    setSelectedImage(null); // Clear the uploaded image
+    setResults([]); // Clear the results
+    setObjectType(''); // Clear object type
+    setFadeIn(false); // Reset fade-in effect
   };
 
   const handlePageChange = (event, value) => {
@@ -214,14 +230,30 @@ const HomePage = () => {
           style={{ display: 'none' }}
           onChange={handleImageUpload}
         />
+       
+        <Box display="flex" gap={2} justifyContent="center" alignItems="center" marginTop={2}>
+          {/* Find Pic Button */}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleFindPic}
+            disabled={!selectedImage}
+            ref={resultSectionRef}
+          >
+            Find Pic
+          </Button>
 
-        <StyledButton
-          variant="contained"
-          disabled={!selectedImage}
-          onClick={handleFindPic}
-        >
-          Find Pic
-        </StyledButton>
+          {/* Clear Button */}
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={handleClear}
+            disabled={!selectedImage && results.length === 0}
+          >
+            Clear
+          </Button>
+        </Box>
+
 
         {/* Loading Progress Bar */}
         {loading && <LinearProgress style={{ width: '100%', marginTop: '20px' }} />}
