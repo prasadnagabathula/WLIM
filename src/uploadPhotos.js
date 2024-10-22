@@ -11,6 +11,13 @@ const UploadPhotos = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [message, setMessage] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [category, setCategory] = useState(null);
+  const [tags, setTags] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  // Azure Computer Vision API endpoint and key
+  const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
+  const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
 
   const navigate = useNavigate();
 
@@ -41,20 +48,48 @@ const UploadPhotos = () => {
   
   const handleClear = () => {
     setSelectedImage(null); // Clear the uploaded image
-
-   
+    setMessage('');
   };
 
+  const analyzeImage = async (imageData) => {
+    const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
+    
+    try {
+      const response = await axios.post(apiUrl, imageData, {
+        headers: {
+          'Ocp-Apim-Subscription-Key': subscriptionKey,
+          'Content-Type': 'application/octet-stream',
+        },
+      });
+      const objects = response.data.objects;
+      const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";
+      setCategory(objectCategory);
+
+      const imageTags = response.data.description.tags;
+      setTags(imageTags);
+      setIsDisabled(false);
+    } catch (error) {
+      console.error('Error analyzing image:', error);
+    }
+  };
+ 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
- 
- 
+    setIsDisabled(true);
     const file = e.target.files[0];
     if (file) {
         // Create a local URL for the selected image
         const imageUrl = URL.createObjectURL(file);
 
         setSelectedImage(imageUrl); // Set the local URL for rendering
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const arrayBuffer = reader.result;
+          analyzeImage(arrayBuffer);
+        };
+        reader.readAsArrayBuffer(file);    
+
       }
         };
 
@@ -67,16 +102,21 @@ const UploadPhotos = () => {
 
     const formData = new FormData();
     formData.append('file', selectedFile);
+    formData.append('category', category); 
+    formData.append('tags', tags); 
 
     try {
-      const response = await axios.post('http://localhost:5005/api/Upload/uploads', formData,{
+      const response = await axios.post('http://localhost:5005/api/upload', formData,{
         headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'multipart/form-data'
           }
     });
 
       if (response.status === 200) {
         setMessage('Image uploaded successfully!');
+        setSelectedImage(null); // Clear the uploaded image
+        setCategory('');
+        setTags([]);
       } else {
         setMessage('Failed to upload image');
       }
@@ -114,7 +154,7 @@ const UploadPhotos = () => {
           </Box>
         </Box>
         <Box>
-        {/* <Title>Welcome to PicFinderAI</Title> */}
+        {/* <Title>Welcome to Item Tracker</Title> */}
         <Typography
           variant="subtitle1"
           style={{
@@ -157,8 +197,8 @@ const UploadPhotos = () => {
          
 
           <Box display="flex" gap={2} justifyContent="center" alignItems="center" marginTop={2}>
-          <button type="submit" className="upload-btn">
-          Upload
+          <button type="submit" className="upload-btn"  disabled={isDisabled} >
+          {isDisabled? "Getting image properties wait..." :"Upload"}
           </button>
           <Button
             variant="outlined"

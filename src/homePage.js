@@ -52,6 +52,16 @@ const HomePage = () => {
       setResults(response.data);
       setObjectType('found');
       console.log(response.data);
+      // Accessing the text value
+      // const captions = response.data.description?.captions;
+      // const captionText = captions && captions.length > 0 ? captions[0].text : "No caption available";
+      // console.log(captionText);  
+      // const tags = response.data.description?.tags;
+      // const tagText = tags && tags.length > 0 ? tags[0].text : "No caption available";
+      const objects = response.data.objects;
+      const objectCategory = objects && objects.length > 2 ? objects[2].object :( objects.length > 1 ? objects[1].object : (objects.length > 0 ? objects[0].object : "unknown"));
+      
+      console.log(objectCategory);  
       setLoading(false);
       setFadeIn(true);
     } catch (error) {
@@ -314,7 +324,7 @@ const HomePage = () => {
       <AppBar position="static" color="primary">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Warehouse Lost and Found System
+            Warehouse Missing Items Tracker
           </Typography>
         </Toolbar>
       </AppBar>
@@ -344,7 +354,6 @@ const HomePage = () => {
           </Box>
         </Box>
         <Box>
-        <Title>Welcome to PicFinderAI</Title>
         <Typography
           variant="subtitle1"
           style={{
@@ -405,7 +414,7 @@ const HomePage = () => {
         </Box> */}
 
 
-{!objectType && loading &&  <Typography variant="body1" style={{ marginTop: '20px', fontWeight: 'bold' }}>
+{ loading &&  <Typography variant="body1" style={{ marginTop: '20px', fontWeight: 'bold' }}>
             Analysing the image....
           </Typography>}
 

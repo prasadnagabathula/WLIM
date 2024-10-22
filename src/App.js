@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './homePage';
 import UploadPhotos from './uploadPhotos';
 import SearchPhotos from './searchPhotos';
+import SearchItems from './searchItems';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="*" element={<h2>Page Not Found</h2>} />
         <Route path="/upload" element={<UploadPhotos />} />
         <Route path="/search" element={<SearchPhotos />} />
+        <Route path="/items" element={<SearchItems />} />
      </Routes>
     </Router>
   );

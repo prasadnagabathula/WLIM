@@ -11,7 +11,7 @@ const ImageDisplay = ({ imageId }) => {
   const fetchImage = async () => {
     try {
       // Example API call to fetch image by ID
-      const response = await axios.get(`http://localhost:5005/api/Upload/images/${imageId}`, {
+      const response = await axios.get(`http://localhost:5005/api/images/${imageId}`, {
         responseType: 'blob', // To handle binary data
       });
 

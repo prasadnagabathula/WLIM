@@ -72,17 +72,18 @@ const SearchPhotos = () => {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch('http://localhost:5005/api/Upload/search', {
+      const response = await fetch('http://localhost:5005/api/search', {
         method: 'POST',
         body: formData,
       });
 
-
+      setResponseMessage('');
       if (response.status === 200) {
         setMessage(response.message);
         const result = await response.json();
       setResponseMessage(result.message);
       setResults(result.filesMatched);
+      console.log(result.filesMatched);
 
       } else {
         setMessage('Failed to upload image');
@@ -120,7 +121,7 @@ const SearchPhotos = () => {
           </Box>
         </Box>
         <Box>
-        {/* <Title>Welcome to PicFinderAI</Title> */}
+        {/* <Title>Welcome to Item Tracker</Title> */}
         <Typography
           variant="subtitle1"
           style={{
@@ -141,7 +142,7 @@ const SearchPhotos = () => {
       <Box container spacing={4} display={'flex'} marginTop="20px" >
         {/* File Upload Section */}
         <Box item xs={12} md={6}>
-          <h2>Upload Your Image</h2>
+          <Box marginLeft={"80px"}><h2>Select Image</h2></Box>
           <form onSubmit={handleSubmit} className="upload-form">
             <label htmlFor="upload-image">
               <UploadBox>
@@ -191,20 +192,19 @@ const SearchPhotos = () => {
         </Box>
 
         {/* Response Section */}
-        
-        {results.length > 0 && (
+        {/* Display the response message */}
         <Box item xs={12} md={6}  marginLeft="100px"  >
-          <h2>Results</h2>
-
-          {/* Display the response message */}
           {responseMessage && (
             <Typography variant="h6" color="primary">
+              <h2>Results</h2>
               {responseMessage}
             </Typography>
           )}
 
-          {/* Display matched files in a grid */}
-          <Box container spacing={2} display={'flex'} width={ "350px" } sx={{
+        {results.length > 0 && (
+        
+          
+          <Box container spacing={2} display={'flex'} width={ "350px" } height={ "250px" }  sx={{
                 overflowX: 'auto', // Enables horizontal scrolling
                 whiteSpace: 'nowrap', // Prevents image wrapping
                 border: '1px solid #ddd', // Optional: Adds a border to the image container
@@ -230,8 +230,8 @@ const SearchPhotos = () => {
               <Typography>{responseMessage}</Typography>
             )}
           </Box>
-        </Box>)}
-
+        )}
+</Box>
       </Box>
       <Footer/>
     </main>
