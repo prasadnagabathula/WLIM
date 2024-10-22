@@ -2,6 +2,8 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './homePage';
+import UploadPhotos from './uploadPhotos';
+import SearchPhotos from './searchPhotos';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
      <Route path="/" element={<HomePage />} />
         {/* Add a catch-all route for unknown URLs */}
         <Route path="*" element={<h2>Page Not Found</h2>} />
+        <Route path="/upload" element={<UploadPhotos />} />
+        <Route path="/search" element={<SearchPhotos />} />
      </Routes>
     </Router>
   );

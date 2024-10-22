@@ -1,10 +1,14 @@
 import React, { useState, useRef } from 'react';
+import axios from 'axios'
 import { Button, Typography, Box, AppBar, Toolbar, Container, Pagination, LinearProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import { CSSTransition } from 'react-transition-group'; // Import CSSTransition for animation
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  //const [result, setResult] = useState(null);
   const [results, setResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [objectType, setObjectType] = useState('');
@@ -12,6 +16,9 @@ const HomePage = () => {
   const [loading, setLoading] = useState(false); // State to manage loading progress
   const resultsPerPage = 4;
   const resultSectionRef = useRef(null); // Reference for results section
+  // Azure Computer Vision API endpoint and key
+  const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
+  const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
 
   // Simulated result data (you would replace this with actual search results)
   const simulatedResults = [
@@ -32,22 +39,100 @@ const HomePage = () => {
 
   const totalPages = Math.ceil(simulatedResults.length / resultsPerPage);
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedImage(URL.createObjectURL(file));
-      setResults([]); // Clear previous results
-      setObjectType(''); // Clear previous object type
-      setFadeIn(false); // Reset fade-in effect
-      setLoading(false); // Reset loading state
+  const analyzeImage = async (imageData) => {
+    const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
+    
+    try {
+      const response = await axios.post(apiUrl, imageData, {
+        headers: {
+          'Ocp-Apim-Subscription-Key': subscriptionKey,
+          'Content-Type': 'application/octet-stream',
+        },
+      });
+      setResults(response.data);
+      setObjectType('found');
+      console.log(response.data);
+      setLoading(false);
+      setFadeIn(true);
+    } catch (error) {
+      console.error('Error analyzing image:', error);
     }
   };
 
-  const handleFindPic = () => {
+
+  // const handleImageUpload = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setSelectedImage(URL.createObjectURL(file));
+  //     setResults([]); // Clear previous results
+  //     setObjectType(''); // Clear previous object type
+  //     setFadeIn(false); // Reset fade-in effect
+  //     setLoading(false); // Reset loading state
+  //   }
+  // };
+  
+
+  const handleImageUpload = (e) => {
+    setLoading(true);
+    setFadeIn(false);
+    const file = e.target.files[0];
+    if (file) {
+        // Create a local URL for the selected image
+        const imageUrl = URL.createObjectURL(file);
+        setSelectedImage(imageUrl); // Set the local URL for rendering
+        setResults([]); // Clear previous results
+        setObjectType(''); // Clear previous object type
+        setFadeIn(false); // Reset fade-in effect
+        setLoading(false); // Reset loading state
+
+        // Optional: You can also handle file uploads directly to a server if needed
+        // For example, uploading the file to a blob storage and getting the URL
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const arrayBuffer = reader.result;
+          analyzeImage(arrayBuffer);
+        };
+        reader.readAsArrayBuffer(file);        
+    }
+    
+};
+
+
+   const handleFindPic = async () => {
+    console.log(selectedImage)
     if (selectedImage) {
       // Set loading to true to show the progress bar
       setLoading(true);
       setFadeIn(false); // Reset fade-in effect
+
+      try {
+        const response = await fetch('http://localhost:3000/analyze-image', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ imageUrl: selectedImage })
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log(data); // Log the analysis result for debugging
+
+        // Handle the results as needed
+        setObjectType(data.description.captions[0].text); // Example: setting object type
+        //setResults(data); // Save the analysis result to state
+
+        setFadeIn(true); // Trigger fade-in effect
+    } catch (error) {
+        console.error('Error during image analysis:', error);
+    } finally {
+        setLoading(false); // Hide the loading state
+    }
+    
 
       // Simulate a delay to represent processing time
       setTimeout(() => {
@@ -69,6 +154,37 @@ const HomePage = () => {
     }
   };
 
+//   const handleFindPic = async () => {
+//     if (selectedImage) {
+//         setLoading(true);
+//         try {
+//             const response = await fetch(selectedImage);
+//             const blob = await response.blob();
+//             const formData = new FormData();
+//             formData.append('image', blob, 'uploaded-image.jpg');
+
+//             const res = await fetch('http://localhost:5000/find-pic', {
+//                 method: 'POST',
+//                 body: formData,
+//             });
+
+//             if (!res.ok) throw new Error('Error fetching data');
+
+//             const data = await res.json();
+
+//             // Call your function to search for matching images based on data
+//             const matchedResults = await searchForMatchingImages(data);
+
+//             setResults(matchedResults);
+//         } catch (error) {
+//             console.error('Error:', error);
+//         } finally {
+//             setLoading(false);
+//         }
+//     }
+// };
+
+
   const handleClear = () => {
     setSelectedImage(null); // Clear the uploaded image
     setResults([]); // Clear the results
@@ -81,7 +197,7 @@ const HomePage = () => {
   };
 
   // Get results for the current page
-  const displayedResults = results.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
+  //const displayedResults = results.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
 
   // Styled components
   const MainContainer = styled(Box)({
@@ -175,6 +291,17 @@ const HomePage = () => {
     marginRight: '20px',
   });
 
+  const navigate = useNavigate();
+
+   const handleItemUpload = () => {
+    navigate('/upload'); // Navigates to the Upload page
+  };
+  const handleFindItem = () => {
+    navigate('/search'); // Navigates to the search page
+  };
+
+  
+
   // CSS animation styles
   const animationStyles = {
     enter: 'animate__animated animate__fadeInRight', // Animation class for entering
@@ -187,28 +314,53 @@ const HomePage = () => {
       <AppBar position="static" color="primary">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            PicFinderAI
+            Warehouse Lost and Found System
           </Typography>
         </Toolbar>
       </AppBar>
 
       {/* Content Section */}
-      <ContentBox>
+      <ContentBox >
+        <Box >
+        <Box marginLeft={"170px"} display={"flex"}>
+        <Box>
+        <Button
+            variant="contained"
+            color="primary"
+            onClick={()=>handleItemUpload()}
+            ref={resultSectionRef}
+          >
+            Upload
+          </Button>
+          </Box>
+          <Box marginLeft={"20px"}>
+          <Button variant="contained"
+            color="primary"
+            onClick={()=>handleFindItem()}
+            ref={resultSectionRef}
+          >
+            Find
+          </Button>
+          </Box>
+        </Box>
+        <Box>
         <Title>Welcome to PicFinderAI</Title>
         <Typography
-    variant="subtitle1"
-    style={{
-      marginBottom: '20px',
-      fontStyle: 'italic',
-      color: '#333',
-      textAlign: 'center', // Center the text
-      fontWeight: '600', // Make the font slightly bolder
-      fontSize: '1.2rem', // Adjust font size
-      textTransform: 'uppercase', // Uppercase letters
-    }}
-  >
-    Unleashing the Power of Visual Recognition
-  </Typography>
+          variant="subtitle1"
+          style={{
+            marginBottom: '20px',
+            fontStyle: 'italic',
+            color: '#333',
+            textAlign: 'center', // Center the text
+            fontWeight: '600', // Make the font slightly bolder
+            fontSize: '1.2rem', // Adjust font size
+            textTransform: 'uppercase', // Uppercase letters
+          }}
+        >
+        Unleashing the Power of Visual Recognition
+      </Typography>
+  </Box>
+  </Box>
 
         <label htmlFor="upload-image">
           <UploadBox>
@@ -231,8 +383,7 @@ const HomePage = () => {
           onChange={handleImageUpload}
         />
        
-        <Box display="flex" gap={2} justifyContent="center" alignItems="center" marginTop={2}>
-          {/* Find Pic Button */}
+        {/* <Box display="flex" gap={2} justifyContent="center" alignItems="center" marginTop={2}>
           <Button
             variant="contained"
             color="primary"
@@ -243,7 +394,6 @@ const HomePage = () => {
             Find Pic
           </Button>
 
-          {/* Clear Button */}
           <Button
             variant="outlined"
             color="secondary"
@@ -252,21 +402,38 @@ const HomePage = () => {
           >
             Clear
           </Button>
-        </Box>
+        </Box> */}
 
+
+{!objectType && loading &&  <Typography variant="body1" style={{ marginTop: '20px', fontWeight: 'bold' }}>
+            Analysing the image....
+          </Typography>}
 
         {/* Loading Progress Bar */}
         {loading && <LinearProgress style={{ width: '100%', marginTop: '20px' }} />}
 
+        <CSSTransition
+              in={fadeIn}
+              timeout={300}
+              classNames="fade"
+              onExited={() => {
+                //setResults(displayedResults); // Update results to displayedResults
+                setFadeIn(false); // Reset fade-in for the next update
+              }}
+              unmountOnExit
+            >
+
         {/* Object Type Display */}
         {objectType && (
           <Typography variant="body1" style={{ marginTop: '20px', fontWeight: 'bold' }}>
-            Hey it's {objectType} !!!
+            Hey it's {results.description.captions[0]?.text} !!!
           </Typography>
         )}
-
+      </CSSTransition>
         {/* Results Pane */}
-        {results.length > 0 && (
+
+
+        {/* {results.length > 0 && (
           <ResultsBox>
             <CSSTransition
               in={fadeIn}
@@ -307,7 +474,7 @@ const HomePage = () => {
               </Box>
             </CSSTransition>
           </ResultsBox>
-        )}
+        )} */}
       </ContentBox>
 
       {/* Footer */}
