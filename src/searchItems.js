@@ -3,9 +3,11 @@ import axios from 'axios';
 import Header from './header'; // Assuming you have a header component
 import Footer from './footer'; // Assuming you have a footer component
 import './uploadPhotos.css'; // Add any custom styles here
-import { Button, Typography, Box, TextField } from '@mui/material';
+import { Button, Typography, Box, TextField,Grid, Paper, Divider } from '@mui/material';
 import { styled } from '@mui/system';
 import ImageDisplay from './imageDisplay';
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
+import CancelIcon from '@mui/icons-material/Cancel';
 //import { useNavigate } from 'react-router-dom';
 import _ from 'lodash'; 
 
@@ -119,7 +121,6 @@ const SearchItems = () => {
 
   const handleClear = () => {
     setSelectedImage(null); // Clear the uploaded image
-    setResults([]);
     setResponseMessage('');   
   };
 
@@ -157,12 +158,11 @@ const analyzeImage = async (imageData) => {
 
 
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-    setIsDisabled(true);
- 
+    setSelectedFile(e.target.files[0]);    
  
     const file = e.target.files[0];
     if (file) {
+      setIsDisabled(true);
         // Create a local URL for the selected image
         const imageUrl = URL.createObjectURL(file);
 
@@ -201,6 +201,8 @@ const handleUpload = async (e) => {
       setSelectedImage(null); // Clear the uploaded image
       setCategory('');
       setTags([]);
+      setSearchText("");
+      loadThumbNails();
     } else {
       setMessage('Failed to upload image');
     }
@@ -301,11 +303,7 @@ const handleUpload = async (e) => {
     } catch (error) {
       console.error('Error uploading image:', error);
       setMessage('Error occurred while uploading');
-    }
-    // useEffect(() => {
-    //     loadThumbnails();
-    //   }, []);
-
+    } 
   };
 
   const handleMouseEnter = (image, index) => {
@@ -323,15 +321,72 @@ const handleUpload = async (e) => {
   return (
     <main className="upload-content">
       <Header />
-      <Box display="flex" justifyContent="space-between" alignItems="flex-start" marginTop="30px" padding="20px" gap={20}>
+      <Box  sx={{
+        height: '83vh',
+        width: '97vw',
+        backgroundImage: 'url(/bg.avif)', 
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'top',
+        position: 'relative',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          height: '100%',
+          width: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.6)', 
+          zIndex: 1,
+        },
+      }}
+      display="flex" justifyContent="space-between" alignItems="flex-start" marginTop="40px" padding="20px" gap={20}>
         {/* Left Side: Image Upload Section */}
-        <Box flex="1">
-          <Typography variant="h5" gutterBottom marginLeft={"0px"} >
+        <Grid
+        container
+        component={Paper}
+        elevation={6}
+        sx={{
+          zIndex: 2, 
+          width: { xs: '90%', md: '60%' }, 
+          height: '70vh',
+          display: 'flex',
+          marginTop: '50px',
+          backgroundColor: 'transparent',
+          
+        }}
+      >
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'top',
+            backgroundColor: '#fff', 
+            border: '2px solid',
+            borderColor: 'divider',
+            // backdropFilter: 'blur(30px)',
+            // opacity: '15%',
+            p: 3,
+          }}
+        >
+          <Box sx={{
+            '& > *': {
+                textAlign: 'center'
+            }
+          }}>
+            <Box flex="1">
+          <Typography variant="h5" gutterBottom marginLeft={"0px"} sx={{marginTop:'10px', fontFamily:'Montserrat',fontSize:'30px'}} >
             Unleashing the Power of Visual Recognition
           </Typography>
           <form onSubmit={handleSubmit} className="upload-form">
             <label htmlFor="upload-image">
-              <UploadBox>
+              <UploadBox sx={{ marginLeft:'80px', marginTop:'40px', marginBottom:'60px'}}>
                 {selectedImage ? (
                   <img
                     src={selectedImage}
@@ -341,6 +396,7 @@ const handleUpload = async (e) => {
                       height: '100%',
                       objectFit: 'cover',
                       borderRadius: '10px',
+                      
                     }}
                   />
                 ) : (
@@ -356,6 +412,7 @@ const handleUpload = async (e) => {
               style={{ display: 'none' }}
               onChange={handleFileChange}
             />
+            
             <Box
               display="flex"
               gap={2}
@@ -363,12 +420,12 @@ const handleUpload = async (e) => {
               alignItems="center"
               marginTop={2}
             >
-              <button type="submit" className="upload-btn" onClick={handleUpload}  disabled={isDisabled} >
+              <Button type="submit" onClick={handleUpload}  disabled={isDisabled} variant="outlined" color="secondary">
               {isDisabled? "Getting image properties wait..." :"Upload"}
-              </button>
-              <button type="submit" className="upload-btn">
-                Find Matching Objects
-              </button>
+              </Button>
+              <Button type="submit" className="upload-btn"  variant="contained" >
+                Find Matching Items
+              </Button>
               <Button
                 variant="outlined"
                 color="secondary"
@@ -377,8 +434,90 @@ const handleUpload = async (e) => {
                 Clear
               </Button>
             </Box>
-          </form>
+            </form>
         </Box>
+
+          </Box>
+          
+        </Grid>
+        <Divider orientation="Vertical" variant="middle" flexItem />
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#fff', 
+            p: 3,
+            flexDirection: 'column',
+          }}
+        >
+            {/* Right Side: Thumbnails and Search Section */}
+  <Box flex="1" display="flex" flexDirection="column" alignItems="flex-start">
+          <TextField
+            label="Search Images"
+            variant="outlined"
+            fullWidth
+            value={searchText}
+            onChange={handleSearchChange}
+            style={{ marginBottom: '20px' }}
+          />
+         <Box display="flex" flexWrap="wrap" justifyContent="center"
+          sx={{
+            maxHeight: '500px', 
+            overflowY: 'auto',  
+            '&::-webkit-scrollbar': {
+              width: '5px', 
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: 'black', 
+              borderRadius: '5px',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: 'lightgrey',
+            },
+          }}>
+        {results.length > 0 && results.map((img, index) => (
+        <Box key={index} position='relative' >
+          <ThumbnailBox
+            //isHovered={hoveredIndex === index}  // Pass hover state to ThumbnailBox
+            onClick={() => handleMouseEnter(img, index)}
+            //onMouseLeave={handleMouseLeave}
+          >
+            {/* <ImageDisplay imageId={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> */}
+
+            <ImageDisplay
+              imageId={img}
+              style={{
+                width: '100px', // Small size for thumbnails
+                height: '100px', // Small size for thumbnails
+                
+              }}
+            />
+
+          </ThumbnailBox>
+
+      {/* Hovered Image Popup */}
+      {hoveredImage && hoveredIndex === index && (
+        <HoveredImagePopup
+          //onMouseEnter={() => setHoveredImage(img)}  // Keep pop-up open when hovering over it
+         // onMouseLeave={handleMouseLeave}  // Close pop-up when mouse leaves
+        >
+          <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
+        </HoveredImagePopup>
+      )}
+    </Box>
+  ))}
+</Box>
+
+
+        </Box>
+
+        </Grid>
+      </Grid>
+        
 
         {/* Response Section */}
         {/* Display the response message */}
@@ -420,54 +559,9 @@ const handleUpload = async (e) => {
           </Box>
         )}
 </Box> */}
-  {/* Right Side: Thumbnails and Search Section */}
-  <Box flex="1" display="flex" flexDirection="column" alignItems="flex-start">
-          <TextField
-            label="Search Images"
-            variant="outlined"
-            fullWidth
-            value={searchText}
-            onChange={handleSearchChange}
-            style={{ marginBottom: '20px' }}
-          />
-         <Box display="flex" flexWrap="wrap" justifyContent="flex-start">
-        {results.length > 0 && results.map((img, index) => (
-        <Box key={index} position="relative">
-          <ThumbnailBox
-            isHovered={hoveredIndex === index}  // Pass hover state to ThumbnailBox
-            onMouseEnter={() => handleMouseEnter(img, index)}
-            onMouseLeave={handleMouseLeave}
-          >
-            {/* <ImageDisplay imageId={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> */}
-
-            <ImageDisplay
-              imageId={img}
-              style={{
-                width: '80px', // Small size for thumbnails
-                height: '80px', // Small size for thumbnails
-              }}
-            />
-
-          </ThumbnailBox>
-
-      {/* Hovered Image Popup */}
-      {hoveredImage && hoveredIndex === index && (
-        <HoveredImagePopup
-          onMouseEnter={() => setHoveredImage(img)}  // Keep pop-up open when hovering over it
-          onMouseLeave={handleMouseLeave}  // Close pop-up when mouse leaves
-        >
-          <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
-        </HoveredImagePopup>
-      )}
-    </Box>
-  ))}
-</Box>
-
-
-        </Box>
+      <Footer/>
       
       </Box>
-      <Footer/>
     </main>
   );
 };
