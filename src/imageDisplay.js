@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Box, Typography } from '@mui/material';
 
-const ImageDisplay = ({ imageId }) => {
+const ImageDisplay = ({ imageId, style }) => {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,11 +39,19 @@ const ImageDisplay = ({ imageId }) => {
       ) : error ? (
         <Typography color="error">{error}</Typography>
       ) : (
+        // <img
+        //   src={imageUrl}
+        //   alt="Uploaded Image"
+        //   style={{ width: '300px', height: 'auto', borderRadius: '8px' }}
+        // />
         <img
-          src={imageUrl}
-          alt="Uploaded Image"
-          style={{ width: '300px', height: 'auto', borderRadius: '8px' }}
-        />
+        src={imageUrl} // Replace with your image source logic
+        alt={`Image ${imageId}`}  
+        style={{
+          objectFit: 'contain', // Use contain to prevent cropping
+          ...style, // Spread any additional styles passed in
+        }}     
+      />
       )}
     </Box>
   );

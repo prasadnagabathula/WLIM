@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 import Header from './header'; // Assuming you have a header component
 import Footer from './footer'; // Assuming you have a footer component
 import './uploadPhotos.css'; // Add any custom styles here
@@ -17,6 +18,13 @@ const SearchItems = () => {
   const [searchText, setSearchText] = useState('');
   const [hoveredImage, setHoveredImage] = useState(null); // To store hovered thumbnail image
   const [hoveredIndex, setHoveredIndex] = useState(null); // Track which thumbnail is hovered
+  const [category, setCategory] = useState(null);
+  const [tags, setTags] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  // Azure Computer Vision API endpoint and key
+  const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
+  const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
 
   useEffect(() => {
     loadThumbNails();
@@ -44,36 +52,69 @@ const SearchItems = () => {
     },
   });
 
-  const ThumbnailBox = styled(Box)(({ isHovered }) => ({
+
+  // const ThumbnailBox = styled(Box)({
+  //   position: 'relative',
+  //   width: '100px', // Fixed width for thumbnail
+  //   height: '100px', // Fixed height for thumbnail
+  //   margin: '10px',
+  //   borderRadius: '10px',
+  //   cursor: 'pointer',
+  //   overflow: 'hidden',
+  //   '&:hover img': {
+  //     transform: 'scale(1.1)',
+  //     transition: 'transform 0.3s ease',
+  //   },
+  // });
+    
+  
+ 
+  // const HoveredImagePopup = styled(Box)(({ theme }) => ({
+  //   position: 'absolute',
+  //   bottom: '-150px', // Adjust to position it below the thumbnail
+  //   right: '25', // Align to the right of the thumbnail
+  //   width: '200px', // Adjust as needed for the hovered image size
+  //   height: '200px', // Adjust as needed for the hovered image size
+  //   backgroundColor: '#fff',
+  //   border: '1px solid #ccc',
+  //   borderRadius: '10px',
+  //   boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  //   zIndex: 10,
+  //   display: hoveredImage ? 'block' : 'none', // Toggle display based on hover
+  // }));
+
+  const ThumbnailBox = styled(Box)(({ theme }) => ({
     position: 'relative',
-    width: '100px',
-    height: '100px',
+    width: '100px', // Width for the thumbnail
+    height: '100px', // Height for the thumbnail
     margin: '10px',
-    borderRadius: '10px',
-    cursor: 'pointer',
+    borderRadius: '15px', // Rounded corners
     overflow: 'hidden',
-    transition: 'transform 0.3s ease',
-    transform: isHovered ? 'scale(1.1)' : 'scale(0.9)', // Scale down when not hovered
-    '&:hover img': {
-      transform: 'scale(1.1)', // Zoom in on hover
-      transition: 'transform 0.3s ease',
+    cursor: 'pointer',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth transition
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Soft shadow effect
+    '&:hover': {
+      transform: 'scale(1.05)', // Slightly scale up on hover
+      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.3)', // Enhanced shadow on hover
     },
+    backgroundColor: '#ffffff', // White background for contrast
   }));
   
-  
-  const HoveredImagePopup = styled(Box)({
+  const HoveredImagePopup = styled(Box)(({ theme }) => ({
     position: 'absolute',
-    top: '-150px',   // Positioning popup relative to the thumbnail
-    left: '0',
-    width: '100px',  // Larger popup size
-    height: '100px', // Larger popup size
-    backgroundColor: '#fff',
-    border: '1px solid #ccc',
-    borderRadius: '10px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    zIndex: 100,
-    display: hoveredImage ? 'block' : 'none',
-  });
+    bottom: '-150px', // Adjust for positioning
+    right: '0', // Align to the right
+    width: '200px', // Width for the popout image
+    height: '200px', // Height for the popout image
+    backgroundColor: '#ffffff', // White background
+    borderRadius: '15px', // Rounded corners
+    border: '2px solid #2196F3', // Blue border for emphasis
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', // Soft shadow effect
+    zIndex: 10,
+    display: hoveredImage ? 'block' : 'none', // Toggle visibility
+    transition: 'all 0.3s ease', // Smooth transition for popout
+  }));
+  
   
 
   const handleClear = () => {
@@ -92,9 +133,32 @@ const SearchItems = () => {
 //     navigate('/'); // Navigates to the search page
 //   };
 
+const analyzeImage = async (imageData) => {
+  const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
+  
+  try {
+    const response = await axios.post(apiUrl, imageData, {
+      headers: {
+        'Ocp-Apim-Subscription-Key': subscriptionKey,
+        'Content-Type': 'application/octet-stream',
+      },
+    });
+    const objects = response.data.objects;
+    const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";
+    setCategory(objectCategory);
+
+    const imageTags = response.data.description.tags;
+    setTags(imageTags);
+    setIsDisabled(false);
+  } catch (error) {
+    console.error('Error analyzing image:', error);
+  }
+};
+
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
+    setIsDisabled(true);
  
  
     const file = e.target.files[0];
@@ -103,7 +167,47 @@ const SearchItems = () => {
         const imageUrl = URL.createObjectURL(file);
 
         setSelectedImage(imageUrl); // Set the local URL for rendering
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const arrayBuffer = reader.result;
+          analyzeImage(arrayBuffer);
+        };
+        reader.readAsArrayBuffer(file);    
       }
+};
+
+
+const handleUpload = async (e) => {
+  e.preventDefault();
+  if (!selectedFile) {
+    setMessage('Please select a file first!');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', selectedFile);
+  formData.append('category', category); 
+  formData.append('tags', tags); 
+
+  try {
+    const response = await axios.post('http://localhost:5005/api/upload', formData,{
+      headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+  });
+
+    if (response.status === 200) {
+      setMessage('Image uploaded successfully!');
+      setSelectedImage(null); // Clear the uploaded image
+      setCategory('');
+      setTags([]);
+    } else {
+      setMessage('Failed to upload image');
+    }
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    setMessage('Error occurred while uploading');
+  }
 };
 
     const debouncedSearch = useCallback(
@@ -259,6 +363,9 @@ const SearchItems = () => {
               alignItems="center"
               marginTop={2}
             >
+              <button type="submit" className="upload-btn" onClick={handleUpload}  disabled={isDisabled} >
+              {isDisabled? "Getting image properties wait..." :"Upload"}
+              </button>
               <button type="submit" className="upload-btn">
                 Find Matching Objects
               </button>
@@ -324,25 +431,24 @@ const SearchItems = () => {
             style={{ marginBottom: '20px' }}
           />
          <Box display="flex" flexWrap="wrap" justifyContent="flex-start">
-  {results.length > 0 && results.map((img, index) => (
-    <Box key={index} position="relative">
-      <ThumbnailBox
-        isHovered={hoveredIndex === index}  // Pass hover state to ThumbnailBox
-        onMouseEnter={() => handleMouseEnter(img, index)}
-        onMouseLeave={handleMouseLeave}
-      >
-        {/* <ImageDisplay imageId={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> */}
+        {results.length > 0 && results.map((img, index) => (
+        <Box key={index} position="relative">
+          <ThumbnailBox
+            isHovered={hoveredIndex === index}  // Pass hover state to ThumbnailBox
+            onMouseEnter={() => handleMouseEnter(img, index)}
+            onMouseLeave={handleMouseLeave}
+          >
+            {/* <ImageDisplay imageId={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> */}
 
-        <ImageDisplay
-          imageId={img}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain', // Change to contain to fit the image without cropping
-          }}
-        />
+            <ImageDisplay
+              imageId={img}
+              style={{
+                width: '80px', // Small size for thumbnails
+                height: '80px', // Small size for thumbnails
+              }}
+            />
 
-      </ThumbnailBox>
+          </ThumbnailBox>
 
       {/* Hovered Image Popup */}
       {hoveredImage && hoveredIndex === index && (
@@ -350,7 +456,7 @@ const SearchItems = () => {
           onMouseEnter={() => setHoveredImage(img)}  // Keep pop-up open when hovering over it
           onMouseLeave={handleMouseLeave}  // Close pop-up when mouse leaves
         >
-          <ImageDisplay imageId={hoveredImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
         </HoveredImagePopup>
       )}
     </Box>
