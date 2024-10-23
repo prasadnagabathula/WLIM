@@ -44,7 +44,7 @@ const SearchItems = () => {
     },
   });
 
-  const ThumbnailBox = styled(Box)({
+  const ThumbnailBox = styled(Box)(({ isHovered }) => ({
     position: 'relative',
     width: '100px',
     height: '100px',
@@ -52,25 +52,29 @@ const SearchItems = () => {
     borderRadius: '10px',
     cursor: 'pointer',
     overflow: 'hidden',
+    transition: 'transform 0.3s ease',
+    transform: isHovered ? 'scale(1.1)' : 'scale(0.9)', // Scale down when not hovered
     '&:hover img': {
-      transform: 'scale(1.1)',
+      transform: 'scale(1.1)', // Zoom in on hover
       transition: 'transform 0.3s ease',
     },
-  });
-
+  }));
+  
+  
   const HoveredImagePopup = styled(Box)({
     position: 'absolute',
-    top: '-150px', // Adjust as needed to move the popup relative to thumbnail
-    left: '0', // Adjust for horizontal positioning
-    width: '150px',
-    height: '150px',
+    top: '-150px',   // Positioning popup relative to the thumbnail
+    left: '0',
+    width: '100px',  // Larger popup size
+    height: '100px', // Larger popup size
     backgroundColor: '#fff',
     border: '1px solid #ccc',
     borderRadius: '10px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    zIndex: 10,
+    zIndex: 100,
     display: hoveredImage ? 'block' : 'none',
   });
+  
 
   const handleClear = () => {
     setSelectedImage(null); // Clear the uploaded image
@@ -319,25 +323,41 @@ const SearchItems = () => {
             onChange={handleSearchChange}
             style={{ marginBottom: '20px' }}
           />
-          <Box display="flex" flexWrap="wrap" justifyContent="flex-start">
-            {results.length > 0 && results.map((img, index) => (
-              <Box key={index} position="relative">
-                <ThumbnailBox
-                  onMouseEnter={() => handleMouseEnter(img, index)}
-                  onMouseLeave={() => handleMouseLeave()}
-                >
-                     <ImageDisplay imageId={img} />
-                  
-                </ThumbnailBox>
-                   {hoveredImage && hoveredIndex === index && (
-                    <HoveredImagePopup>
-                      <ImageDisplay imageId={hoveredImage} /> {/* Use ImageDisplay for the hovered image */}
-                    </HoveredImagePopup>
-                  )}
-                
-              </Box>
-            ))}
-          </Box>
+         <Box display="flex" flexWrap="wrap" justifyContent="flex-start">
+  {results.length > 0 && results.map((img, index) => (
+    <Box key={index} position="relative">
+      <ThumbnailBox
+        isHovered={hoveredIndex === index}  // Pass hover state to ThumbnailBox
+        onMouseEnter={() => handleMouseEnter(img, index)}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* <ImageDisplay imageId={img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> */}
+
+        <ImageDisplay
+          imageId={img}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain', // Change to contain to fit the image without cropping
+          }}
+        />
+
+      </ThumbnailBox>
+
+      {/* Hovered Image Popup */}
+      {hoveredImage && hoveredIndex === index && (
+        <HoveredImagePopup
+          onMouseEnter={() => setHoveredImage(img)}  // Keep pop-up open when hovering over it
+          onMouseLeave={handleMouseLeave}  // Close pop-up when mouse leaves
+        >
+          <ImageDisplay imageId={hoveredImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </HoveredImagePopup>
+      )}
+    </Box>
+  ))}
+</Box>
+
+
         </Box>
       
       </Box>
