@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Grid, Snackbar } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import View from './View';
 
 function Upload({isDrawerOpen}) {
+
+  const [uploadedItems, setUploadedItems] = useState([]);
 
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100); 
@@ -29,30 +32,33 @@ function Upload({isDrawerOpen}) {
       const imageFile = files[0];
         setItemDescription('Black leather wallet with silver clasp and multiple card slots');
         setBrand('Gucci');
-        setModel('N/A');
+        setModel('Marmont');
         setColor('Black');
         setSerialNumber('1234567890');
         setFeatures('Minor scratches on the surface');
-        setCondition('Slightly worn');
+        setCondition('New');
         setIdentifiedDate(new Date().toISOString().split('T')[0]); 
         setLocation('Main Street, City Center');
     }
   };
 
   const handleSubmit = () => {
+    const newItem = {
+      itemDescription,
+      brand,
+      model,
+      color,
+      serialNumber,
+      features,
+      condition,
+      identifiedDate,
+      location,
+    };
+    setUploadedItems([...uploadedItems, newItem]);
     setSnackbarOpen(true);
-    console.log({
-            itemDescription,
-            brand,
-            model,
-            color,
-            serialNumber,
-            features,
-            condition,
-            identifiedDate,
-            location,
-    });
+    console.log(newItem);
   };
+  
 
   return (
     <div>
@@ -95,7 +101,7 @@ function Upload({isDrawerOpen}) {
                 },
               }}
             >
-              Upload Image
+              Upload Identified Item Photo
               <input
                 type="file"
                 accept="image/*"
@@ -210,6 +216,7 @@ function Upload({isDrawerOpen}) {
           message="Item details submitted!"
         />
       </Box>
+      <View uploadedItems={uploadedItems} />
     </div>
   )
 }

@@ -9,6 +9,7 @@ import Login from './Components/Login';
 import Home from './Components/Home';
 
 function App() {
+  const role = "Admin";
   return (
     
     // <div className="App">
@@ -30,7 +31,8 @@ function App() {
      <Router>
      <Routes>
      <Route path="/" element={<Login />} />
-     <Route path="/home/*" element={<Home />} />
+     <Route path={`${role === "Admin" ? "admin": "user"}/home/*`} element={<Home />} />
+     {/* <Route path="/home/*" element={<Home />} /> */}
         {/* Add a catch-all route for unknown URLs */}
         <Route path="*" element={<h2>Page Not Found</h2>} />
         <Route path="/upload" element={<UploadPhotos />} />

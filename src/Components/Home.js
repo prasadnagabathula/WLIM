@@ -78,7 +78,7 @@ function Home() {
     <>
       <ListItem 
         button sx={{color:'#fff'}}
-        component={Link} to="uploaditemdetails"
+        component={Link} to=""
         onClick={handleUploadMenu}
       >
         <ListItemText primary="Upload Item Details" className="drawer-text" />
@@ -128,6 +128,19 @@ function Home() {
     </>
   );
 
+  const [userData, setUserData] = useState({
+    photo: '/profile.avif',
+    name: 'Charitha Sri',
+    role: 'Admin'
+  });
+
+//   useEffect(() => {
+//     const storedData = localStorage.getItem('userData');
+//     if (storedData) {
+//       setUserData(JSON.parse(storedData)); 
+//     }
+//   }, []);
+
 
   return (
     <div style={{fontFamily:'Montserrat'}}>
@@ -145,6 +158,38 @@ function Home() {
             </IconButton>
             <img src='/miraclelogo.jpg' alt="Miracle Logo" style={{ width: '170px',marginLeft:'13px'}} />
           </div> 
+          <Box flexGrow={1} />
+
+          {/* Username and Profile Avatar */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {/* <Typography variant="body1" sx={{ marginRight: 1, color:'black' }}>
+              {username || 'U'}
+            </Typography> */}
+            <div style={{ marginRight: 2, textAlign: 'center' }}>
+              <Typography variant="body1" sx={{ color: '#232527' }}>
+                {userData.name || 'U'}
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#004687', fontSize:'14px' }}>
+                {userData.role || 'User'}
+              </Typography>
+            </div>
+            <IconButton onClick={handleProfileMenuClick} color="inherit">
+              <Avatar src={userData.photo} sx={{ bgcolor: '#00aae7' }}>
+                {/* {username[0] || 'U'} */}
+                {userData.name ? userData.name[0] : 'U'}
+              </Avatar>
+            </IconButton>
+          </div>
+
+          {/* Profile Menu */}
+          <Menu
+            anchorEl={profileMenuAnchorEl}
+            open={Boolean(profileMenuAnchorEl)}
+           onClose={() => setProfileMenuAnchorEl(null)}
+          >
+            <MenuItem onClick={handleProfileMenuClose} sx={{fontFamily:'Lato'}}>Profile</MenuItem>
+            <MenuItem onClick={handleLogout} sx={{fontFamily:'Lato'}}>Logout</MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -202,7 +247,7 @@ function Home() {
           <Route path='claimrequests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
           <Route path='claimStatus' element={<ClaimStatus isDrawerOpen={isDrawerOpen} />} />
           <Route path='claimHistory' element={<ClaimHistory isDrawerOpen={isDrawerOpen} />} />
-          <Route path='upload/view' element={<View isDrawerOpen={isDrawerOpen} />} />
+          <Route path='uploaditemdetails/view' element={<View isDrawerOpen={isDrawerOpen} />} />
         </Routes>
       </Box>
 
