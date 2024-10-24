@@ -30,7 +30,7 @@ function App() {
      <Router>
      <Routes>
      <Route path="/" element={<Login />} />
-     <Route path="/home" element={<Home />} />
+     <Route path="/home/*" element={<Home />} />
         {/* Add a catch-all route for unknown URLs */}
         <Route path="*" element={<h2>Page Not Found</h2>} />
         <Route path="/upload" element={<UploadPhotos />} />
