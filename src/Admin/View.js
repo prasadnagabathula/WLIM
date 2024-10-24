@@ -11,7 +11,7 @@ function View({uploadedItems = [], isDrawerOpen }) {
     useEffect(() => {
       // Adjust margin dynamically based on drawer state
       setMarginLeft(isDrawerOpen ? 240 : 0);
-      setMarginRight(isDrawerOpen ? 50 : 0);
+      setMarginRight(isDrawerOpen ? 50 : 0); 
     }, [isDrawerOpen]);
 
   const handleChangePage = (event, newPage) => {

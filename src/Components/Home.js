@@ -92,7 +92,7 @@ function Home() {
                   <ListItem button component={Link} to="Uploaditemdetails/view" onClick={handleClose}>
                       <ListItemText primary="View"  sx={{color:'#fff'}} />
                   </ListItem>
-              </List>
+              </List> 
       </Collapse>
 
       <ListItem 
