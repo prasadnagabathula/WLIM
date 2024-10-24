@@ -5,6 +5,8 @@ import HomePage from './homePage';
 import UploadPhotos from './uploadPhotos';
 import SearchPhotos from './searchPhotos';
 import SearchItems from './searchItems';
+import Login from './Components/Login';
+import Home from './Components/Home';
 
 function App() {
   return (
@@ -27,7 +29,8 @@ function App() {
     // </div>
      <Router>
      <Routes>
-     <Route path="/" element={<HomePage />} />
+     <Route path="/" element={<Login />} />
+     <Route path="/home" element={<Home />} />
         {/* Add a catch-all route for unknown URLs */}
         <Route path="*" element={<h2>Page Not Found</h2>} />
         <Route path="/upload" element={<UploadPhotos />} />
