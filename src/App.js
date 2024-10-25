@@ -10,7 +10,7 @@ import HomePage from './homePage';
 import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
-  const role = "Admin";
+  const role = "User";
   return (
 
     // <div className="App">
@@ -32,7 +32,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path={`${role === "Admin" ? "admin" : "user"}/home/*`} element={<ProtectedRoute> <Home /></ProtectedRoute>} />
+        <Route path={`${role === "Admin" ? "admin" : "user"}/home/*`} element={<Home />} />
         {/* <Route path="/home/*" element={<Home />} /> */}
         <Route path="/home/*" element={<ProtectedRoute> <Home /></ProtectedRoute>} />
         {/* Add a catch-all route for unknown URLs */}

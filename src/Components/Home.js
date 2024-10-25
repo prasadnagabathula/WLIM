@@ -3,9 +3,8 @@ import { useNavigate, Routes, Route, Link, useLocation  } from 'react-router-dom
 import { AppBar,Divider, Toolbar, IconButton, Typography, Drawer, Box, List, ListItem, ListItemText, Avatar, Menu, MenuItem, CssBaseline, Collapse } from '@mui/material';
 import DriveFolderUploadOutlinedIcon from '@mui/icons-material/DriveFolderUploadOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
-import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
-import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined';import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Default from './Default';
 import CustomBreadcrumbs from './CustomBreadcrumbs';
 import Claims from '../Admin/Claims';
@@ -14,19 +13,25 @@ import ClaimStatus from '../User/ClaimStatus';
 import ClaimHistory from '../User/ClaimHistory';
 import Statistics from './Statistics';
 import View from '../Admin/View';
+import ItemLostRequest from '../User/ItemLostRequest';
 
 function Home() {
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
     const [isDrawerOpen, setDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null); // Anchor for menu
-    const [role, setRole] = useState('Admin'); 
+    const [role, setRole] = useState('User'); 
     const [openUploadMenu, setOpenUploadMenu] = useState(false);
+    const [openItemRequestMenu, setOpenItemRequestMenu] = useState(false);
     const [view, setView] = useState('slider'); // Default view
     const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
     const [currentSubMenu, setCurrentSubMenu] = useState(null);
     
     const handleUploadMenu = () => {
         setOpenUploadMenu((prev) => !prev);
+    };
+
+    const handleItemRequestMenu = () => {
+      setOpenItemRequestMenu((prev) => !prev);
     };
 
     // Handle sub-menu open and close
@@ -109,30 +114,40 @@ function Home() {
 
   const renderUserForms = () => (
     <>
-      <ListItem 
+    <ListItem 
         button sx={{color:'#fff'}}
-        component={Link} to="claimStatus"
-        onClick={(event) => handleClick(event, 'claimStatus')}
+        component={Link} to="itemlostRequest"
+        onClick={(event) => handleClick(event, 'claimHistory')}
       >
-        <ListItemText primary="Claim Status" className="drawer-text" />
-        <CheckCircleOutlineOutlinedIcon />
-      </ListItem>
+        <ListItemText primary="Item Lost Request" />
+        <LibraryAddOutlinedIcon />
+      </ListItem> 
 
       <ListItem 
         button sx={{color:'#fff'}}
-        component={Link} to="claimHistory"
-        onClick={(event) => handleClick(event, 'claimHistory')}
+        component={Link} to=""
+        onClick={handleItemRequestMenu}
       >
-        <ListItemText primary="Claim History" />
-        <HistoryOutlinedIcon />
-      </ListItem>     
+        <ListItemText primary="View All Item Lost Requests" className="drawer-text" />
+        <VisibilityOutlinedIcon />
+      </ListItem>
+      <Collapse in={openItemRequestMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
+              <List component="div" disablePadding sx={{color:'#fff'}}>
+                  <ListItem button component={Link} to="viewallrequest" onClick={handleClose}>
+                      <ListItemText primary="Claim Status"  sx={{color:'#fff'}}  />
+                  </ListItem>
+                  <ListItem button component={Link} to="viewallrequest/claimhistory" onClick={handleClose}>
+                      <ListItemText primary="Claim History"  sx={{color:'#fff'}}  />
+                  </ListItem>
+              </List> 
+      </Collapse>  
     </>
   );
 
   const [userData, setUserData] = useState({
     photo: '/profile.avif',
     name: 'Charitha Sri',
-    role: 'Admin'
+    role: 'user'
   });
 
 //   useEffect(() => {
@@ -246,8 +261,9 @@ function Home() {
         <Route path='/' element={role === 'Admin' ? <Statistics isDrawerOpen={isDrawerOpen} /> : <Default isDrawerOpen={isDrawerOpen} />} />
           <Route path='uploaditemdetails' element={<Upload isDrawerOpen={isDrawerOpen} />} />
           <Route path='claimrequests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
-          <Route path='claimStatus' element={<ClaimStatus isDrawerOpen={isDrawerOpen} />} />
-          <Route path='claimHistory' element={<ClaimHistory isDrawerOpen={isDrawerOpen} />} />
+          <Route path='itemlostrequest' element={<ItemLostRequest isDrawerOpen={isDrawerOpen} />} />
+          <Route path='viewalllostrequest' element={<ClaimStatus isDrawerOpen={isDrawerOpen} />} />
+          <Route path='viewalllostrequest/claimhistory' element={<ClaimHistory isDrawerOpen={isDrawerOpen} />} />
           <Route path='uploaditemdetails/view' element={<View isDrawerOpen={isDrawerOpen} />} />
         </Routes>
       </Box>
