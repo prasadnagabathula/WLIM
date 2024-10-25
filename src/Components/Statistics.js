@@ -33,7 +33,7 @@ function Statistics({ isDrawerOpen }) {
     <div>
         <Box sx={{
           textAlign: 'center',
-          mt: 2,
+          mt: 2, 
           ml: `${marginLeft}px`,
           mr:`${marginRight}px`,
           transition: 'margin-left 0.3s', 
