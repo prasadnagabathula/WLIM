@@ -13,7 +13,9 @@ function Upload({isDrawerOpen}) {
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 400 : 100);
     setMarginRight(isDrawerOpen ? 50 : 0);
-  }, [isDrawerOpen]); 
+
+  }, [isDrawerOpen]);
+
 
   const [itemDescription, setItemDescription] = useState('');
   const [brand, setBrand] = useState('');
@@ -216,7 +218,9 @@ function Upload({isDrawerOpen}) {
           message="Item details submitted!"
         />
       </Box>
-      {/* <View uploadedItems={uploadedItems} /> */}
+
+      <View uploadedItems={uploadedItems} />
+
     </div>
   )
 }
