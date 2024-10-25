@@ -32,9 +32,10 @@ function App() {
      <Routes>
      <Route path="/" element={<Login />} />
      <Route path={`${role === "Admin" ? "admin": "user"}/home/*`} element={<Home />} />
-     {/* <Route path="/home/*" element={<Home />} /> */}
+     <Route path="/home/*" element={<Home />} />
         {/* Add a catch-all route for unknown URLs */}
         <Route path="*" element={<h2>Page Not Found</h2>} />
+        <Route path="/homepage" element={<HomePage />} />
         <Route path="/upload" element={<UploadPhotos />} />
         <Route path="/search" element={<SearchPhotos />} />
         <Route path="/items" element={<SearchItems />} />
