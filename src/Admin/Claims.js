@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
-import {Box,IconButton,TextField,InputAdornment, Card,CardContent, CardMedia,Typography,Modal,Grid,Button,} from '@mui/material';
+import {Box,Accordion,AccordionSummary,AccordionDetails,IconButton,TextField,InputAdornment, Card,CardContent, CardMedia,Typography,Modal,Grid,Button,} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const staticClaimRequests = [
   {
@@ -47,11 +48,12 @@ const staticClaimRequests = [
   },
 ];
 
-const relatedImages = [
-  { id: 1, image: '/related1.jfif' },
-  { id: 2, image: '/related2.jfif' },
-  { id: 3, image: '/related3.jfif' },
-  { id: 4, image: '/related4.jfif' },
+
+const allRelatedImages = [
+  { id: 1, image: '/related1.jfif', color: 'Red', category: 'Bag', brand: 'Lavie', image: '/related1.jfif', description:'Red shiny bag'  },
+  { id: 2, image: '/related2.jfif', color: 'Black', category: 'Backpack', brand: 'SkyBags', image: '/related2.jfif', description:'Black backpack'  },
+  { id: 3, image: '/related3.jfif', color: 'Grey', category: 'Wallet', brand: 'Gucci', image: '/related3.jfif', description:'Gucci wallet'  },
+  { id: 4, image: '/related4.jfif', color: 'Blackk', category: 'Wallet', brand: 'Mast&Harbour', image: '/related4.jfif', description:'Black wallet'  },
 ];
 
 function Claims({isDrawerOpen}) {
@@ -60,8 +62,10 @@ function Claims({isDrawerOpen}) {
   const [open, setOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [similarItemOpen, setSimilarItemOpen] = useState(false);
+  const [selectedSimilarItem, setSelectedSimilarItem] = useState(null);
 
-  
+
   useEffect(() => {
     const fetchClaimRequests = async () => {
       const response = await fetch('/api/claim-requests');
@@ -79,11 +83,16 @@ function Claims({isDrawerOpen}) {
   const handleClose = () => {
     setOpen(false);
     setSelectedRequest(null);
+
+    setSimilarItemOpen(false);
+    setSelectedSimilarItem(null);
   };
+
 
   // const [page, setPage] = useState(0);
   // const [rowsPerPage, setRowsPerPage] = useState(5);
   // const [searchQuery, setSearchQuery] = useState(''); 
+
 
   const [marginLeft, setMarginLeft] = useState(100); 
   const [marginRight, setMarginRight] = useState(100); 
@@ -94,8 +103,23 @@ function Claims({isDrawerOpen}) {
       setMarginRight(isDrawerOpen ? 0 : 0); 
     }, [isDrawerOpen]);
 
-  // 
-  
+  // Function to filter related images
+  const getRelatedImages = () => {
+    if (!selectedRequest) return [];
+    const { Color, ItemCategory, Brand } = selectedRequest;
+
+    return allRelatedImages.filter(image =>
+      image.color.toLowerCase() === Color.toLowerCase() ||
+      image.category.toLowerCase() === ItemCategory.toLowerCase() ||
+      image.brand.toLowerCase() === Brand.toLowerCase()
+    );
+  };
+
+  const handleSimilarItemClick = (item) => {
+    setSelectedSimilarItem(item);
+    setSimilarItemOpen(true);
+  };
+
   return (
     <div>
       <Box  sx={{
@@ -211,9 +235,9 @@ function Claims({isDrawerOpen}) {
                   </Grid>
                 </Grid>
 
-                <Typography variant="h6" sx={{ marginTop: '20px' }}>Similar Items</Typography>
+                <Typography variant="h6" sx={{ marginTop: '20px' }}>Similar Images</Typography>
                 <Box sx={{ display: 'flex', overflowX: 'auto', marginTop: '10px' }}>
-                  {relatedImages.map((image) => (
+                  {getRelatedImages().map(image => (
                     <Card key={image.id} sx={{ minWidth: '120px', marginRight: '10px' }}>
                       <CardMedia
                         component="img"
@@ -228,6 +252,54 @@ function Claims({isDrawerOpen}) {
             )}
           </Box>
         </Modal>
+
+        <Modal open={similarItemOpen} onClose={handleClose}>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}>
+            {selectedSimilarItem && (
+              <Box sx={{
+                bgcolor: 'white',
+                borderRadius: '8px',
+                padding: '20px',
+                maxWidth: '800px',
+                width: '100%',
+                boxShadow: 24,
+                position: 'relative',
+              }}>
+                <IconButton onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
+                  <CloseIcon />
+                </IconButton>
+                <Typography variant="h5" gutterBottom>{selectedSimilarItem.description}</Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <CardMedia
+                      component="img"
+                      height="300"
+                      image={selectedSimilarItem.image}
+                      alt="Item"
+                      sx={{ borderRadius: '8px' }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="h6">Details</Typography>
+                    <Typography><strong>Color:</strong> {selectedSimilarItem.color}</Typography>
+                    <Typography><strong>Category:</strong> {selectedSimilarItem.category}</Typography>
+                    <Typography><strong>Brand:</strong> {selectedSimilarItem.brand}</Typography>
+                    <Typography><strong>Description:</strong> {selectedSimilarItem.description}</Typography>
+                  </Grid>
+                </Grid>
+              </Box>
+            )}
+          </Box>
+        </Modal>
+
+      </div>
+
       {/* {staticClaimRequests.length === 0 ? (
         <Typography>No claim requests found.</Typography>
       ) : (
@@ -310,6 +382,7 @@ function Claims({isDrawerOpen}) {
       </div>
     </Box>  
     </div>
+
   )
 }
 
