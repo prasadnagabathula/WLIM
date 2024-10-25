@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Grid, Snackbar } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import View from './View';
 
-function Upload({isDrawerOpen}) {
-
+function ItemLostRequest({isDrawerOpen}) {
+    
   const [uploadedItems, setUploadedItems] = useState([]);
-
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100); 
 
@@ -26,6 +24,13 @@ function Upload({isDrawerOpen}) {
   const [condition, setCondition] = useState('');
   const [identifiedDate, setIdentifiedDate] = useState('');
   const [location, setLocation] = useState('');
+  const [size, setSize] = useState('');
+  const [itemCategory, setItemCategory] = useState('');
+  const [valueOfTheItem, setValueOfTheItem] = useState('');
+  const [proofOfOwnership, setProofOfOwnership] = useState('');
+  const [circumstancesOfLoss, setCircumstancesOfLoss] = useState('');
+  const [additionalInformation, setAdditionalInformation] = useState('');
+  const [relevantDetails, setRelevantDetails] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleImageUpload = (event) => {
@@ -61,10 +66,9 @@ function Upload({isDrawerOpen}) {
     console.log(newItem);
   };
   
-
   return (
     <div>
-      <Box
+        <Box
         sx={{
           textAlign: 'center',
           mt: 2,
@@ -74,7 +78,7 @@ function Upload({isDrawerOpen}) {
         }}
       >
         <Typography variant="h4" gutterBottom>
-          Upload Item Details
+          Item Lost Request
         </Typography>
         <Grid container spacing={3}>
           {/* First Half - Styled Upload Button */}
@@ -103,7 +107,7 @@ function Upload({isDrawerOpen}) {
                 },
               }}
             >
-              Upload Identified Item Photo
+              Upload Lost Item Photo
               <input
                 type="file"
                 accept="image/*"
@@ -203,6 +207,69 @@ function Upload({isDrawerOpen}) {
                 />
               </Grid>
               <Grid item xs={12}>
+                <TextField
+                  label="Size "
+                  variant="outlined"
+                  fullWidth
+                  value={size}
+                  onChange={(e) => setSize(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Item Category"
+                  variant="outlined"
+                  fullWidth
+                  value={itemCategory}
+                  onChange={(e) => setItemCategory(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Value of the Item"
+                  variant="outlined"
+                  fullWidth
+                  value={valueOfTheItem}
+                  onChange={(e) => setValueOfTheItem(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Proof of Ownership"
+                  variant="outlined"
+                  fullWidth
+                  value={proofOfOwnership}
+                  onChange={(e) => setProofOfOwnership(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Circumstances of Loss"
+                  variant="outlined"
+                  fullWidth
+                  value={circumstancesOfLoss}
+                  onChange={(e) => setCircumstancesOfLoss(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Additional Information(optional)"
+                  variant="outlined"
+                  fullWidth
+                  value={additionalInformation}
+                  onChange={(e) => setAdditionalInformation(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Any Other Relevant Details"
+                  variant="outlined"
+                  fullWidth
+                  value={relevantDetails}
+                  onChange={(e) => setRelevantDetails(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
                 <Button variant="contained" color="primary" onClick={handleSubmit}>
                   Submit
                 </Button>
@@ -218,11 +285,9 @@ function Upload({isDrawerOpen}) {
           message="Item details submitted!"
         />
       </Box>
-
-      {/* <View uploadedItems={uploadedItems} /> */}
-
+      
     </div>
   )
 }
 
-export default Upload
+export default ItemLostRequest
