@@ -216,7 +216,7 @@ function Upload({isDrawerOpen}) {
           message="Item details submitted!"
         />
       </Box>
-      <View uploadedItems={uploadedItems} />
+      {/* <View uploadedItems={uploadedItems} /> */}
     </div>
   )
 }

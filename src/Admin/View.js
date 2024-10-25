@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper } from '@mui/material';
+import { Box,Button, TextField,InputAdornment,IconButton,Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 function View({uploadedItems = [], isDrawerOpen }) {
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -23,6 +25,8 @@ function View({uploadedItems = [], isDrawerOpen }) {
     setPage(0);
   };
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   return (
     <Box sx={{
       textAlign: 'center',
@@ -31,9 +35,29 @@ function View({uploadedItems = [], isDrawerOpen }) {
       mr:`${marginRight}px`,
       transition: 'margin-left 0.3s', 
     }}>
-      <Typography variant="h4" gutterBottom>
-        Uploaded Item Details
-      </Typography>
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        {/* <h3 style={{ marginBottom: '20px', fontSize: '25px', display:'flex', justifyContent:'center' }}>Department Table List</h3> */}
+        <Typography variant="h4" gutterBottom>
+          Uploaded Item Details
+        </Typography>
+        <div style={{ display: 'flex', marginBottom: '20px', width: '100%' }}>
+            <TextField
+                label="Search"
+                variant="outlined"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton edge="end">
+                                <SearchIcon />
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
+                style={{ flexGrow: 1, marginRight: '10px' }}
+            />
+        </div>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -75,6 +99,7 @@ function View({uploadedItems = [], isDrawerOpen }) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
+      </div>
     </Box>
   )
 }
