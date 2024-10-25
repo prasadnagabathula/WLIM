@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 
-import { Box,,Button, TextField,InputAdornment,IconButton, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, CircularProgress } from '@mui/material';
+import { Box,TextField,InputAdornment,IconButton, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
   
-function View({uploadedItems = [], isDrawerOpen }) {
+function View({isDrawerOpen }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [marginLeft, setMarginLeft] = useState(100); // Default margin

@@ -6,6 +6,7 @@ import SearchPhotos from './searchPhotos';
 import SearchItems from './searchItems';
 import Login from './Components/Login';
 import Home from './Components/Home';
+import HomePage from './homePage';
 import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
