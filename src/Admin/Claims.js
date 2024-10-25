@@ -48,6 +48,7 @@ const staticClaimRequests = [
   },
 ];
 
+
 const allRelatedImages = [
   { id: 1, image: '/related1.jfif', color: 'Red', category: 'Bag', brand: 'Lavie', image: '/related1.jfif', description:'Red shiny bag'  },
   { id: 2, image: '/related2.jfif', color: 'Black', category: 'Backpack', brand: 'SkyBags', image: '/related2.jfif', description:'Black backpack'  },
@@ -63,6 +64,7 @@ function Claims({isDrawerOpen}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [similarItemOpen, setSimilarItemOpen] = useState(false);
   const [selectedSimilarItem, setSelectedSimilarItem] = useState(null);
+
 
   useEffect(() => {
     const fetchClaimRequests = async () => {
@@ -81,9 +83,16 @@ function Claims({isDrawerOpen}) {
   const handleClose = () => {
     setOpen(false);
     setSelectedRequest(null);
+
     setSimilarItemOpen(false);
     setSelectedSimilarItem(null);
   };
+
+
+  // const [page, setPage] = useState(0);
+  // const [rowsPerPage, setRowsPerPage] = useState(5);
+  // const [searchQuery, setSearchQuery] = useState(''); 
+
 
   const [marginLeft, setMarginLeft] = useState(100); 
   const [marginRight, setMarginRight] = useState(100); 
@@ -110,7 +119,7 @@ function Claims({isDrawerOpen}) {
     setSelectedSimilarItem(item);
     setSimilarItemOpen(true);
   };
- 
+
   return (
     <div>
       <Box  sx={{
@@ -190,7 +199,7 @@ function Claims({isDrawerOpen}) {
                     position: 'absolute',
                     top: 10,
                     right: 10,
-                    color: 'grey.500',
+                    color: 'grey.500', 
                   }}
                 >
                   <CloseIcon />
@@ -243,6 +252,7 @@ function Claims({isDrawerOpen}) {
             )}
           </Box>
         </Modal>
+
         <Modal open={similarItemOpen} onClose={handleClose}>
           <Box sx={{
             display: 'flex',
@@ -290,6 +300,86 @@ function Claims({isDrawerOpen}) {
 
       </div>
 
+      {/* {staticClaimRequests.length === 0 ? (
+        <Typography>No claim requests found.</Typography>
+      ) : (
+        <Grid container spacing={2}>
+          {staticClaimRequests.map((request) => (
+            <Grid item xs={12} sm={6} md={4} key={request.id}>
+              <Card onClick={() => handleCardClick(request)} sx={{ cursor: 'pointer' }}>
+                <CardMedia
+                  component="img"
+                  height="200"
+                  width="100"
+                  image={request.ItemPhoto}
+                  alt="Item"
+                />
+                <CardContent>
+                  <Typography variant="h6">{request.Description}</Typography>
+                  <Typography color="text.secondary">Claimed Date: {new Date(request.DateTimeWhenLost).toLocaleDateString()}</Typography>
+                  <Typography color="text.secondary">Status: Pending</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}>
+          {selectedRequest && (
+            <Box sx={{
+              bgcolor: 'white',
+              borderRadius: '8px',
+              padding: '20px',
+              maxWidth: '800px',
+              width: '100%',
+              boxShadow: 24,
+            }}>
+              <Typography variant="h5" gutterBottom>{selectedRequest.Description}</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <CardMedia
+                    component="img"
+                    height="300"
+                    image={selectedRequest.ItemPhoto}
+                    alt="Item"
+                    sx={{ borderRadius: '8px' }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography variant="h6">Details</Typography>
+                  <Typography><strong>Color:</strong> {selectedRequest.Color}</Typography>
+                  <Typography><strong>Size:</strong> {selectedRequest.Size}</Typography>
+                  <Typography><strong>Brand:</strong> {selectedRequest.Brand}</Typography>
+                  <Typography><strong>Model:</strong> {selectedRequest.Model}</Typography>
+                  <Typography><strong>Distinguishing Features:</strong> {selectedRequest.DistinguishingFeatures}</Typography>
+                  <Typography><strong>Item Category:</strong> {selectedRequest.ItemCategory}</Typography>
+                  <Typography><strong>Serial Number:</strong> {selectedRequest.SerialNumber}</Typography>
+                  <Typography><strong>Date When Lost:</strong> {new Date(selectedRequest.DateTimeWhenLost).toLocaleString()}</Typography>
+                  <Typography><strong>Location:</strong> {selectedRequest.Location}</Typography>
+                  <Typography><strong>Item Value:</strong> ${selectedRequest.ItemValue.toFixed(2)}</Typography>
+                  <Typography><strong>Proof of Ownership:</strong> {selectedRequest.ProofofOwnership}</Typography>
+                  <Typography><strong>How the Item Lost:</strong> {selectedRequest.HowtheItemLost}</Typography>
+                  <Typography><strong>Reference Number:</strong> {selectedRequest.ReferenceNumber}</Typography>
+                  <Typography><strong>Additional Information:</strong> {selectedRequest.AdditionalInformation}</Typography>
+                  <Typography><strong>Other Relevant Details:</strong> {selectedRequest.OtherRelevantDetails}</Typography>
+                </Grid>
+              </Grid>
+              <Button variant="outlined" onClick={handleClose} sx={{ marginTop: '20px' }}>
+                Close
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </Modal> */}
+      </div>
     </Box>  
     </div>
 
