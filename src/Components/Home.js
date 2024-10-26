@@ -14,17 +14,21 @@ import ClaimHistory from '../User/ClaimHistory';
 import Statistics from './Statistics';
 import View from '../Admin/View';
 import ItemLostRequest from '../User/ItemLostRequest';
+import ItemDetails from '../Admin/ItemDetails';
 
 function Home() {
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
     const [isDrawerOpen, setDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null); // Anchor for menu
-    const [role, setRole] = useState('User'); 
+    const [role, setRole] = useState('Admin'); 
     const [openUploadMenu, setOpenUploadMenu] = useState(false);
     const [openItemRequestMenu, setOpenItemRequestMenu] = useState(false);
     const [view, setView] = useState('slider'); // Default view
     const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
     const [currentSubMenu, setCurrentSubMenu] = useState(null);
+    const [selectedRequest, setSelectedRequest] = useState(null);
+    const [relatedImages, setRelatedImages] = useState([]);
+    const [username, setUsername] = useState('')
     
     const handleUploadMenu = () => {
         setOpenUploadMenu((prev) => !prev);
@@ -79,6 +83,120 @@ function Home() {
     navigate('/');
   };
 
+  const allRelatedImages = [
+    {
+      id: 1,
+      claimedBy: "Harry",
+      Description: "Levis Red sling bag",
+      Color: "Red",
+      Size: "N/A",
+      Brand: "Levis",
+      Model: "N/A",
+      DistinguishingFeatures: "Minor scratches",
+      ItemCategory: "Bags",
+      SerialNumber: "1234567890",
+      DateTimeWhenLost: "2024-10-20T10:30:00",
+      Location: "Main Street, City Center",
+      ItemValue: 150.00,
+      ItemPhoto: "/related1.jfif", 
+      ProofofOwnership: "Receipt",
+      HowtheItemLost: "Left on the bus",
+      ReferenceNumber: "REF12345",
+      AdditionalInformation: "Contact for more details",
+      OtherRelevantDetails: "N/A",
+    },
+    {
+      id: 2,
+      claimedBy: "Sonia",
+      Description: "Black backpack",
+      Color: "Black",
+      Size: "Medium",
+      Brand: "Skybags",
+      Model: "Air",
+      DistinguishingFeatures: "Zipper broken",
+      ItemCategory: "Backpack",
+      SerialNumber: "0987654321",
+      DateTimeWhenLost: "2024-10-19T14:00:00",
+      Location: "City Park",
+      ItemValue: 75.00,
+      ItemPhoto: "/related2.jfif", 
+      ProofofOwnership: "None",
+      HowtheItemLost: "Forgot in the park",
+      ReferenceNumber: "REF54321",
+      AdditionalInformation: "Call if found",
+      OtherRelevantDetails: "N/A",
+    },
+    {
+      id: 3,
+      claimedBy: "Charles",
+      Description: "Grey leather wallet lost",
+      Color: "Grey",
+      Size: "N/A",
+      Brand: "Gucci",
+      Model: "Marmont",
+      DistinguishingFeatures: "Minor scratches",
+      ItemCategory: "Wallet",
+      SerialNumber: "1234567890",
+      DateTimeWhenLost: "2024-10-20T10:30:00",
+      Location: "Main Street, City Center",
+      ItemValue: 150.00,
+      ItemPhoto: "/related3.jfif", 
+      ProofofOwnership: "Receipt",
+      HowtheItemLost: "Left on the bus",
+      ReferenceNumber: "REF12345",
+      AdditionalInformation: "Contact for more details",
+      OtherRelevantDetails: "N/A",
+    },
+    {
+      id: 4,
+      claimedBy: "Selena",
+      Description: "Black wallet lost",
+      Color: "Black",
+      Size: "Small",
+      Brand: "Mat&Harbour",
+      Model: "Air",
+      DistinguishingFeatures: "Worn out",
+      ItemCategory: "Wallet",
+      SerialNumber: "0987654321",
+      DateTimeWhenLost: "2024-10-19T14:00:00",
+      Location: "City Park",
+      ItemValue: 75.00,
+      ItemPhoto: "/related4.jfif", 
+      ProofofOwnership: "None",
+      HowtheItemLost: "Forgot in the park",
+      ReferenceNumber: "REF54321",
+      AdditionalInformation: "Call if found",
+      OtherRelevantDetails: "N/A",
+    },
+    // { id: 1, image: '/related1.jfif', color: 'Red', category: 'Bag', brand: 'Lavie', image: '/related1.jfif', description:'Red shiny bag'  },
+    // { id: 2, image: '/related2.jfif', color: 'Black', category: 'Backpack', brand: 'SkyBags', image: '/related2.jfif', description:'Black backpack'  },
+    // { id: 3, image: '/related3.jfif', color: 'Grey', category: 'Wallet', brand: 'Gucci', image: '/related3.jfif', description:'Gucci wallet'  },
+    // { id: 4, image: '/related4.jfif', color: 'Black', category: 'Wallet', brand: 'Mast&Harbour', image: '/related4.jfif', description:'Black wallet'  },
+  ];
+  
+
+//   const handleCardClick = (request) => {
+//     const images = getRelatedImages(); // Replace with your method to get related images
+//     setSelectedRequest(request);
+//     setRelatedImages(images);
+// };
+
+// const handleCardClick = (request) => {
+//   const relatedImages = getRelatedImages(); 
+//   navigate('/itemdetails', { state: { selectedRequest: request, relatedImages: relatedImages } });
+// };
+
+const getRelatedImages = () => {
+  if (!selectedRequest) return [];
+  const { Color, ItemCategory, Brand } = selectedRequest;
+
+  return allRelatedImages.filter(image =>
+    image.Color.toLowerCase() === Color.toLowerCase() ||
+    image.ItemCategory.toLowerCase() === ItemCategory.toLowerCase() ||
+    image.Brand.toLowerCase() === Brand.toLowerCase()
+  );
+};
+  
   const renderAdminForms = () => (
     <>
       <ListItem 
@@ -144,11 +262,38 @@ function Home() {
     </>
   );
 
+  // const [userData, setUserData] = useState({
+  //   photo: '/profile.avif',
+  //   name: 'Charitha Sri',
+  //   role: 'user'
+  // });
+
+  useEffect(() => {
+    // Retrieve the email from localStorage
+    const userEmail = localStorage.getItem('userEmail'); 
+    const userRole = localStorage.getItem('userRole');
+    
+    // Check if userEmail is valid
+    if (userEmail) {
+      const emailParts = userEmail.split('@');
+      setUsername(emailParts[0]); 
+    }
+     // Check if userRole is valid
+     if (userRole) {
+      setRole(userRole);
+    }
+  }, []);
+ 
   const [userData, setUserData] = useState({
     photo: '/profile.avif',
-    name: 'Charitha Sri',
-    role: 'user'
   });
+ 
+  useEffect(() => {
+    const storedData = localStorage.getItem('userData');
+    if (storedData) {
+      setUserData(JSON.parse(storedData)); 
+    }
+  }, []);
 
 //   useEffect(() => {
 //     const storedData = localStorage.getItem('userData');
@@ -178,9 +323,6 @@ function Home() {
 
           {/* Username and Profile Avatar */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {/* <Typography variant="body1" sx={{ marginRight: 1, color:'black' }}>
-              {username || 'U'}
-            </Typography> */}
             <div style={{ marginRight: 2, textAlign: 'center' }}>
               <Typography variant="body1" sx={{ color: '#232527' }}>
                 {userData.name || 'U'}
@@ -191,11 +333,18 @@ function Home() {
             </div>
             <IconButton onClick={handleProfileMenuClick} color="inherit">
               <Avatar src={userData.photo} sx={{ bgcolor: '#00aae7' }}>
-                {/* {username[0] || 'U'} */}
                 {userData.name ? userData.name[0] : 'U'}
               </Avatar>
             </IconButton>
-          </div>
+          </div> 
+          {/* <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="body1" sx={{ marginRight: 1, color:'black' }}>
+              {username || 'U'}
+            </Typography>
+            <IconButton onClick={handleProfileMenuClick} color="inherit">
+              <Avatar src={userData.photo} sx={{ bgcolor: '#00aae7' }}>{username[0] || 'U'}</Avatar>
+            </IconButton>
+          </div> */}
 
           {/* Profile Menu */}
           <Menu
@@ -205,7 +354,7 @@ function Home() {
           >
             <MenuItem onClick={handleProfileMenuClose} sx={{fontFamily:'Lato'}}>Profile</MenuItem>
             <MenuItem onClick={handleLogout} sx={{fontFamily:'Lato'}}>Logout</MenuItem>
-          </Menu>
+          </Menu> 
         </Toolbar>
       </AppBar>
       <Drawer
@@ -265,6 +414,7 @@ function Home() {
           <Route path='viewalllostrequest' element={<ClaimStatus isDrawerOpen={isDrawerOpen} />} />
           <Route path='viewalllostrequest/claimhistory' element={<ClaimHistory isDrawerOpen={isDrawerOpen} />} />
           <Route path='uploaditemdetails/view' element={<View isDrawerOpen={isDrawerOpen} />} />
+          <Route path='itemdetails' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
         </Routes>
       </Box>
 

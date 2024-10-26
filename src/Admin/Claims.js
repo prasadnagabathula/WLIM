@@ -1,11 +1,11 @@
-
 import React, { useEffect, useState } from 'react';
 import {Box,Accordion,AccordionSummary,AccordionDetails,IconButton,TextField,InputAdornment, Card,CardContent, CardMedia,Typography,Modal,Grid,Button,} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const staticClaimRequests = [
+const staticClaimRequests = [  
   {
     id: 1,
     claimedBy: "John Doe",
@@ -49,6 +49,7 @@ const staticClaimRequests = [
     OtherRelevantDetails: "N/A",
   },
 ];
+
 
 const allRelatedImages = [
   {
@@ -141,15 +142,64 @@ const allRelatedImages = [
   // { id: 4, image: '/related4.jfif', color: 'Black', category: 'Wallet', brand: 'Mast&Harbour', image: '/related4.jfif', description:'Black wallet'  },
 ];
 
-function Claims({isDrawerOpen}) {
+function Claims({isDrawerOpen }) {
 
-  const [claimRequests, setClaimRequests] = useState([]);
+  // const [claimRequests, setClaimRequests] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [similarItemOpen, setSimilarItemOpen] = useState(false);
   const [selectedSimilarItem, setSelectedSimilarItem] = useState(null);
 
+//   const handleItemClick = (request) => {
+//     onCardClick(request); // Pass the selected request to Home
+// };
+
+const navigate = useNavigate();
+
+// const handleCardClick = (request) => {
+//   const relatedImages = getRelatedImages(); 
+//   navigate('/itemdetails', { state: { selectedRequest: request, relatedImages: relatedImages } });
+// };
+
+
+// const getRelatedImages = () => {
+//   if (!selectedRequest) return [];
+//   const { Color, ItemCategory, Brand } = selectedRequest;
+
+//   return allRelatedImages.filter(image =>
+//     image.Color.toLowerCase() === Color.toLowerCase() ||
+//     image.ItemCategory.toLowerCase() === ItemCategory.toLowerCase() ||
+//     image.Brand.toLowerCase() === Brand.toLowerCase()
+//   );
+// };
+
+const [claimRequests, setClaimRequests] = useState(staticClaimRequests);
+
+const handleCardClick = (request) => {
+  const relatedImages = getRelatedImages(request);
+  navigate('/itemdetails', { state: { selectedRequest: request, relatedImages } });
+};
+
+const getRelatedImages = (request) => {
+  const { Color, ItemCategory, Brand } = request;
+  return allRelatedImages.filter(image =>
+    image.Color.toLowerCase() === Color.toLowerCase() ||
+    image.ItemCategory.toLowerCase() === ItemCategory.toLowerCase() ||
+    image.Brand.toLowerCase() === Brand.toLowerCase()
+  );
+};
+
+  // const handleCardClick = (request) => {
+  //   navigate('/itemdetails', { state: { selectedRequest: request, relatedImages } });
+  // };
+
+  // const filteredClaims = claimRequests.filter(request => {
+  //   return (
+  //     request.Description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     request.claimedBy.toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
+  // });
 
   useEffect(() => {
     const fetchClaimRequests = async () => {
@@ -160,10 +210,10 @@ function Claims({isDrawerOpen}) {
     fetchClaimRequests();
   }, []);
 
-  const handleCardClick = (request) => {
-    setSelectedRequest(request);
-    setOpen(true);
-  };
+  // const handleCardClick = (request) => {
+  //   setSelectedRequest(request);
+  //   setOpen(true);
+  // };
 
   const handleClose = () => {
     setOpen(false);
@@ -187,23 +237,6 @@ function Claims({isDrawerOpen}) {
       setMarginLeft(isDrawerOpen ? 240 : 0);
       setMarginRight(isDrawerOpen ? 0 : 0); 
     }, [isDrawerOpen]);
-
-  // Function to filter related images
-  const getRelatedImages = () => {
-    if (!selectedRequest) return [];
-    const { Color, ItemCategory, Brand } = selectedRequest;
-
-    return allRelatedImages.filter(image =>
-      image.Color.toLowerCase() === Color.toLowerCase() ||
-      image.ItemCategory.toLowerCase() === ItemCategory.toLowerCase() ||
-      image.Brand.toLowerCase() === Brand.toLowerCase()
-    );
-  };
-
-  const handleSimilarItemClick = (item) => {
-    setSelectedSimilarItem(item);
-    setSimilarItemOpen(true);
-  };
 
   return (
     <div>
@@ -237,7 +270,8 @@ function Claims({isDrawerOpen}) {
             />
         </div>
         <Grid container spacing={2}>
-          {staticClaimRequests.map((request) => (
+          {/* {staticClaimRequests.map((request) => ( */}
+          {claimRequests.map((request) => (
             <Grid item xs={12} sm={6} md={4} key={request.id}>
               <Card onClick={() => handleCardClick(request)} sx={{ cursor: 'pointer' }}>
                 <CardMedia
@@ -258,7 +292,7 @@ function Claims({isDrawerOpen}) {
         </Grid>
 
        {/* Main Item Modal */}
-       <Modal open={open} onClose={handleClose}>
+      {/* <Modal open={open} onClose={handleClose}>
           <Box sx={{
             display: 'flex',
             justifyContent: 'center',
@@ -331,10 +365,10 @@ function Claims({isDrawerOpen}) {
               </Box>
             )}
           </Box>
-        </Modal>
+        </Modal> */}
 
         {/* Similar Item Modal */}
-        <Modal open={similarItemOpen} onClose={handleClose}>
+       {/* <Modal open={similarItemOpen} onClose={handleClose}>
           <Box sx={{
             display: 'flex',
             justifyContent: 'center',
@@ -389,7 +423,7 @@ function Claims({isDrawerOpen}) {
               </Box>
             )}
           </Box>
-        </Modal>
+        </Modal>*/}
       </div>
     </Box>  
     </div>
@@ -398,3 +432,4 @@ function Claims({isDrawerOpen}) {
 }
 
 export default Claims
+ 
