@@ -63,7 +63,6 @@ function View({ isDrawerOpen }) { //uploadedItems = []
       transition: 'margin-left 0.3s', 
     }}>
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        {/* <h3 style={{ marginBottom: '20px', fontSize: '25px', display:'flex', justifyContent:'center' }}>Department Table List</h3> */}
         <Typography variant="h4" gutterBottom>
           Uploaded Item Details
         </Typography>
@@ -98,9 +97,9 @@ function View({ isDrawerOpen }) { //uploadedItems = []
               <TableCell>Condition</TableCell>
               <TableCell>Identified Date</TableCell>
               <TableCell>Location</TableCell>
-		<TableCell>Category</TableCell>
-                  <TableCell>Tags</TableCell>
-                  <TableCell>Object Type</TableCell>
+		          <TableCell>Category</TableCell>
+              <TableCell>Tags</TableCell>
+              <TableCell>Object Type</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

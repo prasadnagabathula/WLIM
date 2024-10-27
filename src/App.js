@@ -12,7 +12,7 @@ import ItemDetails from './Admin/ItemDetails';
 import Profile from './Components/Profile';
 
 function App() {
-  const role = "Admin";
+  const role = "User";
   return (
     <Router>
       <Routes>

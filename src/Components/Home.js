@@ -20,7 +20,7 @@ function Home() {
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
     const [isDrawerOpen, setDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null); // Anchor for menu
-    const [role, setRole] = useState('Admin'); 
+    const [role, setRole] = useState('User'); 
     const [openUploadMenu, setOpenUploadMenu] = useState(false);
     const [openItemRequestMenu, setOpenItemRequestMenu] = useState(false);
     const [view, setView] = useState('slider'); // Default view
@@ -29,6 +29,12 @@ function Home() {
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [relatedImages, setRelatedImages] = useState([]);
     const [username, setUsername] = useState('')
+
+    const [uploadedItems, setUploadedItems] = useState([]);
+
+  const handleRequestSubmit = (newRequest) => {
+    setUploadedItems((prev) => [...prev, newRequest]);
+  };
     
     const handleUploadMenu = () => {
         setOpenUploadMenu((prev) => !prev);
@@ -196,6 +202,21 @@ const getRelatedImages = () => {
     image.Brand.toLowerCase() === Brand.toLowerCase()
   );
 };
+
+const userClaims = [
+  {
+    itemDescription: 'Pink Floral Sling Bag',
+    identifiedDate: '2024-10-27',
+    status: 'Pending',
+    resolved: false,
+  },
+  {
+    itemDescription: 'Black Leather Wallet',
+    identifiedDate: '2024-10-10',
+    status: 'Completed',
+    resolved: false,
+  },
+];
   
   const renderAdminForms = () => (
     <>
@@ -410,11 +431,11 @@ const getRelatedImages = () => {
         <Route path='/' element={role === 'Admin' ? <Statistics isDrawerOpen={isDrawerOpen} /> : <Default isDrawerOpen={isDrawerOpen} />} />
           <Route path='uploaditemdetails' element={<Upload isDrawerOpen={isDrawerOpen} />} />
           <Route path='claimrequests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
-          <Route path='itemlostrequest' element={<ItemLostRequest isDrawerOpen={isDrawerOpen} />} />
-          <Route path='viewalllostrequest' element={<ClaimStatus isDrawerOpen={isDrawerOpen} />} />
-          <Route path='viewalllostrequest/claimhistory' element={<ClaimHistory isDrawerOpen={isDrawerOpen} />} />
+          <Route path='itemlostrequest' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />
+          <Route path='viewallrequest/claimhistory' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
           <Route path='uploaditemdetails/view' element={<View isDrawerOpen={isDrawerOpen} />} />
           <Route path='itemdetails' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
+          <Route path='viewallrequest' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
         </Routes>
       </Box>
 

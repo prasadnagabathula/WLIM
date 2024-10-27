@@ -227,7 +227,7 @@ const { selectedRequest, relatedImages = [] } = location.state || {};
 
   const [openPopup, setOpenPopup] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [status, setStatus] = useState('In Progress');
+  const [status, setStatus] = useState('');
   const [comments, setComments] = useState('');
 
   const [marginLeft, setMarginLeft] = useState(100);
