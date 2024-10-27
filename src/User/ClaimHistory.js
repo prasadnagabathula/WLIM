@@ -10,7 +10,7 @@ const ClaimHistory = ({ userClaims = [], isDrawerOpen }) => {
 
   // Adjusting the margins when drawer opens or closes
   useEffect(() => {
-    setMarginLeft(isDrawerOpen ? 400 : 100);
+    setMarginLeft(isDrawerOpen ? 260 : 100);
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
 
@@ -25,12 +25,27 @@ const ClaimHistory = ({ userClaims = [], isDrawerOpen }) => {
     setPage(0);
   };
 
+  useEffect(() => {
+    const savedClaims = localStorage.getItem('uploadedItems');
+    if (savedClaims) {
+      setClaims(JSON.parse(savedClaims));
+    }
+  }, []);
+
   // Handle status change to "Resolved"
   const markAsResolved = (index) => {
     const updatedClaims = [...claims];
-    updatedClaims[index].resolved = true;
+    updatedClaims[index].status = 'Completed'; // Update the status to "Completed"
+    updatedClaims[index].resolved = true; // Track whether it's resolved
     setClaims(updatedClaims);
+    localStorage.setItem('uploadedItems', JSON.stringify(updatedClaims)); // Update local storage
   };
+
+  // const markAsResolved = (index) => {
+  //   const updatedClaims = [...claims];
+  //   updatedClaims[index].resolved = true;
+  //   setClaims(updatedClaims);
+  // };
 
   return (
     <Box sx={{
@@ -65,17 +80,17 @@ const ClaimHistory = ({ userClaims = [], isDrawerOpen }) => {
                   <TableCell>{claim.identifiedDate}</TableCell>
                   <TableCell>{claim.status}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="contained"
-                      onClick={() => markAsResolved(index)}
-                      sx={{
-                        backgroundColor: claim.resolved ? 'green' : 'grey',
-                        color: 'white',
-                      }}
-                      disabled={claim.resolved}
-                    >
-                      {claim.resolved ? 'Resolved' : 'Not Resolved'}
-                    </Button>
+                  <Button
+                        variant="contained"
+                        onClick={() => markAsResolved(index)}
+                        sx={{
+                          backgroundColor: claim.resolved ? 'green' : 'grey',
+                          color: 'white',
+                        }}
+                        disabled={claim.resolved}
+                      >
+                        {claim.resolved ? 'Resolved' : 'Not Resolved'}
+                      </Button>
                   </TableCell>
                 </TableRow>
               ))}
