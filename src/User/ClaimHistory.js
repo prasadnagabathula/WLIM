@@ -47,7 +47,7 @@ const ClaimHistory = ({ userClaims = [], isDrawerOpen }) => {
 
       <TableContainer component={Paper}>
         <Table>
-          <TableHead>
+          <TableHead>   
             <TableRow>
               <TableCell>Description</TableCell>
               <TableCell>Requested Date</TableCell>

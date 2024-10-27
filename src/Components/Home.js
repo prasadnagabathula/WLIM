@@ -438,7 +438,6 @@ const userClaims = [
           <Route path='viewallrequest' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
         </Routes>
       </Box>
-
     </div>
   )
 }

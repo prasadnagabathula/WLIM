@@ -325,7 +325,7 @@ function ItemLostRequest({ onRequestSubmit, isDrawerOpen, userName }) {
     valueOfTheItem: '',
     proofOfOwnership: '',
     circumstancesOfLoss: '',
-    aaditionalInformation: '',
+    aaditionalInformation: '',  
     requestedBy: userName,
   });
 
