@@ -3,9 +3,8 @@ import { useNavigate, Routes, Route, Link, useLocation  } from 'react-router-dom
 import { AppBar,Divider, Toolbar, IconButton, Typography, Drawer, Box, List, ListItem, ListItemText, Avatar, Menu, MenuItem, CssBaseline, Collapse } from '@mui/material';
 import DriveFolderUploadOutlinedIcon from '@mui/icons-material/DriveFolderUploadOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
-import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
-import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined';import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Default from './Default';
 import CustomBreadcrumbs from './CustomBreadcrumbs';
 import Claims from '../Admin/Claims';
@@ -14,19 +13,34 @@ import ClaimStatus from '../User/ClaimStatus';
 import ClaimHistory from '../User/ClaimHistory';
 import Statistics from './Statistics';
 import View from '../Admin/View';
+import ItemLostRequest from '../User/ItemLostRequest';
+import ItemDetails from '../Admin/ItemDetails';
 
 function Home() {
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
     const [isDrawerOpen, setDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null); // Anchor for menu
-    const [role, setRole] = useState('Admin'); 
     const [openUploadMenu, setOpenUploadMenu] = useState(false);
+    const [openItemRequestMenu, setOpenItemRequestMenu] = useState(false);
     const [view, setView] = useState('slider'); // Default view
     const [subMenuAnchorEl, setSubMenuAnchorEl] = useState(null);
     const [currentSubMenu, setCurrentSubMenu] = useState(null);
+    const [selectedRequest, setSelectedRequest] = useState(null);
+    const [relatedImages, setRelatedImages] = useState([]);
+    const [username, setUsername] = useState('')
+
+    const [uploadedItems, setUploadedItems] = useState([]);
+
+  const handleRequestSubmit = (newRequest) => {
+    setUploadedItems((prev) => [...prev, newRequest]);
+  };
     
     const handleUploadMenu = () => {
         setOpenUploadMenu((prev) => !prev);
+    };
+
+    const handleItemRequestMenu = () => {
+      setOpenItemRequestMenu((prev) => !prev);
     };
 
     // Handle sub-menu open and close
@@ -70,10 +84,130 @@ function Home() {
   };
   const handleLogout = () => {
     localStorage.removeItem('oauth2');
+    localStorage.removeItem('userName');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('email');
+    localStorage.removeItem('userData');
     navigate('/');
   };
 
+  const allRelatedImages = [
+    {
+      id: 1,
+      claimedBy: "Harry",
+      Description: "Levis Red sling bag",
+      Color: "Red",
+      Size: "N/A",
+      Brand: "Levis",
+      Model: "N/A",
+      DistinguishingFeatures: "Minor scratches",
+      ItemCategory: "Bags",
+      SerialNumber: "1234567890",
+      DateTimeWhenLost: "2024-10-20T10:30:00",
+      Location: "Main Street, City Center",
+      ItemValue: 150.00,
+      ItemPhoto: "/related1.jfif", 
+      ProofofOwnership: "Receipt",
+      HowtheItemLost: "Left on the bus",
+      ReferenceNumber: "REF12345",
+      AdditionalInformation: "Contact for more details",
+      OtherRelevantDetails: "N/A",
+    },
+    {
+      id: 2,
+      claimedBy: "Sonia",
+      Description: "Black backpack",
+      Color: "Black",
+      Size: "Medium",
+      Brand: "Skybags",
+      Model: "Air",
+      DistinguishingFeatures: "Zipper broken",
+      ItemCategory: "Backpack",
+      SerialNumber: "0987654321",
+      DateTimeWhenLost: "2024-10-19T14:00:00",
+      Location: "City Park",
+      ItemValue: 75.00,
+      ItemPhoto: "/related2.jfif", 
+      ProofofOwnership: "None",
+      HowtheItemLost: "Forgot in the park",
+      ReferenceNumber: "REF54321",
+      AdditionalInformation: "Call if found",
+      OtherRelevantDetails: "N/A",
+    },
+    {
+      id: 3,
+      claimedBy: "Charles",
+      Description: "Grey leather wallet lost",
+      Color: "Grey",
+      Size: "N/A",
+      Brand: "Gucci",
+      Model: "Marmont",
+      DistinguishingFeatures: "Minor scratches",
+      ItemCategory: "Wallet",
+      SerialNumber: "1234567890",
+      DateTimeWhenLost: "2024-10-20T10:30:00",
+      Location: "Main Street, City Center",
+      ItemValue: 150.00,
+      ItemPhoto: "/related3.jfif", 
+      ProofofOwnership: "Receipt",
+      HowtheItemLost: "Left on the bus",
+      ReferenceNumber: "REF12345",
+      AdditionalInformation: "Contact for more details",
+      OtherRelevantDetails: "N/A",
+    },
+    {
+      id: 4,
+      claimedBy: "Selena",
+      Description: "Black wallet lost",
+      Color: "Black",
+      Size: "Small",
+      Brand: "Mat&Harbour",
+      Model: "Air",
+      DistinguishingFeatures: "Worn out",
+      ItemCategory: "Wallet",
+      SerialNumber: "0987654321",
+      DateTimeWhenLost: "2024-10-19T14:00:00",
+      Location: "City Park",
+      ItemValue: 75.00,
+      ItemPhoto: "/related4.jfif", 
+      ProofofOwnership: "None",
+      HowtheItemLost: "Forgot in the park",
+      ReferenceNumber: "REF54321",
+      AdditionalInformation: "Call if found",
+      OtherRelevantDetails: "N/A",
+    },
+    // { id: 1, image: '/related1.jfif', color: 'Red', category: 'Bag', brand: 'Lavie', image: '/related1.jfif', description:'Red shiny bag'  },
+    // { id: 2, image: '/related2.jfif', color: 'Black', category: 'Backpack', brand: 'SkyBags', image: '/related2.jfif', description:'Black backpack'  },
+    // { id: 3, image: '/related3.jfif', color: 'Grey', category: 'Wallet', brand: 'Gucci', image: '/related3.jfif', description:'Gucci wallet'  },
+    // { id: 4, image: '/related4.jfif', color: 'Black', category: 'Wallet', brand: 'Mast&Harbour', image: '/related4.jfif', description:'Black wallet'  },
+  ];
+
+const getRelatedImages = () => {
+  if (!selectedRequest) return [];
+  const { Color, ItemCategory, Brand } = selectedRequest;
+
+  return allRelatedImages.filter(image =>
+    image.Color.toLowerCase() === Color.toLowerCase() ||
+    image.ItemCategory.toLowerCase() === ItemCategory.toLowerCase() ||
+    image.Brand.toLowerCase() === Brand.toLowerCase()
+  );
+};
+
+const userClaims = [
+  {
+    itemDescription: 'Pink Floral Sling Bag',
+    identifiedDate: '2024-10-27',
+    status: 'Pending',
+    resolved: false,
+  },
+  {
+    itemDescription: 'Black Leather Wallet',
+    identifiedDate: '2024-10-10',
+    status: 'Completed',
+    resolved: false,
+  },
+];
+  
   const renderAdminForms = () => (
     <>
       <ListItem 
@@ -92,7 +226,7 @@ function Home() {
                   <ListItem button component={Link} to="Uploaditemdetails/view" onClick={handleClose}>
                       <ListItemText primary="View"  sx={{color:'#fff'}} />
                   </ListItem>
-              </List>
+              </List> 
       </Collapse>
 
       <ListItem 
@@ -108,39 +242,45 @@ function Home() {
 
   const renderUserForms = () => (
     <>
-      <ListItem 
+    <ListItem 
         button sx={{color:'#fff'}}
-        component={Link} to="claimStatus"
-        onClick={(event) => handleClick(event, 'claimStatus')}
+        component={Link} to="itemlostRequest"
+        onClick={(event) => handleClick(event, 'claimHistory')}
       >
-        <ListItemText primary="Claim Status" className="drawer-text" />
-        <CheckCircleOutlineOutlinedIcon />
-      </ListItem>
+        <ListItemText primary="Item Lost Request" />
+        <LibraryAddOutlinedIcon />
+      </ListItem> 
 
       <ListItem 
         button sx={{color:'#fff'}}
-        component={Link} to="claimHistory"
-        onClick={(event) => handleClick(event, 'claimHistory')}
+        component={Link} to=""
+        onClick={handleItemRequestMenu}
       >
-        <ListItemText primary="Claim History" />
-        <HistoryOutlinedIcon />
-      </ListItem>     
+        <ListItemText primary="View All Item Lost Requests" className="drawer-text" />
+        <VisibilityOutlinedIcon />
+      </ListItem>
+      <Collapse in={openItemRequestMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
+              <List component="div" disablePadding sx={{color:'#fff'}}>
+                  <ListItem button component={Link} to="viewallrequest" onClick={handleClose}>
+                      <ListItemText primary="Claim Status"  sx={{color:'#fff'}}  />
+                  </ListItem>
+                  <ListItem button component={Link} to="viewallrequest/claimhistory" onClick={handleClose}>
+                      <ListItemText primary="Claim History"  sx={{color:'#fff'}}  />
+                  </ListItem>
+              </List> 
+      </Collapse>  
     </>
   );
 
-  const [userData, setUserData] = useState({
-    photo: '/profile.avif',
-    name: 'Charitha Sri',
-    role: 'Admin'
-  });
+  const [userData, setUserData] = useState({});
 
-//   useEffect(() => {
-//     const storedData = localStorage.getItem('userData');
-//     if (storedData) {
-//       setUserData(JSON.parse(storedData)); 
-//     }
-//   }, []);
-
+  useEffect(() => {
+    setUsername(localStorage.getItem('userName'));
+    const storedData = localStorage.getItem('userData');
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    }
+  }, []);
 
   return (
     <div style={{fontFamily:'Montserrat'}}>
@@ -162,9 +302,6 @@ function Home() {
 
           {/* Username and Profile Avatar */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {/* <Typography variant="body1" sx={{ marginRight: 1, color:'black' }}>
-              {username || 'U'}
-            </Typography> */}
             <div style={{ marginRight: 2, textAlign: 'center' }}>
               <Typography variant="body1" sx={{ color: '#232527' }}>
                 {userData.name || 'U'}
@@ -175,12 +312,11 @@ function Home() {
             </div>
             <IconButton onClick={handleProfileMenuClick} color="inherit">
               <Avatar src={userData.photo} sx={{ bgcolor: '#00aae7' }}>
-                {/* {username[0] || 'U'} */}
                 {userData.name ? userData.name[0] : 'U'}
               </Avatar>
             </IconButton>
-          </div>
-
+          </div> 
+         
           {/* Profile Menu */}
           <Menu
             anchorEl={profileMenuAnchorEl}
@@ -189,7 +325,7 @@ function Home() {
           >
             <MenuItem onClick={handleProfileMenuClose} sx={{fontFamily:'Lato'}}>Profile</MenuItem>
             <MenuItem onClick={handleLogout} sx={{fontFamily:'Lato'}}>Logout</MenuItem>
-          </Menu>
+          </Menu> 
         </Toolbar>
       </AppBar>
       <Drawer
@@ -220,7 +356,7 @@ function Home() {
           <Toolbar />
           <Box  className="drawer-invisible-scrollbar" sx={{ overflow: 'auto' }}>
             <List className="drawer-text">
-              {role === 'Admin' ? renderAdminForms() : renderUserForms()}
+              {userData.role === 'Admin' ? renderAdminForms() : renderUserForms()}
             </List>
           </Box>
         </Drawer>
@@ -242,15 +378,16 @@ function Home() {
         <Toolbar />
         <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen}  />
         <Routes>
-        <Route path='/' element={role === 'Admin' ? <Statistics isDrawerOpen={isDrawerOpen} /> : <Default isDrawerOpen={isDrawerOpen} />} />
+        <Route path='/' element={userData.role === 'Admin' ? <Statistics isDrawerOpen={isDrawerOpen} /> : <Default isDrawerOpen={isDrawerOpen} />} />
           <Route path='uploaditemdetails' element={<Upload isDrawerOpen={isDrawerOpen} />} />
           <Route path='claimrequests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
-          <Route path='claimStatus' element={<ClaimStatus isDrawerOpen={isDrawerOpen} />} />
-          <Route path='claimHistory' element={<ClaimHistory isDrawerOpen={isDrawerOpen} />} />
+          <Route path='itemlostrequest' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />
+          <Route path='viewallrequest/claimhistory' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
           <Route path='uploaditemdetails/view' element={<View isDrawerOpen={isDrawerOpen} />} />
+          <Route path='itemdetails' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
+          <Route path='viewallrequest' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
         </Routes>
       </Box>
-
     </div>
   )
 }
