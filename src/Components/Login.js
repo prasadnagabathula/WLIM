@@ -67,7 +67,7 @@ function Login() {
       return; // Stop the form submission if validation fails
     }
     try {
-      const response = await axios.post(`http://localhost:5241/api/Login?emailId=${email}&password=${password}`);
+      const response = await axios.post(`http://172.17.31.61:5241/api/Login?emailId=${email}&password=${password}`);
 
       if (response.status === 200) {
         localStorage.setItem('oauth2', response.data.token);
