@@ -20,7 +20,6 @@ function Home() {
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
     const [isDrawerOpen, setDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null); // Anchor for menu
-    const [role, setRole] = useState('User'); 
     const [openUploadMenu, setOpenUploadMenu] = useState(false);
     const [openItemRequestMenu, setOpenItemRequestMenu] = useState(false);
     const [view, setView] = useState('slider'); // Default view
@@ -85,7 +84,10 @@ function Home() {
   };
   const handleLogout = () => {
     localStorage.removeItem('oauth2');
+    localStorage.removeItem('userName');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('email');
+    localStorage.removeItem('userData');
     navigate('/');
   };
 
@@ -179,18 +181,6 @@ function Home() {
     // { id: 3, image: '/related3.jfif', color: 'Grey', category: 'Wallet', brand: 'Gucci', image: '/related3.jfif', description:'Gucci wallet'  },
     // { id: 4, image: '/related4.jfif', color: 'Black', category: 'Wallet', brand: 'Mast&Harbour', image: '/related4.jfif', description:'Black wallet'  },
   ];
-  
-
-//   const handleCardClick = (request) => {
-//     const images = getRelatedImages(); // Replace with your method to get related images
-//     setSelectedRequest(request);
-//     setRelatedImages(images);
-// };
-
-// const handleCardClick = (request) => {
-//   const relatedImages = getRelatedImages(); 
-//   navigate('/itemdetails', { state: { selectedRequest: request, relatedImages: relatedImages } });
-// };
 
 const getRelatedImages = () => {
   if (!selectedRequest) return [];
@@ -237,7 +227,6 @@ const userClaims = [
                       <ListItemText primary="View"  sx={{color:'#fff'}} />
                   </ListItem>
               </List> 
-
       </Collapse>
 
       <ListItem 
@@ -283,46 +272,15 @@ const userClaims = [
     </>
   );
 
-  // const [userData, setUserData] = useState({
-  //   photo: '/profile.avif',
-  //   name: 'Charitha Sri',
-  //   role: 'user'
-  // });
+  const [userData, setUserData] = useState({});
 
   useEffect(() => {
-    // Retrieve the email from localStorage
-    const userEmail = localStorage.getItem('userEmail'); 
-    const userRole = localStorage.getItem('userRole');
-    
-    // Check if userEmail is valid
-    if (userEmail) {
-      const emailParts = userEmail.split('@');
-      setUsername(emailParts[0]); 
-    }
-     // Check if userRole is valid
-     if (userRole) {
-      setRole(userRole);
-    }
-  }, []);
- 
-  const [userData, setUserData] = useState({
-    photo: '/profile.avif',
-  });
- 
-  useEffect(() => {
+    setUsername(localStorage.getItem('userName'));
     const storedData = localStorage.getItem('userData');
     if (storedData) {
-      setUserData(JSON.parse(storedData)); 
+      setUserData(JSON.parse(storedData));
     }
   }, []);
-
-//   useEffect(() => {
-//     const storedData = localStorage.getItem('userData');
-//     if (storedData) {
-//       setUserData(JSON.parse(storedData)); 
-//     }
-//   }, []);
-
 
   return (
     <div style={{fontFamily:'Montserrat'}}>
@@ -358,15 +316,7 @@ const userClaims = [
               </Avatar>
             </IconButton>
           </div> 
-          {/* <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="body1" sx={{ marginRight: 1, color:'black' }}>
-              {username || 'U'}
-            </Typography>
-            <IconButton onClick={handleProfileMenuClick} color="inherit">
-              <Avatar src={userData.photo} sx={{ bgcolor: '#00aae7' }}>{username[0] || 'U'}</Avatar>
-            </IconButton>
-          </div> */}
-
+         
           {/* Profile Menu */}
           <Menu
             anchorEl={profileMenuAnchorEl}
@@ -406,7 +356,7 @@ const userClaims = [
           <Toolbar />
           <Box  className="drawer-invisible-scrollbar" sx={{ overflow: 'auto' }}>
             <List className="drawer-text">
-              {role === 'Admin' ? renderAdminForms() : renderUserForms()}
+              {userData.role === 'Admin' ? renderAdminForms() : renderUserForms()}
             </List>
           </Box>
         </Drawer>
@@ -428,7 +378,7 @@ const userClaims = [
         <Toolbar />
         <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen}  />
         <Routes>
-        <Route path='/' element={role === 'Admin' ? <Statistics isDrawerOpen={isDrawerOpen} /> : <Default isDrawerOpen={isDrawerOpen} />} />
+        <Route path='/' element={userData.role === 'Admin' ? <Statistics isDrawerOpen={isDrawerOpen} /> : <Default isDrawerOpen={isDrawerOpen} />} />
           <Route path='uploaditemdetails' element={<Upload isDrawerOpen={isDrawerOpen} />} />
           <Route path='claimrequests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
           <Route path='itemlostrequest' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />

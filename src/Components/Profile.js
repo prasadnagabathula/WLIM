@@ -63,7 +63,8 @@ function Profile() {
     };
     
     const handleBack = () => {
-        navigate('/admin/home');
+        // navigate(`${localStorage.getItem('userRole').toLowerCase() === 'admin' ? 'admin' : 'user'}/home`);
+        navigate(-1);
     };
     
     const handleFileChange = (event) => {

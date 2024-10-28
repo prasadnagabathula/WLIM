@@ -1,4 +1,4 @@
-// import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import UploadPhotos from './uploadPhotos';
@@ -12,14 +12,18 @@ import ItemDetails from './Admin/ItemDetails';
 import Profile from './Components/Profile';
 
 function App() {
-  const role = "User";
+
+  const [role, setRole] = useState("User");
+  const myRole = (data) => {
+    setRole(data);
+  }
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path={`${role === "Admin" ? "admin" : "user"}/home/*`} element={<Home />} />
-        {/* <Route path="/home/*" element={<Home />} /> */}
-        <Route path="/home/*" element={<ProtectedRoute> <Home /></ProtectedRoute>} />
+        <Route path="/" element={<Login myRole={myRole} />} />
+        <Route path={`/${role === "Admin" ? "admin" : "user"}/home/*`} 
+        element={<ProtectedRoute><Home /></ProtectedRoute>} />
         {/* Add a catch-all route for unknown URLs */}
         <Route path="*" element={<h2>Page Not Found</h2>} />
         <Route path="/homepage" element={<HomePage />} />
