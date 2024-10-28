@@ -24,7 +24,7 @@ function View({ isDrawerOpen }) { //uploadedItems = []
     const fetchUploadedItems = async () => {
       try {
         setLoading(true); // Set loading to true before the API call
-        const response = await fetch('http://localhost:5005/api/uploadeditems', {
+        const response = await fetch('https://localhost:7215/api/IdentifiedItem', {
           method: 'GET'
         });
         if (!response.ok) {

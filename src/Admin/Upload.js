@@ -139,8 +139,8 @@ function Upload({ isDrawerOpen }) {
 
 
   const handleSubmit = () => {
-   handleClear();
-   setInputValue(''); 
+  //  handleClear();
+  //  setInputValue(''); 
     // Step 1: Define the data object for the identified item
     const newItem = {
       ItemDescription: itemDescription,
@@ -175,17 +175,17 @@ function Upload({ isDrawerOpen }) {
     formData.append('IdentifiedLocation', location);
     formData.append('Itemobject', itemobject);
 
-
+    console.log("newItem values",newItem)
     try {
-        const response = axios.post('http://localhost:5005/api/IdentifiedItems', formData, {
+        const response = axios.post('http://localhost:7215/api/IdentifiedItem', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
+        
       });
-
+      console.log("response",response)
       if (response.status === 200) {
         setMessage('Item details submitted Successfully!');
-        setSelectedImage(null); // Clear the uploaded image
         setCategory('');
         setTags([]);
       } else {
@@ -265,6 +265,37 @@ function Upload({ isDrawerOpen }) {
           {/* Second Half - Input Fields */}
           <Grid item xs={6}>
             <Grid container spacing={2}>
+            <Grid item xs={12}>
+                <TextField
+                  label="Category"
+                  variant="outlined"
+                  fullWidth
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Tags"
+                  variant="outlined"
+                  fullWidth
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                />
+
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  label="object"
+                  variant="outlined"
+                  fullWidth
+                  value={itemobject}
+                  onChange={(e) => setItemobject(e.target.value)}
+                />
+
+              </Grid> 
               <Grid item xs={12}>
                 <TextField
                   label="Item Description"
@@ -352,37 +383,7 @@ function Upload({ isDrawerOpen }) {
                 />
 
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Category"
-                  variant="outlined"
-                  fullWidth
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                />
-
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Tags"
-                  variant="outlined"
-                  fullWidth
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                />
-
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  label="object"
-                  variant="outlined"
-                  fullWidth
-                  value={itemobject}
-                  onChange={(e) => setItemobject(e.target.value)}
-                />
-
-              </Grid> 
+             
               <Grid item xs={12}>
                 <Button variant="contained" color="primary" onClick={handleSubmit}>
                   Submit
