@@ -3,10 +3,10 @@ import { Box, Typography, TextField, Button, Grid, Snackbar } from '@mui/materia
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import View from './View';
 
-function Upload({isDrawerOpen}) {
+function Upload({isDrawerOpen, setUploadedData}) {
 
-  const [uploadedItems, setUploadedItems] = useState([]);
-
+  // const [uploadedItems, setUploadedItems] = useState([]);
+  const [imageSrc, setImageSrc] = useState(null); 
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100); 
 
@@ -16,51 +16,67 @@ function Upload({isDrawerOpen}) {
 
   }, [isDrawerOpen]);
 
-
   const [itemDescription, setItemDescription] = useState('');
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [color, setColor] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
-  const [features, setFeatures] = useState('');
+  const [distinguishingFeatures, setDistinguishingFeatures] = useState('');
   const [condition, setCondition] = useState('');
   const [identifiedDate, setIdentifiedDate] = useState('');
-  const [location, setLocation] = useState('');
+  const [identifiedLocation, setIdentifiedLocation] = useState('');
+  const [category, setCategory] = useState('');
+  const [tags, setTags] = useState('');
+  const [object, setObject] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleImageUpload = (event) => {
     const files = event.target.files;
     if (files.length > 0) {
       const imageFile = files[0];
-        setItemDescription('Black leather wallet with silver clasp and multiple card slots');
-        setBrand('Gucci');
-        setModel('Marmont');
-        setColor('Black');
-        setSerialNumber('1234567890');
-        setFeatures('Minor scratches on the surface');
-        setCondition('New');
-        setIdentifiedDate(new Date().toISOString().split('T')[0]); 
-        setLocation('Main Street, City Center');
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        setImageSrc(reader.result); 
+      };
+      reader.readAsDataURL(imageFile); 
     }
   };
 
-  const handleSubmit = () => {
+const handleSubmit = () => {
     const newItem = {
       itemDescription,
       brand,
       model,
       color,
       serialNumber,
-      features,
+      distinguishingFeatures,
       condition,
       identifiedDate,
-      location,
+      identifiedLocation,
+      category,
+      tags,
+      object,
     };
-    setUploadedItems([...uploadedItems, newItem]);
+    setUploadedData((prevItems) => [...prevItems, newItem]); 
     setSnackbarOpen(true);
     console.log(newItem);
+    
+    // Reset fields after submission
+    setImageSrc(null);
+    setItemDescription('');
+    setBrand('');
+    setModel('');
+    setColor('');
+    setSerialNumber('');
+    setDistinguishingFeatures('');
+    setCondition('');
+    setIdentifiedDate('');
+    setIdentifiedLocation('');
+    setCategory('');
+    setTags('');
+    setObject('');
   };
-  
 
   return (
     <div>
@@ -83,7 +99,6 @@ function Upload({isDrawerOpen}) {
               variant="contained"
               component="label"
               fullWidth
-              startIcon={<CloudUploadIcon />}
               sx={{
                 width: '300px',
                 height: '300px',
@@ -103,8 +118,15 @@ function Upload({isDrawerOpen}) {
                 },
               }}
             >
-              Upload Identified Item Photo
-              <input
+            {imageSrc ? (
+                            <img src={imageSrc} alt="Uploaded" style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit:'contain' }} />
+                          ) : (
+                              <span style={{ display: 'flex', alignItems: 'center' }}>
+                                <CloudUploadIcon />
+                                <span style={{ marginLeft: 8 }}>Upload Identified Item Photo</span>
+                              </span>            
+            )}              
+            <input
                 type="file"
                 accept="image/*"
                 hidden
@@ -166,8 +188,8 @@ function Upload({isDrawerOpen}) {
                   label="Distinguishing Features"
                   variant="outlined"
                   fullWidth
-                  value={features}
-                  onChange={(e) => setFeatures(e.target.value)}
+                  value={distinguishingFeatures}
+                  onChange={(e) => setDistinguishingFeatures(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -198,8 +220,35 @@ function Upload({isDrawerOpen}) {
                   label="Identified Location"
                   variant="outlined"
                   fullWidth
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  value={identifiedLocation}
+                  onChange={(e) => setIdentifiedLocation(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Category"
+                  variant="outlined"
+                  fullWidth
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Tags"
+                  variant="outlined"
+                  fullWidth
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Object"
+                  variant="outlined"
+                  fullWidth
+                  value={object}
+                  onChange={(e) => setObject(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>

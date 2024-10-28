@@ -427,10 +427,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {  
-  Box, Button, Card, CardMedia, CardContent, Typography, TextField,
-  MenuItem, Dialog, DialogContent, DialogActions, Modal, IconButton, Grid 
-} from '@mui/material';
+import {  Box, Button, Card,Paper, CardMedia, CardContent, Typography, TextField,MenuItem, Dialog, DialogContent, DialogActions, Modal, IconButton, Grid, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 const allRelatedImages = [
@@ -455,8 +452,70 @@ const allRelatedImages = [
       AdditionalInformation: "Contact for more details",
       OtherRelevantDetails: "N/A",
     },
-    // other items...
-];
+    {
+            id: 2,
+            claimedBy: "Sonia",
+            Description: "Black backpack",
+            Color: "Black",
+            Size: "Medium",
+            Brand: "Skybags",
+            Model: "Air",
+            DistinguishingFeatures: "Zipper broken",
+            ItemCategory: "Backpack",
+            SerialNumber: "0987654321",
+            DateTimeWhenLost: "2024-10-19T14:00:00",
+            Location: "City Park",
+            ItemValue: 75.00,
+            ItemPhoto: "/related2.jfif", 
+            ProofofOwnership: "None",
+            HowtheItemLost: "Forgot in the park",
+            ReferenceNumber: "REF54321",
+            AdditionalInformation: "Call if found",
+            OtherRelevantDetails: "N/A",
+          },
+          {
+            id: 3,
+            claimedBy: "Charles",
+            Description: "Grey leather wallet lost",
+            Color: "Grey",
+            Size: "N/A",
+            Brand: "Gucci",
+            Model: "Marmont",
+            DistinguishingFeatures: "Minor scratches",
+            ItemCategory: "Wallet",
+            SerialNumber: "1234567890",
+            DateTimeWhenLost: "2024-10-20T10:30:00",
+            Location: "Main Street, City Center",
+            ItemValue: 150.00,
+            ItemPhoto: "/related3.jfif", 
+            ProofofOwnership: "Receipt",
+            HowtheItemLost: "Left on the bus",
+            ReferenceNumber: "REF12345",
+            AdditionalInformation: "Contact for more details",
+            OtherRelevantDetails: "N/A",
+          },
+          {
+            id: 4,
+            claimedBy: "Selena",
+            Description: "Black wallet lost",
+            Color: "Black",
+            Size: "Small",
+            Brand: "Mat&Harbour",
+            Model: "Air",
+            DistinguishingFeatures: "Worn out",
+            ItemCategory: "Wallet",
+            SerialNumber: "0987654321",
+            DateTimeWhenLost: "2024-10-19T14:00:00",
+            Location: "City Park",
+            ItemValue: 75.00,
+            ItemPhoto: "/related4.jfif", 
+            ProofofOwnership: "None",
+            HowtheItemLost: "Forgot in the park",
+            ReferenceNumber: "REF54321",
+            AdditionalInformation: "Call if found",
+            OtherRelevantDetails: "N/A",
+          },
+  ];
 
 const ItemDetails = ({ isDrawerOpen }) => {
   const location = useLocation();
@@ -465,7 +524,7 @@ const ItemDetails = ({ isDrawerOpen }) => {
 
   const [similarItemOpen, setSimilarItemOpen] = useState(false);
   const [selectedSimilarItem, setSelectedSimilarItem] = useState(null);
-  const [highlightedItemId, setHighlightedItemId] = useState(null); // track highlighted matched item
+  const [highlightedItemId, setHighlightedItemId] = useState(null); 
 
   const [openPopup, setOpenPopup] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -478,7 +537,7 @@ const ItemDetails = ({ isDrawerOpen }) => {
     setMarginLeft(isDrawerOpen ? 240 : 0);
   }, [isDrawerOpen]);
 
-  const handleBack = () => navigate('/admin/home/claimrequests');
+  const handleBack = () => navigate(-1);
 
   const handlePopupClose = () => setOpenPopup(false);
 
@@ -495,7 +554,7 @@ const ItemDetails = ({ isDrawerOpen }) => {
   };
 
   const handleSelectAsMatched = () => {
-    setHighlightedItemId(selectedSimilarItem.id); // highlight matched item
+    setHighlightedItemId(selectedSimilarItem.id); 
     setSimilarItemOpen(false);
   };
 
@@ -550,7 +609,7 @@ const ItemDetails = ({ isDrawerOpen }) => {
                   minWidth: '120px', 
                   marginRight: '10px', 
                   cursor: 'pointer', 
-                  border: highlightedItemId === item.id ? '2px solid blue' : 'none' // Highlight styling
+                  border: highlightedItemId === item.id ? '2px solid green' : 'none' 
                 }}
               >
                 <CardMedia component="img" height="100" image={item.ItemPhoto} alt={`Related ${item.id}`} />
@@ -634,6 +693,7 @@ const ItemDetails = ({ isDrawerOpen }) => {
           width: '100%',
           boxShadow: 24,
           position: 'relative',
+          objectFit:'contain'
         }}
       >
         <IconButton onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
@@ -641,20 +701,43 @@ const ItemDetails = ({ isDrawerOpen }) => {
         </IconButton>
 
         {/* Comparison Section */}
+        <Paper 
+          elevation={3}
+          sx={{
+            padding: 3,
+            maxHeight: '90vh', 
+            overflowY: 'auto', 
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 1,
+              maxHeight: '500px', 
+              overflowY: 'auto',  
+              '&::-webkit-scrollbar': {
+                width: '5px', 
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: 'black', 
+                borderRadius: '5px',
+              },
+              '&::-webkit-scrollbar-track': {
+                backgroundColor: 'lightgrey',
+              },
+          }}
+        >
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h6">Selected Item</Typography>
+            <Typography variant="h6" sx={{textAlign:'center'}}>Selected Item</Typography>
             <CardMedia
               component="img"
-              height="250" // Reduced height
+              height="250" 
               image={selectedRequest?.ItemPhoto}
               alt="Selected Item"
               sx={{
                 borderRadius: '8px',
                 marginBottom: '10px',
-                objectFit: 'cover', // Fit the image properly
-                width: '100%', // Make the image responsive
-                maxHeight: '250px', // Reduced max height
+                objectFit: 'contain', 
+                width: '100%', 
+                maxHeight: '250px', 
               }}
             />
             <Typography><strong>Description:</strong> {selectedRequest?.Description}</Typography>
@@ -662,22 +745,31 @@ const ItemDetails = ({ isDrawerOpen }) => {
             <Typography><strong>Size:</strong> {selectedRequest?.Size}</Typography>
             <Typography><strong>Brand:</strong> {selectedRequest?.Brand}</Typography>
             <Typography><strong>Model:</strong> {selectedRequest?.Model}</Typography>
-            {/* Add more fields as needed */}
+            <Typography><strong>Distinguishing Features:</strong> {selectedRequest?.DistinguishingFeatures}</Typography>
+            <Typography><strong>Item Category:</strong> {selectedRequest?.ItemCategory}</Typography>
+            <Typography><strong>Serial Number:</strong> {selectedRequest?.SerialNumber}</Typography>
+            <Typography><strong>Date When Lost:</strong> {new Date(selectedRequest?.DateTimeWhenLost).toLocaleString()}</Typography>
+            <Typography><strong>Location:</strong> {selectedRequest?.Location}</Typography>
+            <Typography><strong>Item Value:</strong> ${selectedRequest?.ItemValue?.toFixed(2)}</Typography>
+            <Typography><strong>Proof of Ownership:</strong> {selectedRequest?.ProofofOwnership}</Typography>
+            <Typography><strong>How the Item Lost:</strong> {selectedRequest?.HowtheItemLost}</Typography>
+            <Typography><strong>Reference Number:</strong> {selectedRequest?.ReferenceNumber}</Typography>
+            <Typography><strong>Additional Information:</strong> {selectedRequest?.AdditionalInformation}</Typography>
+            <Typography><strong>Other Relevant Details:</strong> {selectedRequest?.OtherRelevantDetails}</Typography>
           </Grid>
-
           <Grid item xs={12} md={6}>
-            <Typography variant="h6">Similar Item</Typography>
+            <Typography variant="h6" sx={{textAlign:'center'}}>Similar Item</Typography>
             <CardMedia
               component="img"
-              height="250" // Reduced height
+              height="250" 
               image={selectedSimilarItem.ItemPhoto}
               alt="Similar Item"
               sx={{
                 borderRadius: '8px',
                 marginBottom: '10px',
-                objectFit: 'cover', // Fit the image properly
-                width: '100%', // Make the image responsive
-                maxHeight: '250px', // Reduced max height
+                objectFit: 'contain', 
+                width: '100%', 
+                maxHeight: '250px', 
               }}
             />
             <Typography><strong>Description:</strong> {selectedSimilarItem.Description}</Typography>
@@ -685,26 +777,35 @@ const ItemDetails = ({ isDrawerOpen }) => {
             <Typography><strong>Size:</strong> {selectedSimilarItem.Size}</Typography>
             <Typography><strong>Brand:</strong> {selectedSimilarItem.Brand}</Typography>
             <Typography><strong>Model:</strong> {selectedSimilarItem.Model}</Typography>
-            {/* Add more fields as needed */}
-          </Grid>
+            <Typography><strong>Distinguishing Features:</strong> {selectedSimilarItem.DistinguishingFeatures}</Typography>
+            <Typography><strong>Item Category:</strong> {selectedSimilarItem.ItemCategory}</Typography>
+            <Typography><strong>Serial Number:</strong> {selectedSimilarItem.SerialNumber}</Typography>
+            <Typography><strong>Date When Lost:</strong> {new Date(selectedSimilarItem.DateTimeWhenLost).toLocaleString()}</Typography>
+            <Typography><strong>Location:</strong> {selectedSimilarItem.Location}</Typography>
+            <Typography><strong>Item Value:</strong> ${selectedSimilarItem.ItemValue.toFixed(2)}</Typography>
+            <Typography><strong>Proof of Ownership:</strong> {selectedSimilarItem.ProofofOwnership}</Typography>
+            <Typography><strong>How the Item Lost:</strong> {selectedSimilarItem.HowtheItemLost}</Typography>
+            <Typography><strong>Reference Number:</strong> {selectedSimilarItem.ReferenceNumber}</Typography>
+            <Typography><strong>Additional Information:</strong> {selectedSimilarItem.AdditionalInformation}</Typography>
+            <Typography><strong>Other Relevant Details:</strong> {selectedSimilarItem.OtherRelevantDetails}</Typography>
+        </Grid>
         </Grid>
 
         {/* Align button to the right */}
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
           <Button
             variant="contained"
-            color="primary"
+            color="success"
             onClick={handleSelectAsMatched}
           >
             Select This as Matched Item
           </Button>
         </Box>
+        </Paper>
       </Box>
     )}
   </Box>
 </Modal>
-
-
     </Box>
   );
 };

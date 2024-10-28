@@ -2,46 +2,43 @@ import React, { useState, useEffect } from 'react';
 import { Box,Button, TextField,InputAdornment,IconButton, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, CircularProgress } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
   
-function View({ isDrawerOpen }) { //uploadedItems = []
+function View({uploadedData, isDrawerOpen }) { //uploadedItems = []
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [marginLeft, setMarginLeft] = useState(100); // Default margin
-  const [marginRight, setMarginRight] = useState(100); // Default margin
+  const [marginLeft, setMarginLeft] = useState(100); 
+  const [marginRight, setMarginRight] = useState(100); 
 
-  const [uploadedItems, setUploadedItems] = useState([]); // State to hold API data
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  // const [uploadedItems, setUploadedItems] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
-    // Adjust margin dynamically based on drawer state
     setMarginLeft(isDrawerOpen ? 240 : 0);
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
 
-  useEffect(() => {
-    // Fetch data from the API when the component loads
-    const fetchUploadedItems = async () => {
-      try {
-        setLoading(true); // Set loading to true before the API call
-        const response = await fetch('http://localhost:5005/api/uploadeditems', {
-          method: 'GET'
-        });
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const data = await response.json();
-        setUploadedItems(data); // Store the API response in the state
-        setLoading(false); // Set loading to false once data is fetched
-      } catch (err) {
-        setError(err.message); // Handle any errors
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUploadedItems = async () => {
+  //     try {
+  //       setLoading(true); 
+  //       const response = await fetch('http://localhost:5005/api/uploadeditems', {
+  //         method: 'GET'
+  //       });
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch data');
+  //       }
+  //       const data = await response.json();
+  //       setUploadedItems(data); 
+  //       setLoading(false); 
+  //     } catch (err) {
+  //       setError(err.message); 
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchUploadedItems(); // Call the API fetching function
-  }, []);
-
+  //   fetchUploadedItems(); 
+  // }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -52,7 +49,8 @@ function View({ isDrawerOpen }) { //uploadedItems = []
     setPage(0);
   };
 
-   const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  
   return (
     <Box sx={{
       textAlign: 'center',
@@ -103,11 +101,11 @@ function View({ isDrawerOpen }) { //uploadedItems = []
             </TableRow>
           </TableHead>
           <TableBody>
-            {uploadedItems.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
+            {uploadedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
               <TableRow key={index}>
                 <TableCell>{item.itemDescription}</TableCell>
-                    <TableCell>{item.brandMake}</TableCell>
-                    <TableCell>{item.modelVersion}</TableCell>
+                    <TableCell>{item.brand}</TableCell>
+                    <TableCell>{item.model}</TableCell>
                     <TableCell>{item.color}</TableCell>
                     <TableCell>{item.serialNumber}</TableCell>
                     <TableCell>{item.distinguishingFeatures}</TableCell>
@@ -125,7 +123,7 @@ function View({ isDrawerOpen }) { //uploadedItems = []
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={uploadedItems.length}
+        count={uploadedData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
