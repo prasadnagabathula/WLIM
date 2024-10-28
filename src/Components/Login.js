@@ -5,7 +5,7 @@ import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined';
 import axios from './AuthService';
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function Login({myRole}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -71,14 +71,17 @@ function Login() {
 
       if (response.status === 200) {
         localStorage.setItem('oauth2', response.data.token);
+        localStorage.setItem('userName', response.data.name);
         localStorage.setItem('userRole', response.data.role);
         localStorage.setItem('userEmail', email);
-
+        localStorage.setItem('userData', JSON.stringify({ name: response.data.name, role: response.data.role, email, photo: null }));
+        myRole(response.data.role);
         // Now you can retrieve the role
         const userRole = response.data.role;
         console.log('User role:', userRole);
+        const homeURL = `${userRole.toLowerCase() === 'admin' ? 'admin' : 'user'}/home`;
 
-        navigate('/home');
+        navigate(homeURL);
       }
     } catch (err) {
       setError('Invalid Email or password.');
