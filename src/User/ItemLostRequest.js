@@ -1,51 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Grid, Snackbar } from '@mui/material';
+import axios from 'axios';
+import { InputLabel, Box, Typography, TextField, Button, Grid, Snackbar } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-function ItemLostRequest({ onRequestSubmit, isDrawerOpen, userName }) {
-
+function ItemLostRequest({ isDrawerOpen, userName }) {
   const [marginLeft, setMarginLeft] = useState(100);
-  const [marginRight, setMarginRight] = useState(100); 
+  const [itemLostRequests, setItemLostRequests] = useState([]);
+  const [currentItemLostRequest, setCurrentItemLostRequest] = useState({
+    description: '',
+    color: '',
+    size: '',
+    brand: '',
+    model: '',
+    distinguishingFeatures: '',
+    itemCategory: '',
+    serialNumber: '',
+    dateTimeWhenLost: '',
+    location: '',
+    itemValue: '',
+    itemPhoto: '',
+    proofOfOwnership: '',
+    howTheItemLost: '',
+    referenceNumber: '',
+    additionalInformation: '',
+    otherRelevantDetails: '',
+    requestedBy: userName,
+  });
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 400 : 100);
-    setMarginRight(isDrawerOpen ? 50 : 0);
-
   }, [isDrawerOpen]);
 
-  const [uploadedImage, setUploadedImage] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [itemDetails, setItemDetails] = useState({
-    itemDescription: '',
-    brand: '',
-    model: '',
-    color: '',
-    serialNumber: '',
-    identifiedDate: '',
-    location: '',
-    size: '',
-    itemCategory: '',
-    valueOfTheItem: '',
-    proofOfOwnership: '',
-    circumstancesOfLoss: '',
-    aaditionalInformation: '',  
-    requestedBy: userName,
-  });
-
-  // const handleImageUpload = (event) => {
-  //   const files = event.target.files;
-  //   if (files.length > 0) {
-  //     setUploadedImage(URL.createObjectURL(files[0]));
-  //   }
-  // };
+  useEffect(() => {
+    const fetchItemLostRequests = async () => {
+      try {
+        const response = await axios.get('http://localhost:5291/api/LostItemRequest');
+        setItemLostRequests(response.data);
+      } catch (error) {
+        console.error('Error fetching item lost requests:', error);
+      }
+    };
+    fetchItemLostRequests();
+  }, []);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setUploadedImage(reader.result); 
-        console.log("Image uploaded:", reader.result); // Debug log
+        setUploadedImage(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -53,34 +58,40 @@ function ItemLostRequest({ onRequestSubmit, isDrawerOpen, userName }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setItemDetails((prev) => ({ ...prev, [name]: value }));
+    setCurrentItemLostRequest((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    const newClaim = { ...itemDetails, image: uploadedImage, status: 'In Progress', resolved: false };
-    console.log("Claim to be saved:", newClaim); 
+  const handleSubmit = async () => {
+    try {
+      await axios.post('http://localhost:5291/api/LostItemRequest', currentItemLostRequest);
+      setSnackbarOpen(true);
+      setItemLostRequests((prevRequests) => [...prevRequests, currentItemLostRequest]);
+      // Reset form
+      setCurrentItemLostRequest({
+        description: '',
+        color: '',
+        size: '',
+        brand: '',
+        model: '',
+        distinguishingFeatures: '',
+        itemCategory: '',
+        serialNumber: '',
+        dateTimeWhenLost: '',
+        location: '',
+        itemValue: '',
+        itemPhoto: '',
+        proofOfOwnership: '',
+        howTheItemLost: '',
+        referenceNumber: '',
+        additionalInformation: '',
+        otherRelevantDetails: '',
+        requestedBy: userName,
+      });
+      setUploadedImage(null);
+    } catch (error) {
+      console.error('Error submitting the lost item request:', error);
+    }
 
-    const existingClaims = JSON.parse(localStorage.getItem('uploadedItems')) || [];
-    localStorage.setItem('uploadedItems', JSON.stringify([...existingClaims, newClaim]));
-
-    setSnackbarOpen(true);
-    setItemDetails({
-      itemDescription: '',
-      brand: '',
-      model: '',
-      color: '',
-      serialNumber: '',
-      identifiedDate: '',
-      location: '',
-      size: '',
-      itemCategory: '',
-      valueOfTheItem: '',
-      proofOfOwnership: '',
-      circumstancesOfLoss: '',
-      additionalInformation: '',
-      requestedBy: userName,
-    });
-    setUploadedImage(null);
   };
 
   return (
@@ -88,7 +99,6 @@ function ItemLostRequest({ onRequestSubmit, isDrawerOpen, userName }) {
       textAlign: 'center',
       mt: 2,
       ml: `${marginLeft}px`,
-      mr: `${marginRight}px`,
       transition: 'margin-left 0.3s',
     }}>
       <Typography variant="h4" gutterBottom>
@@ -111,13 +121,13 @@ function ItemLostRequest({ onRequestSubmit, isDrawerOpen, userName }) {
               justifyContent: 'center',
               backgroundColor: uploadedImage ? 'transparent' : '#fff',
               backgroundImage: uploadedImage ? `url(${uploadedImage})` : 'none',
-              backgroundSize: 'contain', 
+              backgroundSize: 'contain',
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               cursor: 'pointer',
-              marginTop:'100px',
+              marginTop: '100px',
               marginBottom: '20px',
-              color:'black',
+              color: 'black',
               transition: 'all 0.3s ease-in-out',
               '&:hover': {
                 border: '2px dashed #333',
@@ -132,26 +142,39 @@ function ItemLostRequest({ onRequestSubmit, isDrawerOpen, userName }) {
               onChange={handleImageUpload}
             />
           </Button>
-          {/* {uploadedImage && (
-            <img src={uploadedImage} alt="Uploaded" style={{ width: '100%', marginTop: '10px' }} />
-          )} */}
         </Grid>
         <Grid item xs={6}>
           <Grid container spacing={2}>
-            {Object.keys(itemDetails).map((key) => (
-              key !== 'image' && (
-                <Grid item xs={12} key={key}>
-                  <TextField
-                    label={key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                    variant="outlined"
-                    fullWidth
-                    name={key}
-                    value={itemDetails[key]}
-                    onChange={handleChange}
-                    type={key === 'identifiedDate' ? 'date' : 'text'}
-                  />
-                </Grid>
-              )
+            {[
+              { label: 'Description', name: 'description', maxLength: 50 },
+              { label: 'Color', name: 'color', maxLength: 50 },
+              { label: 'Size', name: 'size', maxLength: 20 },
+              { label: 'Brand', name: 'brand', maxLength: 50 },
+              { label: 'Model', name: 'model', maxLength: 50 },
+              { label: 'Distinguishing Features', name: 'distinguishingFeatures', maxLength: 100 },
+              { label: 'Item Category', name: 'itemCategory', maxLength: 50 },
+              { label: 'Serial Number', name: 'serialNumber', maxLength: 50 },
+              { label: 'Date and Time When Lost', name: 'dateTimeWhenLost', type: 'datetime-local' },
+              { label: 'Location', name: 'location', maxLength: 100 },
+              { label: 'Item Value', name: 'itemValue', type: 'number', inputProps: { min: 0 } },
+              { label: 'Proof of Ownership', name: 'proofOfOwnership', maxLength: 100 },
+              { label: 'How the Item Was Lost', name: 'howTheItemLost', maxLength: 100 },
+              { label: 'Reference Number', name: 'referenceNumber', maxLength: 50 },
+              { label: 'Additional Information', name: 'additionalInformation', maxLength: 200 },
+              { label: 'Other Relevant Details', name: 'otherRelevantDetails', maxLength: 200 },
+            ].map(({ label, name, maxLength, type = 'text', inputProps = {} }) => (
+              <React.Fragment key={name}>
+                <InputLabel>{label}</InputLabel>
+                <TextField
+                  margin="dense"
+                  name={name}
+                  value={currentItemLostRequest[name]}
+                  onChange={handleChange}
+                  fullWidth
+                  inputProps={{ maxLength, ...inputProps }}
+                  type={type}
+                />
+              </React.Fragment>
             ))}
             <Grid item xs={12}>
               <Button variant="contained" color="primary" onClick={handleSubmit}>
@@ -172,3 +195,4 @@ function ItemLostRequest({ onRequestSubmit, isDrawerOpen, userName }) {
 }
 
 export default ItemLostRequest;
+
