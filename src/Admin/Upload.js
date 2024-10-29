@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Grid, Snackbar } from '@mui/material';
+import { Box, Alert, Typography, TextField, Button, Grid, Snackbar } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import View from './View';
 import axios from 'axios';
@@ -36,9 +36,9 @@ function Upload({isDrawerOpen, setUploadedData}) {
   const [message, setMessage] = useState('');
   const [itemobject, setItemobject] = useState('');
   const [inputValue, setInputValue] = useState('');
-  
+  const [severity, setSeverity] = useState('success');
 
-  const [CurrentIdentifiedItems, setCurrentIdentifiedItems] = useState({
+  const [currentIdentifiedItems, setCurrentIdentifiedItems] = useState({
     ItemDescription: '',
     BrandMake: '',
     ModelVersion: '',
@@ -64,7 +64,9 @@ function Upload({isDrawerOpen, setUploadedData}) {
     justifyContent: 'center',
     backgroundColor: '#fff',
     cursor: 'pointer',
+    marginTop: '100px',
     marginBottom: '20px',
+    color: 'black',
     transition: 'all 0.3s ease-in-out',
     '&:hover': {
       border: '2px dashed #333',
@@ -83,6 +85,10 @@ function Upload({isDrawerOpen, setUploadedData}) {
     setInputValue(''); 
     setSelectedImage(null); // Clear the uploaded image
     //setMessage('');
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
 
@@ -106,18 +112,18 @@ function Upload({isDrawerOpen, setUploadedData}) {
     }
   }
 
-  const handleImageUpload = (event) => {
-    const files = event.target.files;
-    if (files.length > 0) {
-      const imageFile = files[0];
-      const reader = new FileReader();
+  // const handleImageUpload = (event) => {
+  //   const files = event.target.files;
+  //   if (files.length > 0) {
+  //     const imageFile = files[0];
+  //     const reader = new FileReader();
       
-      reader.onloadend = () => {
-        setImageSrc(reader.result); 
-      };
-      reader.readAsDataURL(imageFile); 
-    }
-  };
+  //     reader.onloadend = () => {
+  //       setImageSrc(reader.result); 
+  //     };
+  //     reader.readAsDataURL(imageFile); 
+  //   }
+  // };
 
 // const handleSubmit = () => {
 //     const newItem = {
@@ -165,6 +171,7 @@ function Upload({isDrawerOpen, setUploadedData}) {
           'Content-Type': 'application/octet-stream',
         },
       });
+      console.log(response)
       const objects = response.data.objects;
       const Itemobjects = objects && objects.length > 0 ? objects[0].object : "unknown";
       const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";
@@ -181,7 +188,7 @@ function Upload({isDrawerOpen, setUploadedData}) {
   };
 
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
   //  handleClear();
   //  setInputValue(''); 
     // Step 1: Define the data object for the identified item
@@ -206,7 +213,7 @@ function Upload({isDrawerOpen, setUploadedData}) {
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('category', category);
-    formData.append('tags', tags);
+    formData.append('tags', tags.join(','));
     formData.append('ItemDescription', itemDescription);
     formData.append('BrandMake', brand);
     formData.append('ModelVersion', model);
@@ -220,24 +227,29 @@ function Upload({isDrawerOpen, setUploadedData}) {
 
     console.log("newItem values",newItem)
     try {
-        const response = axios.post('https://localhost:7215/api/IdentifiedItem', formData, {
+      // console.log(formData);
+        const response = await axios.post('https://localhost:7215/api/IdentifiedItem', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
-        
       });
-      console.log("response",response)
+      console.log("response",response);
       if (response.status === 200) {
         setMessage('Item details submitted Successfully!');
+        setSeverity('success');
         setCategory('');
         setTags([]);
+        handleClear();
       } else {
-        setMessage('Item details submitted Successfully!');
+        setMessage('Error occurred while submitting!');
+        setSeverity('error');
       }
     } catch (error) {
       console.error('Error uploading image:', error);
       setMessage('Error occurred while uploading');
+      setSeverity('error'); 
     }
+    setSnackbarOpen(true); 
   };
 
   return (
@@ -251,7 +263,6 @@ function Upload({isDrawerOpen, setUploadedData}) {
           transition: 'margin-left 0.3s',
         }}
       >
-          {message && <p className="upload-message">{message}</p>}
         <Typography variant="h4" gutterBottom>
           Identified Item Details
         </Typography>
@@ -259,69 +270,36 @@ function Upload({isDrawerOpen, setUploadedData}) {
 
           {/* First Half - Styled Upload Button */}
           <Grid item xs={6}>
-             <Button
-              variant="contained"
-              component="label"
-              fullWidth
-              sx={{
+              <Button sx={{
                 width: '300px',
                 height: '300px',
-                border: '2px dashed #888',
-                borderRadius: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#fff',
-                cursor: 'pointer',
-                marginTop: '100px',
-                marginBottom: '20px',
-                color: 'black',
-                transition: 'all 0.3s ease-in-out',
-                '&:hover': {
-                  border: '2px dashed #333',
-                },
-              }}
-            >
-            {imageSrc ? (
-                            <img src={imageSrc} alt="Uploaded" style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit:'contain' }} />
-                          ) : (
-                              <span style={{ display: 'flex', alignItems: 'center' }}>
-                                <CloudUploadIcon />
-                                <span style={{ marginLeft: 8 }}>Upload Identified Item Photo</span>
-                              </span>            
-            )}              
-            <input
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={handleFileChange}
-              />
+                marginTop: '100px',}}>
+                <label htmlFor="upload-image">
+                <UploadBox>
+                  {selectedImage ? (
+                    <img
+                      src={selectedImage}
+                      alt="Uploaded"
+                      style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'contain' }}
+                    />
+                  ) : (
+                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                      <CloudUploadIcon />
+                      <span style={{ marginLeft: 8 }}>Upload Identified Item Photo</span>
+                    </span>
+                  )}
+                </UploadBox>
+                </label>
+                <input
+                  id="upload-image"
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleFileChange}
+                />
             </Button>
-            
-            </Grid>
-            </Grid>
-
-             {/* Upload Identified Item Photo */}
-{ /* </Grid>//             <label htmlFor="upload-image">
-//               <UploadBox>
-//                 {selectedImage ? ( */}
-{/* //                   <img */}
-{/* //                     src={selectedImage}
-//                     alt="Uploaded"
-//                     style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
-//                   />
-//                 ) : (
-//                   <Typography>Click here to upload an image</Typography>
-//                 )}
-//               </UploadBox>
-//             </label> */}
-{/* //             <input id="upload-image" */}
-{/* //               type="file"
-//               accept="image/*"
-//               hidden
-//               onChange={handleFileChange}
-//             />
-//             </Button> */}
+          </Grid>
+               
 
           {/* Second Half - Input Fields */}
           <Grid item xs={6}>
@@ -444,34 +422,6 @@ function Upload({isDrawerOpen, setUploadedData}) {
                   onChange={(e) => setIdentifiedLocation(e.target.value)}
                 />
               </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Category"
-                  variant="outlined"
-                  fullWidth
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Tags"
-                  variant="outlined"
-                  fullWidth
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Object"
-                  variant="outlined"
-                  fullWidth
-                  value={object}
-                  onChange={(e) => setObject(e.target.value)}
-                />
-
-              </Grid>
              
               <Grid item xs={12}>
                 <Button variant="contained" color="primary" onClick={handleSubmit}>
@@ -480,16 +430,17 @@ function Upload({isDrawerOpen, setUploadedData}) {
               </Grid>
             </Grid>
           </Grid>
+        </Grid>
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}
-          onClose={() => setSnackbarOpen(false)}
-          message="Item details submitted!"
-        />
+          onClose={handleCloseSnackbar}
+        >
+          <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
+            {message}
+          </Alert>
+        </Snackbar>
       </Box>
-
-      {/* <View uploadedItems={uploadedItems} /> */}
-
     </div>
   )
 }

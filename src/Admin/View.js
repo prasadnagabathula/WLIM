@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Box,Button, TextField,InputAdornment,IconButton, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, CircularProgress } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
   
-function View({uploadedData, isDrawerOpen }) { 
+function View({ isDrawerOpen }) { 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [marginLeft, setMarginLeft] = useState(100); 
   const [marginRight, setMarginRight] = useState(100); 
 
-  const [uploadedItems, setUploadedItems] = useState([]); 
+  // const [uploadedItems, setUploadedItems] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
+
+  const [uploadedData, setUploadedData] = useState([]);
 
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 240 : 0);
@@ -29,7 +31,9 @@ function View({uploadedData, isDrawerOpen }) {
           throw new Error('Failed to fetch data');
         }
         const data = await response.json();
-        setUploadedItems(data); // Store the API response in the state
+        // setUploadedItems(data); // Store the API response in the state
+        setUploadedData(data);
+        console.log(data); // Store the API response in the state
         setLoading(false); // Set loading to false once data is fetched
       } catch (err) {
         setError(err.message); // Handle any errors
