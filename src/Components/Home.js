@@ -30,18 +30,18 @@ function Home() {
     const [username, setUsername] = useState('')
 
     const [uploadedItems, setUploadedItems] = useState([]);
-    const [uploadedData, setUploadedData] = useState([]);
+    // const [uploadedData, setUploadedData] = useState([]);
 
-    useEffect(() => {
-      const storedItems = JSON.parse(localStorage.getItem('uploadedData'));
-      if (storedItems) {
-        setUploadedData(storedItems);
-      }
-    }, []);
+    // useEffect(() => {
+    //   const storedItems = JSON.parse(localStorage.getItem('uploadedData'));
+    //   if (storedItems) {
+    //     setUploadedData(storedItems);
+    //   }
+    // }, []);
   
-    useEffect(() => {
-      localStorage.setItem('uploadedData', JSON.stringify(uploadedData));
-    }, [uploadedData]);
+    // useEffect(() => {
+    //   localStorage.setItem('uploadedData', JSON.stringify(uploadedData));
+    // }, [uploadedData]);
 
   const handleRequestSubmit = (newRequest) => {
     setUploadedItems((prev) => [...prev, newRequest]);
@@ -391,11 +391,11 @@ const userClaims = [
         <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen}  />
         <Routes>
         <Route path='/' element={userData.role === 'Admin' ? <Statistics isDrawerOpen={isDrawerOpen} /> : <Default isDrawerOpen={isDrawerOpen} />} />
-          <Route path='Identified Items' element={<Upload setUploadedData={setUploadedData}  isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Identified Items' element={<Upload  isDrawerOpen={isDrawerOpen} />} />
           <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
           <Route path='Lost Item Request' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />
           <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
-          <Route path='Identified Items/View' element={<View uploadedData={uploadedData} isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Identified Items/View' element={<View isDrawerOpen={isDrawerOpen} />} />
           <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
           <Route path='View All Lost Item Requests' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
         </Routes>
