@@ -124,16 +124,6 @@ const SearchItems = () => {
     setResponseMessage('');   
   };
 
-  
-//   const navigate = useNavigate();
-
-//    const handleItemUpload = () => {
-//     navigate('/upload'); // Navigates to the Upload page
-//   };
-//   const handleHome = () => {
-//     navigate('/'); // Navigates to the search page
-//   };
-
 const analyzeImage = async (imageData) => {
   const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
   
