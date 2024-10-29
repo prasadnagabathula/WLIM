@@ -8,7 +8,7 @@ function View({uploadedData, isDrawerOpen }) {
   const [marginLeft, setMarginLeft] = useState(100); 
   const [marginRight, setMarginRight] = useState(100); 
 
-  // const [uploadedItems, setUploadedItems] = useState([]); 
+  const [uploadedItems, setUploadedItems] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
 
@@ -16,6 +16,29 @@ function View({uploadedData, isDrawerOpen }) {
     setMarginLeft(isDrawerOpen ? 240 : 0);
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
+
+  useEffect(() => {
+    // Fetch data from the API when the component loads
+    const fetchUploadedItems = async () => {
+      try {
+        setLoading(true); // Set loading to true before the API call
+        const response = await fetch('https://localhost:7215/api/IdentifiedItem', {
+          method: 'GET'
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        setUploadedItems(data); // Store the API response in the state
+        setLoading(false); // Set loading to false once data is fetched
+      } catch (err) {
+        setError(err.message); // Handle any errors
+        setLoading(false);
+      }
+    };
+
+    fetchUploadedItems(); // Call the API fetching function
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
