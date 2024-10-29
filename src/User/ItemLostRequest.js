@@ -102,7 +102,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       transition: 'margin-left 0.3s',
     }}>
       <Typography variant="h4" gutterBottom>
-        Item Lost Request
+        Lost Item Request
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={6}>
@@ -145,36 +145,21 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         </Grid>
         <Grid item xs={6}>
           <Grid container spacing={2}>
-            {[
-              { label: 'Description', name: 'description', maxLength: 50 },
-              { label: 'Color', name: 'color', maxLength: 50 },
-              { label: 'Size', name: 'size', maxLength: 20 },
-              { label: 'Brand', name: 'brand', maxLength: 50 },
-              { label: 'Model', name: 'model', maxLength: 50 },
-              { label: 'Distinguishing Features', name: 'distinguishingFeatures', maxLength: 100 },
-              { label: 'Item Category', name: 'itemCategory', maxLength: 50 },
-              { label: 'Serial Number', name: 'serialNumber', maxLength: 50 },
-              { label: 'Date and Time When Lost', name: 'dateTimeWhenLost', type: 'datetime-local' },
-              { label: 'Location', name: 'location', maxLength: 100 },
-              { label: 'Item Value', name: 'itemValue', type: 'number', inputProps: { min: 0 } },
-              { label: 'Proof of Ownership', name: 'proofOfOwnership', maxLength: 100 },
-              { label: 'How the Item Was Lost', name: 'howTheItemLost', maxLength: 100 },
-              { label: 'Reference Number', name: 'referenceNumber', maxLength: 50 },
-              { label: 'Additional Information', name: 'additionalInformation', maxLength: 200 },
-              { label: 'Other Relevant Details', name: 'otherRelevantDetails', maxLength: 200 },
-            ].map(({ label, name, maxLength, type = 'text', inputProps = {} }) => (
-              <React.Fragment key={name}>
-                <InputLabel>{label}</InputLabel>
-                <TextField
-                  margin="dense"
-                  name={name}
-                  value={currentItemLostRequest[name]}
-                  onChange={handleChange}
-                  fullWidth
-                  inputProps={{ maxLength, ...inputProps }}
-                  type={type}
-                />
-              </React.Fragment>
+            
+            {Object.keys(currentItemLostRequest).map((key) => (
+              key !== 'image' && (
+                <Grid item xs={12} key={key}>
+                  <TextField
+                    label={key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                    variant="outlined"
+                    fullWidth
+                    name={key}
+                    value={currentItemLostRequest[key]}
+                    onChange={handleChange}
+                    type={key === 'identifiedDate' ? 'date' : 'text'}
+                  />
+                </Grid>
+              )
             ))}
             <Grid item xs={12}>
               <Button variant="contained" color="primary" onClick={handleSubmit}>

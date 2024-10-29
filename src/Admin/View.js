@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Box,Button, TextField,InputAdornment,IconButton, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, CircularProgress } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
   
-function View({uploadedData, isDrawerOpen }) { //uploadedItems = []
-
+function View({uploadedData, isDrawerOpen }) { 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [marginLeft, setMarginLeft] = useState(100); 
   const [marginRight, setMarginRight] = useState(100); 
 
-  // const [uploadedItems, setUploadedItems] = useState([]); 
+  const [uploadedItems, setUploadedItems] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
 
@@ -63,7 +62,7 @@ function View({uploadedData, isDrawerOpen }) { //uploadedItems = []
     }}>
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <Typography variant="h4" gutterBottom>
-          Uploaded Item Details
+          Identified Item Details
         </Typography>
         <div style={{ display: 'flex', marginBottom: '20px', width: '100%' }}>
             <TextField

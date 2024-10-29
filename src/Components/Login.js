@@ -75,8 +75,8 @@ function Login({myRole}) {
         localStorage.setItem('userRole', response.data.role);
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userData', JSON.stringify({ name: response.data.name, role: response.data.role, email, photo: null }));
+        
         myRole(response.data.role);
-        // Now you can retrieve the role
         const userRole = response.data.role;
         console.log('User role:', userRole);
         const homeURL = `${userRole.toLowerCase() === 'admin' ? 'admin' : 'user'}/home`;

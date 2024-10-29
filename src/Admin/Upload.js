@@ -27,8 +27,6 @@ function Upload({isDrawerOpen, setUploadedData}) {
   const [condition, setCondition] = useState('');
   const [identifiedDate, setIdentifiedDate] = useState('');
   const [identifiedLocation, setIdentifiedLocation] = useState('');
-  const [category, setCategory] = useState('');
-  const [tags, setTags] = useState('');
   const [object, setObject] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -105,6 +103,8 @@ function Upload({isDrawerOpen, setUploadedData}) {
         analyzeImage(arrayBuffer);
       };
       reader.readAsArrayBuffer(file);
+    }
+  }
 
   const handleImageUpload = (event) => {
     const files = event.target.files;
@@ -191,10 +191,10 @@ function Upload({isDrawerOpen, setUploadedData}) {
       ModelVersion: model,
       Color: color,
       SerialNumber: serialNumber,
-      DistinguishingFeatures: features,
+      DistinguishingFeatures: distinguishingFeatures,
       Condition: condition,
       IdentifiedDate: identifiedDate,
-      IdentifiedLocation: location,
+      IdentifiedLocation: identifiedLocation,
       category: category,
       tags: tags,
       Itemobject: itemobject
@@ -212,10 +212,10 @@ function Upload({isDrawerOpen, setUploadedData}) {
     formData.append('ModelVersion', model);
     formData.append('color', color);
     formData.append('serialNumber', serialNumber);
-    formData.append('DistinguishingFeatures', features);
+    formData.append('DistinguishingFeatures', distinguishingFeatures);
     formData.append('condition', condition);
     formData.append('identifiedDate', identifiedDate);
-    formData.append('IdentifiedLocation', location);
+    formData.append('IdentifiedLocation', identifiedLocation);
     formData.append('Itemobject', itemobject);
 
     console.log("newItem values",newItem)
@@ -253,12 +253,13 @@ function Upload({isDrawerOpen, setUploadedData}) {
       >
           {message && <p className="upload-message">{message}</p>}
         <Typography variant="h4" gutterBottom>
-          Upload Item Details
+          Identified Item Details
         </Typography>
         <Grid container spacing={3}>
+
           {/* First Half - Styled Upload Button */}
           <Grid item xs={6}>
-            {/* <Button
+             <Button
               variant="contained"
               component="label"
               fullWidth
@@ -293,16 +294,19 @@ function Upload({isDrawerOpen, setUploadedData}) {
                 type="file"
                 accept="image/*"
                 hidden
-                onChange={handleImageUpload}
+                onChange={handleFileChange}
               />
             </Button>
-//             > */}
-//             {/* Upload Identified Item Photo */}
-//             <label htmlFor="upload-image">
+            
+            </Grid>
+            </Grid>
+
+             {/* Upload Identified Item Photo */}
+{ /* </Grid>//             <label htmlFor="upload-image">
 //               <UploadBox>
-//                 {selectedImage ? (
-//                   <img
-//                     src={selectedImage}
+//                 {selectedImage ? ( */}
+{/* //                   <img */}
+{/* //                     src={selectedImage}
 //                     alt="Uploaded"
 //                     style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
 //                   />
@@ -310,15 +314,14 @@ function Upload({isDrawerOpen, setUploadedData}) {
 //                   <Typography>Click here to upload an image</Typography>
 //                 )}
 //               </UploadBox>
-//             </label>
-//             <input id="upload-image"
-//               type="file"
+//             </label> */}
+{/* //             <input id="upload-image" */}
+{/* //               type="file"
 //               accept="image/*"
 //               hidden
 //               onChange={handleFileChange}
 //             />
-//             {/* </Button> */}
-          </Grid>
+//             </Button> */}
 
           {/* Second Half - Input Fields */}
           <Grid item xs={6}>
@@ -425,11 +428,12 @@ function Upload({isDrawerOpen, setUploadedData}) {
                   fullWidth
                   value={identifiedDate}
                   onChange={(e) => setIdentifiedDate(e.target.value)}
-                  InputProps={{
-                    inputProps: {
-                      placeholder: ''
-                    },
-                  }} />
+                  InputLabelProps={{
+                    shrink: true, 
+                }}
+                inputProps={{
+                    style: { textAlign: 'left' }, 
+                }}/>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -476,8 +480,6 @@ function Upload({isDrawerOpen, setUploadedData}) {
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
-
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={6000}
@@ -492,4 +494,4 @@ function Upload({isDrawerOpen, setUploadedData}) {
   )
 }
 
-export default Upload
+export default Upload;
