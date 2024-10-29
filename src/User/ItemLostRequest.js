@@ -3,8 +3,9 @@ import axios from 'axios';
 import { InputLabel, Box, Typography, TextField, Button, Grid, Snackbar } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-function ItemLostRequest({ isDrawerOpen, userName }) {
+const ItemLostRequest = (isDrawerOpen, userName) => {
   const [marginLeft, setMarginLeft] = useState(100);
+  const [selectedFile, setSelectedFile] = useState(null); // New state for file
   const [itemLostRequests, setItemLostRequests] = useState([]);
   const [currentItemLostRequest, setCurrentItemLostRequest] = useState({
     description: '',
@@ -48,11 +49,12 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUploadedImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setSelectedFile(file); // Update selectedFile with the chosen file
+      setUploadedImage(URL.createObjectURL(file)); // Display the preview
+      setCurrentItemLostRequest((prev) => ({
+        ...prev,
+        itemPhoto: file.name // Optional: store file name for reference
+      }));
     }
   };
 
@@ -63,9 +65,33 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
   const handleSubmit = async () => {
     try {
-      await axios.post('http://localhost:5291/api/LostItemRequest', currentItemLostRequest);
+      let photoPath = currentItemLostRequest.itemPhoto;
+
+      // If a new file is selected, upload it
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append('itemPhoto', selectedFile);
+
+        const uploadResponse = await axios.post('http://localhost:5291/api/LostItemRequest/itemPhoto', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        console.log("Upload response:", uploadResponse.data);
+
+        //photoPath = uploadResponse.data.filePath; // Adjust based on your backend response
+        photoPath = uploadResponse.data.path; // Adjust based on your backend response
+      }
+
+      const requestData = {
+        ...currentItemLostRequest,
+        itemPhoto: photoPath, // Ensure itemPhoto path is updated
+      };
+      //requestData.itemPhoto = photoPath;
+      await axios.post('http://localhost:5291/api/LostItemRequest', requestData);
       setSnackbarOpen(true);
-      setItemLostRequests((prevRequests) => [...prevRequests, currentItemLostRequest]);
+      setItemLostRequests((prevRequests) => [...prevRequests, requestData]);
+
       // Reset form
       setCurrentItemLostRequest({
         description: '',
@@ -87,11 +113,11 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         otherRelevantDetails: '',
         requestedBy: userName,
       });
-      setUploadedImage(null);
+      setSelectedFile(null); // Clear selected file
+      setUploadedImage(null); // Clear preview image
     } catch (error) {
       console.error('Error submitting the lost item request:', error);
     }
-
   };
 
   return (
@@ -145,6 +171,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         </Grid>
         <Grid item xs={6}>
           <Grid container spacing={2}>
+            {/* All Input Fields */}
             {[
               { label: 'Description', name: 'description', maxLength: 50 },
               { label: 'Color', name: 'color', maxLength: 50 },
@@ -195,4 +222,3 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 }
 
 export default ItemLostRequest;
-
