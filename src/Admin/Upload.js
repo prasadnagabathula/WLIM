@@ -5,10 +5,9 @@ import View from './View';
 import axios from 'axios';
 import { styled } from '@mui/system';
 
-
-function Upload({ isDrawerOpen }) {
-
-  const [uploadedItems, setUploadedItems] = useState([]);
+function Upload({isDrawerOpen, setUploadedData}) {
+  // const [uploadedItems, setUploadedItems] = useState([]);
+  const [imageSrc, setImageSrc] = useState(null); 
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -19,16 +18,18 @@ function Upload({ isDrawerOpen }) {
 
   }, [isDrawerOpen]);
 
-
   const [itemDescription, setItemDescription] = useState('');
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [color, setColor] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
-  const [features, setFeatures] = useState('');
+  const [distinguishingFeatures, setDistinguishingFeatures] = useState('');
   const [condition, setCondition] = useState('');
   const [identifiedDate, setIdentifiedDate] = useState('');
-  const [location, setLocation] = useState('');
+  const [identifiedLocation, setIdentifiedLocation] = useState('');
+  const [category, setCategory] = useState('');
+  const [tags, setTags] = useState('');
+  const [object, setObject] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -38,8 +39,6 @@ function Upload({ isDrawerOpen }) {
   const [itemobject, setItemobject] = useState('');
   const [inputValue, setInputValue] = useState('');
   
-
-
 
   const [CurrentIdentifiedItems, setCurrentIdentifiedItems] = useState({
     ItemDescription: '',
@@ -107,10 +106,54 @@ function Upload({ isDrawerOpen }) {
       };
       reader.readAsArrayBuffer(file);
 
+  const handleImageUpload = (event) => {
+    const files = event.target.files;
+    if (files.length > 0) {
+      const imageFile = files[0];
+      const reader = new FileReader();
+      
+      reader.onloadend = () => {
+        setImageSrc(reader.result); 
+      };
+      reader.readAsDataURL(imageFile); 
     }
   };
 
-
+// const handleSubmit = () => {
+//     const newItem = {
+//       itemDescription,
+//       brand,
+//       model,
+//       color,
+//       serialNumber,
+//       distinguishingFeatures,
+//       condition,
+//       identifiedDate,
+//       identifiedLocation,
+//       category,
+//       tags,
+//       object,
+//     };
+//     setUploadedData((prevItems) => [...prevItems, newItem]); 
+//     setSnackbarOpen(true);
+//     console.log(newItem);
+    
+//     // Reset fields after submission
+//     setImageSrc(null);
+//     setItemDescription('');
+//     setBrand('');
+//     setModel('');
+//     setColor('');
+//     setSerialNumber('');
+//     setDistinguishingFeatures('');
+//     setCondition('');
+//     setIdentifiedDate('');
+//     setIdentifiedLocation('');
+//     setCategory('');
+//     setTags('');
+//     setObject('');
+//     }
+//   };
 
   const analyzeImage = async (imageData) => {
     const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
@@ -139,8 +182,8 @@ function Upload({ isDrawerOpen }) {
 
 
   const handleSubmit = () => {
-   handleClear();
-   setInputValue(''); 
+  //  handleClear();
+  //  setInputValue(''); 
     // Step 1: Define the data object for the identified item
     const newItem = {
       ItemDescription: itemDescription,
@@ -175,17 +218,17 @@ function Upload({ isDrawerOpen }) {
     formData.append('IdentifiedLocation', location);
     formData.append('Itemobject', itemobject);
 
-
+    console.log("newItem values",newItem)
     try {
-        const response = axios.post('http://localhost:5005/api/IdentifiedItems', formData, {
+        const response = axios.post('https://localhost:7215/api/IdentifiedItem', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
+        
       });
-
+      console.log("response",response)
       if (response.status === 200) {
         setMessage('Item details submitted Successfully!');
-        setSelectedImage(null); // Clear the uploaded image
         setCategory('');
         setTags([]);
       } else {
@@ -219,7 +262,6 @@ function Upload({ isDrawerOpen }) {
               variant="contained"
               component="label"
               fullWidth
-              // startIcon={<CloudUploadIcon />}
               sx={{
                 width: '300px',
                 height: '300px',
@@ -238,33 +280,80 @@ function Upload({ isDrawerOpen }) {
                   border: '2px dashed #333',
                 },
               }}
-            > */}
-            {/* Upload Identified Item Photo */}
-            <label htmlFor="upload-image">
-              <UploadBox>
-                {selectedImage ? (
-                  <img
-                    src={selectedImage}
-                    alt="Uploaded"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
-                  />
-                ) : (
-                  <Typography>Click here to upload an image</Typography>
-                )}
-              </UploadBox>
-            </label>
-            <input id="upload-image"
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={handleFileChange}
-            />
-            {/* </Button> */}
+            >
+            {imageSrc ? (
+                            <img src={imageSrc} alt="Uploaded" style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit:'contain' }} />
+                          ) : (
+                              <span style={{ display: 'flex', alignItems: 'center' }}>
+                                <CloudUploadIcon />
+                                <span style={{ marginLeft: 8 }}>Upload Identified Item Photo</span>
+                              </span>            
+            )}              
+            <input
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handleImageUpload}
+              />
+            </Button>
+//             > */}
+//             {/* Upload Identified Item Photo */}
+//             <label htmlFor="upload-image">
+//               <UploadBox>
+//                 {selectedImage ? (
+//                   <img
+//                     src={selectedImage}
+//                     alt="Uploaded"
+//                     style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
+//                   />
+//                 ) : (
+//                   <Typography>Click here to upload an image</Typography>
+//                 )}
+//               </UploadBox>
+//             </label>
+//             <input id="upload-image"
+//               type="file"
+//               accept="image/*"
+//               hidden
+//               onChange={handleFileChange}
+//             />
+//             {/* </Button> */}
           </Grid>
 
           {/* Second Half - Input Fields */}
           <Grid item xs={6}>
             <Grid container spacing={2}>
+            <Grid item xs={12}>
+                <TextField
+                  label="Category"
+                  variant="outlined"
+                  fullWidth
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Tags"
+                  variant="outlined"
+                  fullWidth
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                />
+
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  label="object"
+                  variant="outlined"
+                  fullWidth
+                  value={itemobject}
+                  onChange={(e) => setItemobject(e.target.value)}
+                />
+
+              </Grid> 
               <Grid item xs={12}>
                 <TextField
                   label="Item Description"
@@ -315,8 +404,8 @@ function Upload({ isDrawerOpen }) {
                   label="Distinguishing Features"
                   variant="outlined"
                   fullWidth
-                  value={features}
-                  onChange={(e) => setFeatures(e.target.value)}
+                  value={distinguishingFeatures}
+                  onChange={(e) => setDistinguishingFeatures(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -347,10 +436,9 @@ function Upload({ isDrawerOpen }) {
                   label="Identified Location"
                   variant="outlined"
                   fullWidth
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  value={identifiedLocation}
+                  onChange={(e) => setIdentifiedLocation(e.target.value)}
                 />
-
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -360,7 +448,6 @@ function Upload({ isDrawerOpen }) {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                 />
-
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -370,19 +457,18 @@ function Upload({ isDrawerOpen }) {
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
                 />
-
               </Grid>
-
               <Grid item xs={12}>
                 <TextField
-                  label="object"
+                  label="Object"
                   variant="outlined"
                   fullWidth
-                  value={itemobject}
-                  onChange={(e) => setItemobject(e.target.value)}
+                  value={object}
+                  onChange={(e) => setObject(e.target.value)}
                 />
 
-              </Grid> 
+              </Grid>
+             
               <Grid item xs={12}>
                 <Button variant="contained" color="primary" onClick={handleSubmit}>
                   Submit
