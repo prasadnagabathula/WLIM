@@ -36,7 +36,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   useEffect(() => {
     const fetchItemLostRequests = async () => {
       try {
-        const response = await axios.get('http://localhost:5291/api/LostItemRequest');
+        const response = await axios.get('https://localhost:7237/api/LostItemRequest');
         setItemLostRequests(response.data);
       } catch (error) {
         console.error('Error fetching item lost requests:', error);
