@@ -30,6 +30,18 @@ function Home() {
     const [username, setUsername] = useState('')
 
     const [uploadedItems, setUploadedItems] = useState([]);
+    const [uploadedData, setUploadedData] = useState([]);
+
+    useEffect(() => {
+      const storedItems = JSON.parse(localStorage.getItem('uploadedData'));
+      if (storedItems) {
+        setUploadedData(storedItems);
+      }
+    }, []);
+  
+    useEffect(() => {
+      localStorage.setItem('uploadedData', JSON.stringify(uploadedData));
+    }, [uploadedData]);
 
   const handleRequestSubmit = (newRequest) => {
     setUploadedItems((prev) => [...prev, newRequest]);
@@ -379,11 +391,11 @@ const userClaims = [
         <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen}  />
         <Routes>
         <Route path='/' element={userData.role === 'Admin' ? <Statistics isDrawerOpen={isDrawerOpen} /> : <Default isDrawerOpen={isDrawerOpen} />} />
-          <Route path='uploaditemdetails' element={<Upload isDrawerOpen={isDrawerOpen} />} />
+          <Route path='uploaditemdetails' element={<Upload setUploadedData={setUploadedData}  isDrawerOpen={isDrawerOpen} />} />
           <Route path='claimrequests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
           <Route path='itemlostrequest' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />
           <Route path='viewallrequest/claimhistory' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
-          <Route path='uploaditemdetails/view' element={<View isDrawerOpen={isDrawerOpen} />} />
+          <Route path='uploaditemdetails/view' element={<View uploadedData={uploadedData} isDrawerOpen={isDrawerOpen} />} />
           <Route path='itemdetails' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
           <Route path='viewallrequest' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
         </Routes>
