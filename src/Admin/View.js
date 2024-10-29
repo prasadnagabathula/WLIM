@@ -18,27 +18,28 @@ function View({uploadedData, isDrawerOpen }) { //uploadedItems = []
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
 
-  // useEffect(() => {
-  //   const fetchUploadedItems = async () => {
-  //     try {
-  //       setLoading(true); 
-  //       const response = await fetch('http://localhost:5005/api/uploadeditems', {
-  //         method: 'GET'
-  //       });
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch data');
-  //       }
-  //       const data = await response.json();
-  //       setUploadedItems(data); 
-  //       setLoading(false); 
-  //     } catch (err) {
-  //       setError(err.message); 
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    // Fetch data from the API when the component loads
+    const fetchUploadedItems = async () => {
+      try {
+        setLoading(true); // Set loading to true before the API call
+        const response = await fetch('https://localhost:7215/api/IdentifiedItem', {
+          method: 'GET'
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        setUploadedItems(data); // Store the API response in the state
+        setLoading(false); // Set loading to false once data is fetched
+      } catch (err) {
+        setError(err.message); // Handle any errors
+        setLoading(false);
+      }
+    };
 
-  //   fetchUploadedItems(); 
-  // }, []);
+    fetchUploadedItems(); // Call the API fetching function
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
