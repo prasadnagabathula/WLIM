@@ -65,10 +65,10 @@ function Home() {
     const navigate = useNavigate();
 
     const location = useLocation();
-    const currentPath = location.pathname;
+    const currentPath = decodeURIComponent(location.pathname);
        
     const getBreadcrumbs = () => {
-        const pathnames = location.pathname.split('/').filter((x) => x);
+        const pathnames = decodeURIComponent(location.pathname).split('/').filter((x) => x);
         return pathnames.map((path, index) => ({
             label: path.charAt(0).toUpperCase() + path.slice(1).replace(/([A-Z])/g, ' $1'), // Capitalize and space camel case
             link: '/' + pathnames.slice(0, index + 1).join('/'), // Create link for breadcrumb
@@ -227,15 +227,15 @@ const userClaims = [
         component={Link} to=""
         onClick={handleUploadMenu}
       >
-        <ListItemText primary="Upload Item Details" className="drawer-text" />
+        <ListItemText primary="Identified Items" className="drawer-text" />
         <DriveFolderUploadOutlinedIcon />
       </ListItem>
       <Collapse in={openUploadMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
               <List component="div" disablePadding sx={{color:'#fff'}}>
-                  <ListItem button component={Link} to="Uploaditemdetails" onClick={handleClose}>
+                  <ListItem button component={Link} to="Identified Items" onClick={handleClose}>
                       <ListItemText primary="Create"  sx={{color:'#fff'}}  />
                   </ListItem>
-                  <ListItem button component={Link} to="Uploaditemdetails/view" onClick={handleClose}>
+                  <ListItem button component={Link} to="Identified Items/View" onClick={handleClose}>
                       <ListItemText primary="View"  sx={{color:'#fff'}} />
                   </ListItem>
               </List> 
@@ -243,7 +243,7 @@ const userClaims = [
 
       <ListItem 
         button sx={{color:'#fff'}}
-        component={Link} to="claimrequests"
+        component={Link} to="Claim Requests"
         onClick={(event) => handleClick(event, 'claims')}
       >
         <ListItemText primary="Claim Requests"  />
@@ -256,10 +256,10 @@ const userClaims = [
     <>
     <ListItem 
         button sx={{color:'#fff'}}
-        component={Link} to="itemlostRequest"
+        component={Link} to="Lost Item Request"
         onClick={(event) => handleClick(event, 'claimHistory')}
       >
-        <ListItemText primary="Item Lost Request" />
+        <ListItemText primary="Lost Item Request" />
         <LibraryAddOutlinedIcon />
       </ListItem> 
 
@@ -268,15 +268,15 @@ const userClaims = [
         component={Link} to=""
         onClick={handleItemRequestMenu}
       >
-        <ListItemText primary="View All Item Lost Requests" className="drawer-text" />
+        <ListItemText primary="View All Lost Item Requests" className="drawer-text" />
         <VisibilityOutlinedIcon />
       </ListItem>
       <Collapse in={openItemRequestMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
               <List component="div" disablePadding sx={{color:'#fff'}}>
-                  <ListItem button component={Link} to="viewallrequest" onClick={handleClose}>
+                  <ListItem button component={Link} to="View All Lost Item Requests" onClick={handleClose}>
                       <ListItemText primary="Claim Status"  sx={{color:'#fff'}}  />
                   </ListItem>
-                  <ListItem button component={Link} to="viewallrequest/claimhistory" onClick={handleClose}>
+                  <ListItem button component={Link} to="View All Requests/Claim History" onClick={handleClose}>
                       <ListItemText primary="Claim History"  sx={{color:'#fff'}}  />
                   </ListItem>
               </List> 
@@ -391,13 +391,13 @@ const userClaims = [
         <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen}  />
         <Routes>
         <Route path='/' element={userData.role === 'Admin' ? <Statistics isDrawerOpen={isDrawerOpen} /> : <Default isDrawerOpen={isDrawerOpen} />} />
-          <Route path='uploaditemdetails' element={<Upload setUploadedData={setUploadedData}  isDrawerOpen={isDrawerOpen} />} />
-          <Route path='claimrequests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
-          <Route path='itemlostrequest' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />
-          <Route path='viewallrequest/claimhistory' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
-          <Route path='uploaditemdetails/view' element={<View uploadedData={uploadedData} isDrawerOpen={isDrawerOpen} />} />
-          <Route path='itemdetails' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
-          <Route path='viewallrequest' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Identified Items' element={<Upload setUploadedData={setUploadedData}  isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Lost Item Request' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />
+          <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Identified Items/View' element={<View uploadedData={uploadedData} isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
+          <Route path='View All Lost Item Requests' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
         </Routes>
       </Box>
     </div>

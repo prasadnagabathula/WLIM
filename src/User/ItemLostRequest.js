@@ -92,7 +92,7 @@ function ItemLostRequest({ onRequestSubmit, isDrawerOpen, userName }) {
       transition: 'margin-left 0.3s',
     }}>
       <Typography variant="h4" gutterBottom>
-        Item Lost Request
+        Lost Item Request
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={6}>
@@ -149,6 +149,8 @@ function ItemLostRequest({ onRequestSubmit, isDrawerOpen, userName }) {
                     value={itemDetails[key]}
                     onChange={handleChange}
                     type={key === 'identifiedDate' ? 'date' : 'text'}
+                    InputLabelProps={key === 'identifiedDate' ? { shrink: true } : {}}
+                    inputProps={key === 'identifiedDate' ? { style: { textAlign: 'left' } } : {}}
                   />
                 </Grid>
               )

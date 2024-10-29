@@ -90,7 +90,7 @@ const handleSubmit = () => {
         }}
       >
         <Typography variant="h4" gutterBottom>
-          Upload Item Details
+          Identified Item Details
         </Typography>
         <Grid container spacing={3}>
           {/* First Half - Styled Upload Button */}
@@ -209,11 +209,12 @@ const handleSubmit = () => {
                   fullWidth
                   value={identifiedDate}
                   onChange={(e) => setIdentifiedDate(e.target.value)}
-                  InputProps={{
-                    inputProps: {
-                      placeholder: '' 
-                    },
-                  }}/>
+                  InputLabelProps={{
+                    shrink: true, 
+                }}
+                inputProps={{
+                    style: { textAlign: 'left' }, 
+                }}/>
               </Grid>
               <Grid item xs={12}>
                 <TextField
