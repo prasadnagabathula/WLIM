@@ -15,6 +15,7 @@ import Statistics from './Statistics';
 import View from '../Admin/View';
 import ItemLostRequest from '../User/ItemLostRequest';
 import ItemDetails from '../Admin/ItemDetails';
+import UploadPhotos from '../uploadPhotos';
 
 function Home() {
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
@@ -391,7 +392,7 @@ const userClaims = [
         <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen}  />
         <Routes>
         <Route path='/' element={userData.role === 'Admin' ? <Statistics isDrawerOpen={isDrawerOpen} /> : <Default isDrawerOpen={isDrawerOpen} />} />
-          <Route path='Identified Items' element={<Upload  isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Identified Items' element={<UploadPhotos  isDrawerOpen={isDrawerOpen} />} />
           <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
           <Route path='Lost Item Request' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />
           <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />

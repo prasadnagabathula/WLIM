@@ -13,17 +13,19 @@ import Profile from './Components/Profile';
 
 function App() {
 
-  const [role, setRole] = useState("User");
-  const myRole = (data) => {
-    setRole(data);
-  }
+  // const [role, setRole] = useState("User");
+  // const myRole = (data) => {
+  //   setRole(data);
+  // }
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login myRole={myRole} />} />
-        <Route path={`/${role === "Admin" ? "admin" : "user"}/home/*`} 
-        element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/" element={<Login />} />
+        {/* <Route path={`/${role === "Admin" ? "admin" : "user"}/home/*`} 
+        element={<ProtectedRoute><Home /></ProtectedRoute>} /> */}
+        <Route path="/admin/home/*" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/user/home/*" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         {/* Add a catch-all route for unknown URLs */}
         <Route path="*" element={<h2>Page Not Found</h2>} />
         <Route path="/homepage" element={<HomePage />} />

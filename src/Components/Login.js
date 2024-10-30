@@ -5,7 +5,7 @@ import HttpsOutlinedIcon from '@mui/icons-material/HttpsOutlined';
 import axios from './AuthService';
 import { useNavigate } from 'react-router-dom';
 
-function Login({myRole}) {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -76,7 +76,7 @@ function Login({myRole}) {
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userData', JSON.stringify({ name: response.data.name, role: response.data.role, email, photo: null }));
         
-        myRole(response.data.role);
+        // myRole(response.data.role);
         const userRole = response.data.role;
         console.log('User role:', userRole);
         const homeURL = `${userRole.toLowerCase() === 'admin' ? 'admin' : 'user'}/home`;
