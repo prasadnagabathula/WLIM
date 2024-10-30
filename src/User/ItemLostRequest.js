@@ -261,6 +261,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       ml: `${marginLeft}px`,
       transition: 'margin-left 0.3s',
     }}>
+      
       <Grid container spacing={3}>
         <Grid item xs={6}>
           <Button
@@ -361,46 +362,9 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
           </Box>
 
 
-        </Box>
+          </Box>
         </form>
-          {/* <Grid container spacing={2}>
-            {[
-              { label: 'Description', name: 'description', maxLength: 50  },
-              { label: 'Color', name: 'color', maxLength: 50 },
-              { label: 'Size', name: 'size', maxLength: 20 },
-              { label: 'Brand', name: 'brand', maxLength: 50 },
-              { label: 'Model', name: 'model', maxLength: 50 },
-              { label: 'Distinguishing Features', name: 'distinguishingFeatures', maxLength: 100 },
-              { label: 'Item Category', name: 'itemCategory', maxLength: 50 },
-              { label: 'Serial Number', name: 'serialNumber', maxLength: 50 },
-              { label: 'Date and Time When Lost', name: 'dateTimeWhenLost', type: 'datetime-local' },
-              { label: 'Location', name: 'location', maxLength: 100 },
-              { label: 'Item Value', name: 'itemValue', type: 'number', inputProps: { min: 0 } },
-              { label: 'Proof of Ownership', name: 'proofOfOwnership', maxLength: 100 },
-              { label: 'How the Item Was Lost', name: 'howTheItemLost', maxLength: 100 },
-              { label: 'Reference Number', name: 'referenceNumber', maxLength: 50 },
-              { label: 'Additional Information', name: 'additionalInformation', maxLength: 200 },
-              { label: 'Other Relevant Details', name: 'otherRelevantDetails', maxLength: 200 },
-            ].map(({ label, name, maxLength, type = 'text', inputProps = {} }) => (
-              <React.Fragment key={name}>
-                <InputLabel>{label}</InputLabel>
-                <TextField
-                  margin="dense"
-                  name={name}
-                  value={currentItemLostRequest[name]}
-                  onChange={handleChange}
-                  fullWidth
-                  inputProps={{ maxLength, ...inputProps }}
-                  type={type}
-                />
-              </React.Fragment>
-            ))}
-            <Grid item xs={12}>
-              <Button variant="contained" color="primary" onClick={handleSubmit}>
-                Submit
-              </Button>
-            </Grid>
-          </Grid> */}
+          
         </Grid>
       </Grid>
       <Snackbar

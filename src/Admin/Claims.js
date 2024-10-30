@@ -279,6 +279,7 @@ const getRelatedImages = (request) => {
                   height="200"
                   image={request.ItemPhoto}
                   alt="Item"
+                  sx={{objectFit:'contain'}}
                 />
                 <CardContent>
                   <Typography variant="h6">{request.Description}</Typography>
