@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from './header'; // Assuming you have a header component
 import Footer from './footer'; // Assuming you have a footer component
 import './uploadPhotos.css'; // Add any custom styles here
-import { Button, Typography, Box} from '@mui/material';
-import { styled } from '@mui/system';
+import { Button,Grid,Alert, Snackbar, Typography, Box} from '@mui/material';
+import { fontFamily, styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-const UploadPhotos = () => {
+const UploadPhotos = ({isDrawerOpen}) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [message, setMessage] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [category, setCategory] = useState(null);
   const [tags, setTags] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [severity, setSeverity] = useState('success');
+
+  const [marginLeft, setMarginLeft] = useState(100);
+  const [marginRight, setMarginRight] = useState(100);
+
+  useEffect(() => {
+    setMarginLeft(isDrawerOpen ? 300 : 100);
+    setMarginRight(isDrawerOpen ? 50 : 0);
+
+  }, [isDrawerOpen]);
 
   // Azure Computer Vision API endpoint and key
   const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
@@ -26,6 +38,10 @@ const UploadPhotos = () => {
   };
   const handleFindItem = () => {
     navigate('/search'); // Navigates to the search page
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
 
@@ -97,6 +113,7 @@ const UploadPhotos = () => {
     e.preventDefault();
     if (!selectedFile) {
       setMessage('Please select a file first!');
+      setSeverity('error');
       return;
     }
 
@@ -114,110 +131,109 @@ const UploadPhotos = () => {
 
       if (response.status === 200) {
         setMessage('Image uploaded successfully!');
+        setSeverity('success');
         setSelectedImage(null); // Clear the uploaded image
         setCategory('');
         setTags([]);
       } else {
         setMessage('Failed to upload image');
+        setSeverity('error');
       }
     } catch (error) {
       console.error('Error uploading image:', error);
       setMessage('Error occurred while uploading');
+      setSeverity('error');
     }
+    setSnackbarOpen(true); 
   };
 
   return (
-    <div className="upload-image-container">
-      {/* Header component */}
-      <Header />
-
-      <main className="upload-content">
-      <Box >
-        <Box marginLeft={"170px"} display={"flex"}>
-        <Box>
-        <Button
-            variant="contained"
-            color="primary"
-            onClick={()=>handleHome()}
-            
-          >
-            Home
-          </Button>
+    <div>
+      <Box
+        sx={{
+          textAlign: 'center',
+          mt: 2,
+          ml: `${marginLeft}px`,
+          mr: `${marginRight}px`,
+          transition: 'margin-left 0.3s',
+        }}
+      >
+        <Grid container justifyContent="center" alignItems="center" spacing={2}>
+          <Box sx={{mt: 4}}>
+            <Typography variant="h4" gutterBottom sx={{ fontFamily: 'Lato', mb:4 }}>
+              Unleashing the Power of Visual Recognition
+            </Typography>
+  
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}>
+              <form onSubmit={handleSubmit}>
+                <label htmlFor="upload-image">
+                  <UploadBox
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '2px dashed #888',
+                      borderRadius: '8px',
+                      padding: '20px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {selectedImage ? (
+                      <img
+                        src={selectedImage}
+                        alt="Uploaded"
+                        style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'contain' }}
+                      />
+                    ) : (
+                      <span style={{ display: 'flex', alignItems: 'center' }}>
+                        <CloudUploadIcon />
+                        <span style={{ marginLeft: 8 }}>Upload Identified Item Photo</span>
+                      </span>
+                    )}
+                  </UploadBox>
+                </label>
+                <input
+                  id="upload-image"
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleFileChange}
+                />
+                <Box display="flex" gap={3} justifyContent="center" alignItems="center" marginTop={4}>
+                  <Button type="submit" variant="outlined" color="primary" disabled={isDisabled}>
+                    {isDisabled ? "Getting image properties, wait..." : "Upload"}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleClear}
+                  >
+                    Clear
+                  </Button>
+                </Box>
+              </form>
+            </Box>
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={6000}
+              onClose={handleCloseSnackbar}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              sx={{ mb:2 }}
+            >
+              <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
+                {message}
+              </Alert>
+            </Snackbar>
           </Box>
-          <Box marginLeft={"20px"}>
-          <Button variant="contained"
-            color="primary"
-            onClick={()=>handleFindItem()}            
-          >
-            Find
-          </Button>
-          </Box>
-        </Box>
-        <Box>
-        {/* <Title>Welcome to Item Tracker</Title> */}
-        <Typography
-          variant="subtitle1"
-          style={{
-            marginBottom: '20px',
-            fontStyle: 'italic',
-            color: '#333',
-            textAlign: 'center', // Center the text
-            fontWeight: '600', // Make the font slightly bolder
-            fontSize: '1.2rem', // Adjust font size
-            textTransform: 'uppercase', // Uppercase letters
-          }}
-        >
-        Unleashing the Power of Visual Recognition
-      </Typography>
-  </Box>
-  </Box>
-        
-        <h2>Upload Your Image</h2>
-        <form onSubmit={handleSubmit} className="upload-form">
-        <label htmlFor="upload-image">
-          <UploadBox>
-            {selectedImage ? (
-              <img
-                src={selectedImage}
-                alt="Uploaded"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px' }}
-              />
-            ) : (
-              <Typography>Click here to upload an image</Typography>
-            )}
-          </UploadBox>
-        </label>
-        <input
-          id="upload-image"
-          type="file"
-          accept="image/*"
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
-         
-
-          <Box display="flex" gap={2} justifyContent="center" alignItems="center" marginTop={2}>
-          <button type="submit" className="upload-btn"  disabled={isDisabled} >
-          {isDisabled? "Getting image properties wait..." :"Upload"}
-          </button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={handleClear}
-            //disabled={!selectedImage && results.length === 0}
-          >
-            Clear
-          </Button>
-          </Box>
-        </form>
-
-        {message && <p className="upload-message">{message}</p>}
-      </main>
-
-      {/* Footer component */}
-      <Footer />
+        </Grid>
+      </Box>
     </div>
   );
+  
 };
 
 export default UploadPhotos;
