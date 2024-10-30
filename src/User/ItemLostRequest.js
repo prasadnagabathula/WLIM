@@ -133,9 +133,9 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   }));
 
 
-  const handleImageChange = (event) => {
+  const handleImageChange = (e) => {
     setResults([]);
-    const file = event.target.files[0];
+    const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
       const reader = new FileReader();
@@ -150,28 +150,35 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   };
 
   const searchImage =  () => {
-    setResults([]);   
+    //setResults([]);   
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('category', category); 
     formData.append('tags', tags); 
     formData.append('itemDescription', itemDescription); 
-
-       axios.post('http://localhost:5005/api/search',  formData, {
-        headers: {
+    try {
+    axios.post('http://localhost:5005/api/search', formData,{
+      headers: {
           'Content-Type': 'multipart/form-data'
         }
-      }).then(response=>{
-        
-        if (response.status === 200) {       
-          setResults(response.data.filesMatched);
-        } else {
-          setMessage('No items found');
-        }
+       })
+       .then ((response) => {
+        console.log(response)
 
-      }).catch(error => {
-            console.error("Error occurred while searching:", error);
-        });           
+      if (response.status === 200) {
+        setResults([]);
+      setResponseMessage('');
+              const filePaths = response.data.filesMatched.map(item => item.filePath);       
+              setResults(filePaths);
+            } else {
+              setMessage('No items found');
+            
+             }
+    });
+  
+        } catch (error) {
+                console.error("Error occurred while searching:", error);
+            };           
   };
 
 
@@ -208,6 +215,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
         if (response.status === 200) {
           const result = await response.json();
+          console.log(result);
           const filePaths = result.map(item => item.filePath);
           setResults(filePaths || []); 
           setResponseMessage(result.message);
