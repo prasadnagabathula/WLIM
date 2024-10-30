@@ -133,7 +133,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   }));
 
 
-  const handleImageUpload = (event) => {
+  const handleImageChange = (event) => {
+    setResults([]);
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
@@ -149,7 +150,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   };
 
   const searchImage =  () => {
-    setResults([]);
+    setResults([]);   
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('category', category); 
@@ -298,7 +299,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
               type="file"
               accept="image/*"
               style={{ display: 'none' }}
-              onChange={handleImageUpload}
+              onChange={handleImageChange}
             />
           </Button>
         </Grid>
