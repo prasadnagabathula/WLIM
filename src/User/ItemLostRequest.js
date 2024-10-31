@@ -1,10 +1,11 @@
 import React, { useState, useEffect,useCallback } from 'react';
 import axios from 'axios';
-import { InputLabel, Box, Typography, TextField, Button, Grid, Snackbar } from '@mui/material';
+import { Box, Typography, TextField, Button, Grid, Snackbar, Alert } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { height, styled } from '@mui/system';
 import ImageDisplay from '../imageDisplay';
 import _ from 'lodash'; 
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 
 function ItemLostRequest({ isDrawerOpen, userName }) {
   const [marginLeft, setMarginLeft] = useState(100);
@@ -26,6 +27,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const [itemobject, setItemobject] = useState([]);
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [selectedItemDetails, setSelectedItemDetails] = useState({ id: null, itemDescription: '' });
+  const [itemSelected, setItemSelected] = useState(false);
+  const [severity, setSeverity] = useState('success');
   //const [selectedImageId, setSelectedImageId] = useState('');
 
   // Azure Computer Vision API endpoint and key
@@ -54,7 +57,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     requestedBy: userName,
   });
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);  
+  const [resultResponseMessage, setResultResponseMessage] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
 
 
@@ -71,6 +75,9 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     fetchItemLostRequests();
   }, []);
 
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   const analyzeImage = async (imageData) => {
     const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
@@ -143,6 +150,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
     console.log(item.filePath);
       setSelectedThumbnail(item.filePath); // Set the selected image
       setSelectedItemDetails({ id: item.id, itemDescription: item.itemDescription }); // Capture id and description
+      setItemSelected(true);
       //setSelectedImageId(item.id);
 
       setCurrentItemLostRequest({
@@ -172,6 +180,8 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
 
   const handleImageChange = (e) => {
     setResults([]);
+    setItemSelected(false);
+    setSelectedItemDetails({ id: null, itemDescription: '' });
     const file = e.target.files[0];
     if (file) {
       setSelectedFile(file);
@@ -204,7 +214,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
 
       if (response.status === 200) {
         setResults([]);
-      setResponseMessage('');
+        setResultResponseMessage('');
               const filePaths = response.data.filesMatched.map(item => ({
                   id: item.id,
                   itemDescription: item.itemDescription,
@@ -237,7 +247,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
       debouncedSearch(value);
     } else {
       setResults([]);
-      setResponseMessage('');
+      setResultResponseMessage('');
     }
     
   };
@@ -259,13 +269,13 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
           console.log(result);
           const filePaths = result.map(item => item.filePath);
           setResults(filePaths || []); 
-          setResponseMessage(result.message);
+          setResultResponseMessage(result.message);
         } else {
-          setResponseMessage('No matching images found');
+          setResultResponseMessage('No matching images found');
         }
       } catch (error) {
         console.error('Error during search:', error);
-        setResponseMessage('Error occurred while searching');
+        setResultResponseMessage('Error occurred while searching');
       }
     }, 300), // 300ms delay
     []
@@ -275,12 +285,15 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
     if (!selectedThumbnail) return;
     try {
       const response = await axios.post('https://localhost:7237/api/LostItemRequest/Claim', currentItemLostRequest);
+
       if (response.status === 200) {
+        setItemSelected(false);
+        setSelectedItemDetails({ id: null, itemDescription: '' });
+        setSeverity('success');
         setResults([]); 
-         // setResponseMessage(result.message);
-      }
-      setSnackbarOpen(true);
-      setItemLostRequests((prevRequests) => [...prevRequests, currentItemLostRequest]);
+        setResponseMessage(response.data.message);
+        setSnackbarOpen(true);
+        setItemLostRequests((prevRequests) => [...prevRequests, currentItemLostRequest]);
       // Reset form
       setCurrentItemLostRequest({
         description: '',
@@ -304,6 +317,8 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
         claimId: '',
       });
       setUploadedImage(null);
+      }
+      
     } catch (error) {
       console.error('Error submitting the lost item request:', error);
     }
@@ -358,9 +373,9 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
             />
           </Button>
         </Grid>
-        <Grid item xs={6}>
-        <form  className="upload-form"> 
-        <Box flex="1" display="flex" flexDirection="column" alignItems="flex-start">
+            <Grid item xs={6}>
+            <form  className="upload-form"> 
+                  <Box flex="1" display="flex" flexDirection="column" alignItems="flex-start">
                     <TextField
                       label="Search Items"
                       variant="outlined"
@@ -389,58 +404,84 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
                   }}
                 >
                   {results.length > 0 ? (results.map((item, index) => (
-                <Box key={index} position="relative">
-                   <ThumbnailBox onClick={
-                    //() => handleMouseEnter(img, index),
-                    () => handleThumbnailClick(item)
-                   }                     
-                     style={{
-                         border: selectedThumbnail === item.filePath ? '2px solid #2196F3' : 'none', // Highlight selected thumbnail
-                     }}
-                    >
-                  <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
-                </ThumbnailBox>
+                        <Box key={index} position="relative">
+                          <ThumbnailBox onClick={
+                            //() => handleMouseEnter(img, index),
+                            () => handleThumbnailClick(item)
+                          }                     
+                            style={{
+                                border: selectedThumbnail === item.filePath ? '2px solid #2196F3' : 'none', // Highlight selected thumbnail
+                            }}
+                            >
+                          <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                        </ThumbnailBox>
 
-                {/* Hovered Image Popup */}
-                {/* {hoveredImage && hoveredIndex === index && (
-                  <HoveredImagePopup>
-                    <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
-                  </HoveredImagePopup>
-                )} */}
-                 
-                 
-              </Box>
+                        {/* Hovered Image Popup */}
+                        {/* {hoveredImage && hoveredIndex === index && (
+                          <HoveredImagePopup>
+                            <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
+                          </HoveredImagePopup>
+                        )} */}
+                        
+                        
+                      </Box>
               
-            ))) : <Typography>{responseMessage}</Typography>}
-          </Box>
+                ))) : <Typography>{resultResponseMessage}</Typography>}
+              </Box>
 
-          {selectedItemDetails.id && (
-                <Box mt={2}>
-                    <p>Selected Item : {selectedItemDetails.itemDescription}</p>
-                </Box>
-            )}
+                {itemSelected  && ( <Box display={"flex"} >
+                                    <Box mt={2} sx={{
+                                    display: 'flex',
+                                    width: '50%',
+                                    alignItems: 'left',
+                                    justifyContent: 'center',
+                                    fontFamily: 'Lato',
+                                    textAlign: 'center',
+                                    color: '#229954',
+                                    marginLeft: 16,
+                                    
+                                    }}>
+                                    <DoneAllIcon sx={{marginTop:2}} /> <p><b>Selected Item :</b> {selectedItemDetails.itemDescription}</p>
+                                    </Box>                                   
 
-          <Box width="100%" display="flex" justifyContent="center" mt={2}>
-                      <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={handleClaimItem}
-                          disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
-                      >
-                          Claim the Item
-                      </Button>
-                  </Box>
+                                    <Box width="100%" height="40px" display="flex" justifyContent="right" mt={2} sx={{
+                                    display: 'flex',
+                                    width: '50%',
+                                    marginTop: "40px"
+                                    }} >
+                                          <Button
+                                              variant="contained"
+                                              color="primary"
+                                              onClick={handleClaimItem}
+                                              disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
+                                          >
+                                              Claim the Item
+                                          </Button>
+                                      </Box>
+                              </Box>
+                      )}
          </Box>
         </form>
           
         </Grid>
       </Grid>
-      <Snackbar
+      {/* <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={() => setSnackbarOpen(false)}
-        message="Item details submitted!"
-      />
+        message={responseMessage}
+      /> */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        sx={{ ml:'34%',mb: 2 }}
+        >
+        <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
+        {responseMessage}
+        </Alert>
+        </Snackbar>
     </Box>
   );
 }
