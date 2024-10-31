@@ -1,193 +1,65 @@
-// import React, { useState, useEffect } from 'react';
-// import {Table,Box,TableBody,TableCell,TableContainer,TableHead,TableRow,TablePagination,Paper,Typography,Button,} from '@mui/material';
-
-// const ClaimHistory = ({ userClaims = [], isDrawerOpen }) => {
-//   const [claims, setClaims] = useState(userClaims);
-//   const [page, setPage] = useState(0);
-//   const [rowsPerPage, setRowsPerPage] = useState(5);
-//   const [marginLeft, setMarginLeft] = useState(100);
-//   const [marginRight, setMarginRight] = useState(100);
-
-//   // Adjusting the margins when drawer opens or closes
-//   useEffect(() => {
-//     setMarginLeft(isDrawerOpen ? 260 : 100);
-//     setMarginRight(isDrawerOpen ? 50 : 0);
-//   }, [isDrawerOpen]);
-
-//   // Handle pagination page change
-//   const handleChangePage = (event, newPage) => {
-//     setPage(newPage);
-//   };
-
-//   // Handle rows per page change
-//   const handleChangeRowsPerPage = (event) => {
-//     setRowsPerPage(parseInt(event.target.value, 10));
-//     setPage(0);
-//   };
-
-//   useEffect(() => {
-//     const savedClaims = localStorage.getItem('uploadedItems');
-//     if (savedClaims) {
-//       setClaims(JSON.parse(savedClaims));
-//     }
-//   }, []);
-
-//   // Handle status change to "Resolved"
-//   const markAsResolved = (index) => {
-//     const updatedClaims = [...claims];
-//     updatedClaims[index].status = 'Completed'; // Update the status to "Completed"
-//     updatedClaims[index].resolved = true; // Track whether it's resolved
-//     setClaims(updatedClaims);
-//     localStorage.setItem('uploadedItems', JSON.stringify(updatedClaims)); // Update local storage
-//   };
-
-//   // const markAsResolved = (index) => {
-//   //   const updatedClaims = [...claims];
-//   //   updatedClaims[index].resolved = true;
-//   //   setClaims(updatedClaims);
-//   // };
-
-//   return (
-//     <Box sx={{
-//       textAlign: 'center',
-//       mt: 2,
-//       ml: `${marginLeft}px`,
-//       mr: `${marginRight}px`,
-//       transition: 'margin-left 0.3s',
-//     }}>
-//       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-//       <Typography variant="h4" sx={{ textAlign: 'center', marginY: 2 }}>
-//         Claim History
-//       </Typography>
-
-//       <TableContainer component={Paper}>
-//         <Table>
-//           <TableHead>   
-//             <TableRow>
-//               <TableCell>Description</TableCell>
-//               <TableCell>Requested Date</TableCell>
-//               <TableCell>Status</TableCell>
-//               <TableCell>Action</TableCell>
-//             </TableRow>
-//           </TableHead>
-
-//           <TableBody>
-//             {claims
-//               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-//               .map((claim, index) => (
-//                 <TableRow key={index}>
-//                   <TableCell>{claim.itemDescription}</TableCell>
-//                   <TableCell>{claim.identifiedDate}</TableCell>
-//                   <TableCell>{claim.status}</TableCell>
-//                   <TableCell>
-//                   <Button
-//                         variant="contained"
-//                         onClick={() => markAsResolved(index)}
-//                         sx={{
-//                           backgroundColor: claim.resolved ? 'green' : 'grey',
-//                           color: 'white',
-//                         }}
-//                         disabled={claim.resolved}
-//                       >
-//                         {claim.resolved ? 'Resolved' : 'Not Resolved'}
-//                       </Button>
-//                   </TableCell>
-//                 </TableRow>
-//               ))}
-//           </TableBody>
-//         </Table>
-//       </TableContainer>
-
-//       <TablePagination
-//         component="div"
-//         count={claims.length}
-//         page={page}
-//         onPageChange={handleChangePage}
-//         rowsPerPage={rowsPerPage}
-//         onRowsPerPageChange={handleChangeRowsPerPage}
-//       />
-//       </div>
-//     </Box>
-//   );
-// };
-
-// export default ClaimHistory;
-
 import React, { useState, useEffect } from 'react';
-import { Table, Box, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, Typography, Button, } from '@mui/material';
+import { Table, Box, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, Typography, Button } from '@mui/material';
+import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-import ItemLostRequest from './ItemLostRequest';
 
 const ClaimHistory = ({ isDrawerOpen }) => {
-  //const [claims, setClaims] = useState(userClaims);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
   const [itemLostRequests, setItemLostRequests] = useState([]);
-  const [currentItemLostRequest, setCurrentItemLostRequest] = useState({
-    description: '',
-    color: '',
-    size: '',
-    brand: '',
-    model: '',
-    distinguishingFeatures: '',
-    itemCategory: '',
-    serialNumber: '',
-    dateTimeWhenLost: '',
-    location: '',
-    itemValue: '',
-    itemPhoto: '',
-    proofOfOwnership: '',
-    howTheItemLost: '',
-    referenceNumber: '',
-    additionalInformation: '',
-    otherRelevantDetails: ''
-  });
+  const [userName, setUserName] = useState('');
 
-  // Adjusting the margins when drawer opens or closes
+  // Decode token to get the username
+  useEffect(() => {
+    const token = localStorage.getItem('oauth2');
+    if (token) {
+      const decoded = jwtDecode(token);
+      console.log("Decoded token:", decoded); // Debugging to verify token structure
+      setUserName(decoded?.UserName); // Assuming `userName` is part of the token payload
+    }
+  }, []);
+
+  // Adjust margins based on drawer state
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 260 : 100);
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
 
+  // Fetch items and filter based on userName
   useEffect(() => {
     const fetchItemLostRequests = async () => {
+      if (!userName) return; // Only fetch when userName is available
       try {
-        const response = await axios.get('https://localhost:7237/api/LostItemRequest');
-        setItemLostRequests(response.data);
+        const response = await axios.get('http://localhost:5291/api/LostItemRequest');
+        const userClaims = response.data.filter(item => item.createdBy === userName);
+        console.log("Filtered Claims for User:", userClaims); // Debugging statement
+        setItemLostRequests(userClaims);
       } catch (error) {
         console.error('Error fetching item lost requests:', error);
       }
     };
     fetchItemLostRequests();
-  }, []);
+  }, [userName]);
 
-  // Handle pagination page change
+  // Handle pagination
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  // Handle rows per page change
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  // useEffect(() => {
-  //   const savedClaims = localStorage.getItem('uploadedItems');
-  //   if (savedClaims) {
-  //     setClaims(JSON.parse(savedClaims));
-  //   }
-  // }, []);
-
-  // Handle status change to "Resolved"
+  // Mark status as resolved
   const markAsResolved = (index) => {
     const updatedClaims = [...itemLostRequests];
-    updatedClaims[index].status = 'Completed'; // Update the status to "Completed"
-    updatedClaims[index].resolved = true; // Track whether it's resolved
+    updatedClaims[index].status = 'Completed';
+    updatedClaims[index].resolved = true;
     setItemLostRequests(updatedClaims);
-    localStorage.setItem('uploadedItems', JSON.stringify(updatedClaims)); // Update local storage
+    localStorage.setItem('uploadedItems', JSON.stringify(updatedClaims));
   };
 
   return (
@@ -255,4 +127,3 @@ const ClaimHistory = ({ isDrawerOpen }) => {
 };
 
 export default ClaimHistory;
-

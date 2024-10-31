@@ -67,7 +67,7 @@ function Login() {
       return; // Stop the form submission if validation fails
     }
     try {
-      const response = await axios.post(`http://localhost:5241/api/Login?emailId=${email}&password=${password}`);
+      const response = await axios.post(`http://172.17.31.61:5241/api/Login?emailId=${email}&password=${password}`);
       console.log(response);
       if (response.status === 200) {
         localStorage.setItem('oauth2', response.data.token);
@@ -75,7 +75,7 @@ function Login() {
         localStorage.setItem('userRole', response.data.role);
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userData', JSON.stringify({ name: response.data.name, role: response.data.role, email, photo: null }));
-        
+
         // myRole(response.data.role);
         const userRole = response.data.role;
         console.log('User role:', userRole);
