@@ -248,6 +248,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
     } else {
       setResults([]);
       setResultResponseMessage('');
+      setItemSelected(false);
     }
     
   };
@@ -259,6 +260,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
 
   const debouncedSearch = useCallback(
     _.debounce(async (query) => {
+     
       try {
         const response = await fetch(`http://localhost:5005/api/images/search/${query}`, {
           method: 'GET',
@@ -267,11 +269,19 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
         if (response.status === 200) {
           const result = await response.json();
           console.log(result);
-          const filePaths = result.map(item => item.filePath);
+          //const filePaths = result.map(item => item.filePath);
+
+          const filePaths = result.map(item => ({
+            id: item.id,
+            itemDescription: item.itemDescription,
+            filePath: item.filePath
+          })); 
+
           setResults(filePaths || []); 
           setResultResponseMessage(result.message);
         } else {
           setResultResponseMessage('No matching images found');
+          setItemSelected(false);
         }
       } catch (error) {
         console.error('Error during search:', error);
@@ -429,24 +439,24 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
                 ))) : <Typography>{resultResponseMessage}</Typography>}
               </Box>
 
-                {itemSelected  && ( <Box display={"flex"} >
+                {itemSelected  && ( <Box display={"flex"} justifyContent="center"  >
                                     <Box mt={2} sx={{
                                     display: 'flex',
-                                    width: '50%',
+                                    width: 133,
                                     alignItems: 'left',
                                     justifyContent: 'center',
                                     fontFamily: 'Lato',
                                     textAlign: 'center',
                                     color: '#229954',
-                                    marginLeft: 16,
+                                    marginLeft: 20,
                                     
                                     }}>
                                     <DoneAllIcon sx={{marginTop:2}} /> <p><b>Selected Item :</b> {selectedItemDetails.itemDescription}</p>
                                     </Box>                                   
 
-                                    <Box width="100%" height="40px" display="flex" justifyContent="right" mt={2} sx={{
+                                    <Box  height="40px" display="flex" justifyContent="right" mt={2} sx={{
                                     display: 'flex',
-                                    width: '50%',
+                                    width: 230,
                                     marginTop: "40px"
                                     }} >
                                           <Button
@@ -454,6 +464,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
                                               color="primary"
                                               onClick={handleClaimItem}
                                               disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
+                                              width="300px"
                                           >
                                               Claim the Item
                                           </Button>
