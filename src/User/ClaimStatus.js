@@ -32,7 +32,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
   useEffect(() => {
     const fetchClaims = async () => {
       try {
-        const response = await axios.get('http://localhost:5291/api/LostItemRequest');
+        const response = await axios.get('https://localhost:7237/api/LostItemRequest');
         console.log("Fetched claims:", response.data); // Debugging to verify API response data
         const userClaims = response.data.filter(item => item.createdBy === userName);
         console.log("Filtered claims for user:", userClaims); // Debugging to verify filtering
