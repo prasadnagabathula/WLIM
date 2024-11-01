@@ -72,15 +72,15 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                   {/* <CardMedia component="img" height="200" image={item.image} alt="Item" sx={{ objectFit: 'cover' }} /> */}
 
                   <CardMedia>
-                     <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                    <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                   </CardMedia>
                   <CardContent>
                     <Typography variant="h6">{item.itemDescription}</Typography>
-                    <Typography>Description: {item.description}</Typography>
-                    <Typography>Requested By: {item.createdBy}</Typography>
+                    <Typography><b>Description:</b> {item.description}</Typography>
+                    <Typography><b>Requested By:</b> {item.createdBy}</Typography>
                     <Typography>
-                        Requested Date:{" "}
-                        {new Date(item.createdDate).toLocaleString("en-US", {
+                      <b>Requested Date:</b>{" "}
+                      {new Date(item.createdDate).toLocaleString("en-US", {
                         timeZone: "America/New_York",
                         year: "numeric",
                         month: "2-digit",
@@ -89,9 +89,9 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                         minute: "2-digit",
                         second: "2-digit",
                         hour12: false
-                        }).replace(",", "")}
-                        </Typography>
-                    <Typography>Status: {item.status}</Typography>
+                      }).replace(",", "")}
+                    </Typography>
+                    <Typography><b>Status:</b> {item.status}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -113,21 +113,21 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                   </Box>
                   <CardContent sx={{ flex: 2 }}>
                     <Typography variant="h5" gutterBottom>{selectedItem.itemDescription}</Typography>
-                    <Typography>Description: {selectedItem.description}</Typography>
-                    <Typography>Brand: {selectedItem.brand}</Typography>
-                    <Typography>Model: {selectedItem.model}</Typography>
-                    <Typography>Color: {selectedItem.color}</Typography>
-                    <Typography>Serial Number: {selectedItem.serialNumber}</Typography>
-                    <Typography>Requested By: {selectedItem.requestedBy}</Typography>
-                    <Typography>Requested Date: {selectedItem.dateTimeWhenLost}</Typography>
-                    <Typography>Location: {selectedItem.location}</Typography>
-                    <Typography>Status: {selectedItem.status}</Typography>
-                    <Typography>Size: {selectedItem.size}</Typography>
-                    <Typography>Item Category: {selectedItem.itemCategory}</Typography>
-                    <Typography>Value Of the Item: {selectedItem.itemValue}</Typography>
-                    <Typography>Proof Of Ownership: {selectedItem.proofofOwnership}</Typography>
-                    <Typography>How the Item Lost: {selectedItem.howTheItemLost}</Typography>
-                    <Typography>Additional Information: {selectedItem.additionalInformation}</Typography>
+                    <Typography><b>Description:</b> {selectedItem.description}</Typography>
+                    <Typography><b>Brand:</b> {selectedItem.brand}</Typography>
+                    <Typography><b>Model: </b>{selectedItem.model}</Typography>
+                    <Typography><b>Color:</b> {selectedItem.color}</Typography>
+                    <Typography><b>Serial Number:</b> {selectedItem.serialNumber}</Typography>
+                    <Typography><b>Requested By:</b> {selectedItem.requestedBy}</Typography>
+                    <Typography><b>Requested Date:</b> {selectedItem.dateTimeWhenLost}</Typography>
+                    <Typography><b>Location:</b> {selectedItem.location}</Typography>
+                    <Typography><b>Status: </b>{selectedItem.status}</Typography>
+                    <Typography><b>Size: </b>{selectedItem.size}</Typography>
+                    <Typography><b>Item Category:</b> {selectedItem.itemCategory}</Typography>
+                    <Typography><b>Value Of the Item:</b> {selectedItem.itemValue}</Typography>
+                    <Typography><b>Proof Of Ownership:</b> {selectedItem.proofofOwnership}</Typography>
+                    <Typography><b>How the Item Lost:</b> {selectedItem.howTheItemLost}</Typography>
+                    <Typography><b>Additional Information: </b>{selectedItem.additionalInformation}</Typography>
                   </CardContent>
                 </Box>
               </Box>
