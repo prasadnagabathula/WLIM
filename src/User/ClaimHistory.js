@@ -79,10 +79,9 @@ const ClaimHistory = ({ isDrawerOpen }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Description</TableCell>
-                <TableCell>Requested Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell><b>Description</b></TableCell>
+                <TableCell><b>Requested Date</b></TableCell>
+                <TableCell><b>Status</b></TableCell>                
               </TableRow>
             </TableHead>
 
@@ -105,9 +104,8 @@ const ClaimHistory = ({ isDrawerOpen }) => {
                       }).replace(",", "")}
                     </TableCell>
 
-                    <TableCell>{ilr.status}</TableCell>
                     <TableCell>
-                      <Button
+                    <Button
                         variant="contained"
                         onClick={() => markAsResolved(index)}
                         sx={{
@@ -118,6 +116,10 @@ const ClaimHistory = ({ isDrawerOpen }) => {
                       >
                         {ilr.resolved ? 'Resolved' : 'Not Resolved'}
                       </Button>
+
+                    </TableCell>
+                    <TableCell>
+                     
                     </TableCell>
                   </TableRow>
                 ))}

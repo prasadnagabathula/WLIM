@@ -1,29 +1,30 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import axios from 'axios';
 import { Box, Typography, TextField, Button, Grid, Snackbar, Alert } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { height, styled } from '@mui/system';
 import ImageDisplay from '../imageDisplay';
-import _ from 'lodash';
+import _ from 'lodash'; 
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 
 function ItemLostRequest({ isDrawerOpen, userName }) {
   const [marginLeft, setMarginLeft] = useState(100);
   const [itemLostRequests, setItemLostRequests] = useState([]);
 
-  useEffect(() => {
+    useEffect(() => {
     setMarginLeft(isDrawerOpen ? 400 : 100);
   }, [isDrawerOpen]);
 
   const [results, setResults] = useState([]);
+  const [imageTags, setImageTags] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [hoveredImage, setHoveredImage] = useState(null); // To store hovered thumbnail image
   const [hoveredIndex, setHoveredIndex] = useState(null); // Track which thumbnail is hovered
   const [message, setMessage] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [category, setCategory] = useState('');
-  const [tags, setTags] = useState([]);
-  const [itemDescription, setItemDescription] = useState('');
+  const [tags, setTags] = useState();
+  const [itemDescription, setItemDescription] = useState(null);
   const [itemobject, setItemobject] = useState([]);
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [selectedItemDetails, setSelectedItemDetails] = useState({ id: null, itemDescription: '' });
@@ -60,7 +61,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     requestedBy: userName,
   });
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);  
   const [resultResponseMessage, setResultResponseMessage] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
 
@@ -82,9 +83,9 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     setSnackbarOpen(false);
   };
 
-  const analyzeImage = async (imageData) => {
+  const analyzeImage = async (imageData, file) => {
     const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
-
+    
     try {
       const response = await axios.post(apiUrl, imageData, {
         headers: {
@@ -94,19 +95,26 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       });
 
       if (response.status === 200) {
-        {
-          const objects = response.data.objects;
-          const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";
-          const imageTags = response.data.description.tags;
-
-          setCategory(objectCategory);
-          setTags(imageTags);
-          setItemDescription(response.data.description.captions[0].text);
-          searchImage();
-        }
-      } else {
-        console.log('Error analyzing image');
-      }
+      {
+        console.log(response);
+       
+        const imageTags = response.data.description.tags;
+        console.log(imageTags)
+        setImageTags(imageTags);
+        setItemDescription(response.data.description.captions[0].text);
+        const itemDesc = response.data.description.captions[0].text;
+        console.log(response.data.description.captions[0].text);
+         const objects = response.data.objects;
+         const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";
+        // setCategory(objectCategory);
+        // console.log(category);
+        // console.log(tags);
+        // console.log(itemDescription);
+        searchImage(file,imageTags, itemDesc, objectCategory);
+      }  
+    } else {
+      console.log('Error analyzing image');
+    }    
     } catch (error) {
       console.error('Error analyzing image:', error);
     }
@@ -128,10 +136,10 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       boxShadow: '0 6px 12px rgba(0, 0, 0, 0.3)',
     },
     backgroundColor: '#ffffff',
-  }));
+}));
 
-  // Hovered Image Popup (with position fixed for overlay)
-  const HoveredImagePopup = styled(Box)(({ theme }) => ({
+// Hovered Image Popup (with position fixed for overlay)
+const HoveredImagePopup = styled(Box)(({ theme }) => ({
     position: 'absolute', // Ensures the pop-up doesn't scroll with the container
     top: '20px', // Adjust as needed to avoid overlap
     left: '20px', // Adjust as needed for alignment
@@ -144,7 +152,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     zIndex: 1000,
     display: hoveredImage ? 'block' : 'none',
     transition: 'all 0.3s ease',
-  }));
+}));
 
   //setSelectedImageId(item.id);
   useEffect(() => {
@@ -155,33 +163,33 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
   // Function to handle selecting a thumbnail and submitting it via API
   const handleThumbnailClick = async (item) => {
-    console.log(item.filePath);
-    setSelectedThumbnail(item.filePath); // Set the selected image
-    setSelectedItemDetails({ id: item.id, itemDescription: item.itemDescription }); // Capture id and description
-    setItemSelected(true);
+    //console.log(item.filePath);
+      setSelectedThumbnail(item.filePath); // Set the selected image
+      setSelectedItemDetails({ id: item.id, itemDescription: item.itemDescription }); // Capture id and description
+      setItemSelected(true);
+      //setSelectedImageId(item.id);
 
-
-    setCurrentItemLostRequest({
-      description: selectedItemDetails.itemDescription,
-      color: '',
-      size: '',
-      brand: '',
-      model: '',
-      distinguishingFeatures: '',
-      itemCategory: '',
-      serialNumber: '',
-      dateTimeWhenLost: '',
-      location: '',
-      itemValue: '',
-      itemPhoto: '',
-      proofOfOwnership: '',
-      howTheItemLost: '',
-      referenceNumber: '',
-      additionalInformation: '',
-      otherRelevantDetails: '',
-      requestedBy: userName,
-      claimId: selectedItemDetails.id,
-    });
+      setCurrentItemLostRequest({
+        description: selectedItemDetails.itemDescription,
+        color: '',
+        size: '',
+        brand: '',
+        model: '',
+        distinguishingFeatures: '',
+        itemCategory: '',
+        serialNumber: '',
+        dateTimeWhenLost: '',
+        location: '',
+        itemValue: '',
+        itemPhoto: '',
+        proofOfOwnership: '',
+        howTheItemLost: '',
+        referenceNumber: '',
+        additionalInformation: '',
+        otherRelevantDetails: '',
+        requestedBy: userName,
+        claimId: selectedItemDetails.id,
+      });
 
   };
 
@@ -190,7 +198,9 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     setResults([]);
     setItemSelected(false);
     setSelectedItemDetails({ id: null, itemDescription: '' });
+    console.log(e);
     const file = e.target.files[0];
+    //console.log(file);
     if (file) {
       setSelectedFile(file);
       const reader = new FileReader();
@@ -198,46 +208,46 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         const imageUrl = URL.createObjectURL(file);
         setUploadedImage(imageUrl);
         const arrayBuffer = reader.result;
-        analyzeImage(arrayBuffer);
+        analyzeImage(arrayBuffer,file);
       };
       reader.readAsArrayBuffer(file);
     }
   };
 
-  const searchImage = () => {
+  const searchImage =  (file, imgTags, itemDesc, category) => {
     //setResults([]);   
     const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('category', category);
-    formData.append('tags', tags);
-    formData.append('itemDescription', itemDescription);
+    formData.append('file', file);
+    formData.append('category', category); 
+    formData.append('tags', imgTags); 
+    formData.append('itemDescription', itemDesc); 
     try {
-      axios.post('http://localhost:5005/api/search', formData, {
-        headers: {
+    axios.post('http://localhost:5005/api/search', formData,{
+      headers: {
           'Content-Type': 'multipart/form-data'
         }
-      })
-        .then((response) => {
-          console.log(response)
+       })
+       .then ((response) => {
+        //console.log(response)
 
-          if (response.status === 200) {
-            setResults([]);
-            setResultResponseMessage('');
-            const filePaths = response.data.filesMatched.map(item => ({
-              id: item.id,
-              itemDescription: item.itemDescription,
-              filePath: item.filePath
-            }));
-            setResults(filePaths);
-          } else {
-            setMessage('No items found');
-
-          }
-        });
-
-    } catch (error) {
-      console.error("Error occurred while searching:", error);
-    };
+      if (response.status === 200) {
+        setResults([]);
+        setResultResponseMessage('');
+              const filePaths = response.data.filesMatched.map(item => ({
+                  id: item.id,
+                  itemDescription: item.itemDescription,
+                  filePath: item.filePath
+                }));       
+              setResults(filePaths);
+            } else {
+              setMessage('No items found');
+            
+             }
+    });
+  
+        } catch (error) {
+                console.error("Error occurred while searching:", error);
+            };           
   };
 
 
@@ -258,7 +268,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       setResultResponseMessage('');
       setItemSelected(false);
     }
-
+    
   };
 
   const handleMouseEnter = (image, index) => {
@@ -276,9 +286,16 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
         if (response.status === 200) {
           const result = await response.json();
-          console.log(result);
-          const filePaths = result.map(item => item.filePath);
-          setResults(filePaths || []);
+          //console.log(result);
+          //const filePaths = result.map(item => item.filePath);
+
+          const filePaths = result.map(item => ({
+            id: item.id,
+            itemDescription: item.itemDescription,
+            filePath: item.filePath
+          })); 
+
+          setResults(filePaths || []); 
           setResultResponseMessage(result.message);
         } else {
           setResultResponseMessage('No matching images found');
@@ -301,35 +318,35 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         setItemSelected(false);
         setSelectedItemDetails({ id: null, itemDescription: '' });
         setSeverity('success');
-        setResults([]);
+        setResults([]); 
         setResponseMessage(response.data.message);
         setSnackbarOpen(true);
         setItemLostRequests((prevRequests) => [...prevRequests, currentItemLostRequest]);
-        // Reset form
-        setCurrentItemLostRequest({
-          description: '',
-          color: '',
-          size: '',
-          brand: '',
-          model: '',
-          distinguishingFeatures: '',
-          itemCategory: '',
-          serialNumber: '',
-          dateTimeWhenLost: '',
-          location: '',
-          itemValue: '',
-          itemPhoto: '',
-          proofOfOwnership: '',
-          howTheItemLost: '',
-          referenceNumber: '',
-          additionalInformation: '',
-          otherRelevantDetails: '',
-          requestedBy: userName,
-          claimId: '',
-        });
-        setUploadedImage(null);
+      // Reset form
+      setCurrentItemLostRequest({
+        description: '',
+        color: '',
+        size: '',
+        brand: '',
+        model: '',
+        distinguishingFeatures: '',
+        itemCategory: '',
+        serialNumber: '',
+        dateTimeWhenLost: '',
+        location: '',
+        itemValue: '',
+        itemPhoto: '',
+        proofOfOwnership: '',
+        howTheItemLost: '',
+        referenceNumber: '',
+        additionalInformation: '',
+        otherRelevantDetails: '',
+        requestedBy: userName,
+        claimId: '',
+      });
+      setUploadedImage(null);
       }
-
+      
     } catch (error) {
       console.error('Error submitting the lost item request:', error);
     }
@@ -376,9 +393,9 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
               },
             }}
           >
-            {!uploadedImage && 'Upload Lost Item Photo'}
+            {!uploadedImage && 'Search by Photo'}
             <input
-              id="upload-image"
+            id="upload-image"
               type="file"
               accept="image/*"
               style={{ display: 'none' }}
@@ -391,10 +408,10 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         <Box>
 
           <form className="upload-form">
-            <Box flex="1" display="flex" flexDirection="column" alignItems="flex-start">
+            <Box flex="1" display="flex" flexDirection="column" alignItems="flex-start" maxWidth={750} maxHeight={650}>
               <TextField
-                label="Search Items"
-                variant="outlined"
+                label="Search"
+                variant="outlined"                
                 fullWidth
                 value={searchText}
                 onChange={handleSearchChange}
@@ -432,53 +449,49 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
                       <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                     </ThumbnailBox>
 
-                    {/* Hovered Image Popup */}
-                    {/* {hoveredImage && hoveredIndex === index && (
+                        {/* Hovered Image Popup */}
+                        {/* {hoveredImage && hoveredIndex === index && (
                           <HoveredImagePopup>
                             <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
                           </HoveredImagePopup>
                         )} */}
-
-
-                  </Box>
-
+                        
+                        
+                      </Box>
+              
                 ))) : <Typography>{resultResponseMessage}</Typography>}
               </Box>
 
-              {itemSelected && (<Box sx={{
-                display: 'flex',
-                flexDirection: 'column'
-              }} >
-                <Box mt={2} sx={{
-                  display: 'flex',
-                  // width: '50%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: 'Lato',
-                  textAlign: 'center',
-                  color: '#229954',
-                  // marginLeft: 16,
+                {itemSelected  && ( <Box display={"flex"} justifyContent="center"  >
+                                    <Box mt={2} sx={{
+                                    display: 'flex',
+                                    width: 133,
+                                    alignItems: 'left',
+                                    justifyContent: 'center',
+                                    fontFamily: 'Lato',
+                                    textAlign: 'center',
+                                    color: '#229954',
+                                    marginLeft: 20,
+                                    
+                                    }}>
+                                    <DoneAllIcon sx={{marginTop:2}} /> <p><b>Selected Item :</b> {selectedItemDetails.itemDescription}</p>
+                                    </Box>                                   
 
-                }}>
-                  <DoneAllIcon /> <p><b>Selected Item :</b> {selectedItemDetails.itemDescription}</p>
-                </Box>
-
-                <Box width="100%" height="40px" display="flex" justifyContent="right" sx={{
-                  display: 'flex',
-                  // width: '50%',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  // marginTop: "40px"
-                }} >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleClaimItem}
-                    disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
-                  >
-                    Claim the Item
-                  </Button>
-                </Box>
+                                    <Box  height="40px" display="flex" justifyContent="right" mt={2} sx={{
+                                    display: 'flex',
+                                    width: 230,
+                                    marginTop: "40px"
+                                    }} >
+                                          <Button
+                                              variant="contained"
+                                              color="primary"
+                                              onClick={handleClaimItem}
+                                              disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
+                                              width="300px"
+                                          >
+                                              Claim the Item
+                                          </Button>
+                                      </Box>
               </Box>
               )}
             </Box>
@@ -499,12 +512,12 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        sx={{ ml: '34%', mb: 2 }}
-      >
+        sx={{ ml:'34%',mb: 2 }}
+        >
         <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
-          {responseMessage}
+        {responseMessage}
         </Alert>
-      </Snackbar>
+        </Snackbar>
     </Box>
   );
 }

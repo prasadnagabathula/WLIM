@@ -3,7 +3,7 @@ import axios from 'axios';
 import Header from './header'; // Assuming you have a header component
 import Footer from './footer'; // Assuming you have a footer component
 import './uploadPhotos.css'; // Add any custom styles here
-import { Button,Grid,Alert, Snackbar, Typography, Box} from '@mui/material';
+import { Button,Grid,Alert, Snackbar, Typography, Box, TextField} from '@mui/material';
 import { fontFamily, styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -20,6 +20,7 @@ const UploadPhotos = ({isDrawerOpen}) => {
 
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
+  const [comments, setComments] = useState('');
 
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 300 : 100);
@@ -203,7 +204,20 @@ const UploadPhotos = ({isDrawerOpen}) => {
                   hidden
                   onChange={handleFileChange}
                 />
+
+<Box >
+                <TextField
+                  label="Comments"
+                  variant="outlined"
+                  fullWidth
+                  value={comments}
+                  onChange={(e) => setComments(e.target.value)}
+                />
+                </Box>
                 <Box display="flex" gap={3} justifyContent="center" alignItems="center" marginTop={4}>
+
+                
+
                   <Button type="submit" variant="outlined" color="primary" disabled={isDisabled}>
                     {isDisabled ? "Getting image properties, wait..." : "Upload"}
                   </Button>

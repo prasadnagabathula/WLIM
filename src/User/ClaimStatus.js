@@ -3,6 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from '../Components/AuthService'; // Assuming your auth service file is named authService.js
+import ImageDisplay from '../imageDisplay';
 
 const ClaimStatus = ({ isDrawerOpen }) => {
   const [marginLeft, setMarginLeft] = useState(100);
@@ -36,6 +37,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
         console.log("Fetched claims:", response.data); // Debugging to verify API response data
         const userClaims = response.data.filter(item => item.createdBy === userName);
         console.log("Filtered claims for user:", userClaims); // Debugging to verify filtering
+        console.log(userClaims);
         setUploadedItems(userClaims);
       } catch (error) {
         console.error('Error fetching claims:', error);
@@ -67,12 +69,28 @@ const ClaimStatus = ({ isDrawerOpen }) => {
             {uploadedItems.map((item, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card sx={{ cursor: 'pointer', boxShadow: 3 }} onClick={() => handleCardClick(item)}>
-                  <CardMedia component="img" height="200" image={item.image} alt="Item" sx={{ objectFit: 'cover' }} />
+                  {/* <CardMedia component="img" height="200" image={item.image} alt="Item" sx={{ objectFit: 'cover' }} /> */}
+
+                  <CardMedia>
+                     <ImageDisplay imageId={item.image} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                  </CardMedia>
                   <CardContent>
                     <Typography variant="h6">{item.itemDescription}</Typography>
                     <Typography>Description: {item.description}</Typography>
                     <Typography>Requested By: {item.createdBy}</Typography>
-                    <Typography>Requested Date: {item.createdDate}</Typography>
+                    <Typography>
+                        Requested Date:{" "}
+                        {new Date(item.createdDate).toLocaleString("en-US", {
+                        timeZone: "America/New_York",
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false
+                        }).replace(",", "")}
+                        </Typography>
                     <Typography>Status: {item.status}</Typography>
                   </CardContent>
                 </Card>
