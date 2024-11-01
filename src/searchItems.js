@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Header from './header'; // Assuming you have a header component
 import Footer from './footer'; // Assuming you have a footer component
-import './uploadPhotos.css'; // Add any custom styles here
+import './Admin/uploadPhotos.css'; // Add any custom styles here
 import { Button, Typography, Box, TextField,Grid, Paper, Divider } from '@mui/material';
 import { styled } from '@mui/system';
 import ImageDisplay from './imageDisplay';

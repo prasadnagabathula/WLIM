@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from './header'; // Assuming you have a header component
 import Footer from './footer'; // Assuming you have a footer component
-import './uploadPhotos.css'; // Add any custom styles here
+import './Admin/uploadPhotos.css'; // Add any custom styles here
 import {Button,  Typography, Box} from '@mui/material';
 import { styled } from '@mui/system';
 import ImageDisplay from './imageDisplay';

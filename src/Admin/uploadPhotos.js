@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Header from './header'; // Assuming you have a header component
-import Footer from './footer'; // Assuming you have a footer component
+//import Header from './header'; // Assuming you have a header component
+//import Footer from './footer'; // Assuming you have a footer component
 import './uploadPhotos.css'; // Add any custom styles here
 import { Button,Grid,Alert, Snackbar, Typography, Box, TextField} from '@mui/material';
 import { fontFamily, styled } from '@mui/system';

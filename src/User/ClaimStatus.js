@@ -4,6 +4,7 @@ import { Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Con
 import CloseIcon from '@mui/icons-material/Close';
 import axios from '../Components/AuthService'; // Assuming your auth service file is named authService.js
 import ImageDisplay from '../imageDisplay';
+import DateFormat from '../Components/DateFormat'; 
 
 const ClaimStatus = ({ isDrawerOpen }) => {
   const [marginLeft, setMarginLeft] = useState(100);
@@ -79,17 +80,8 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                     <Typography><b>Description:</b> {item.description}</Typography>
                     <Typography><b>Requested By:</b> {item.createdBy}</Typography>
                     <Typography>
-                      <b>Requested Date:</b>{" "}
-                      {new Date(item.createdDate).toLocaleString("en-US", {
-                        timeZone: "America/New_York",
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: false
-                      }).replace(",", "")}
+                      <b>Requested Date:</b>{" "}                    
+                      <DateFormat date={item.createdDate} />
                     </Typography>
                     <Typography><b>Status:</b> {item.status}</Typography>
                   </CardContent>
