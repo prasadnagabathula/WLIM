@@ -14,6 +14,7 @@ const UploadPhotos = ({isDrawerOpen}) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [category, setCategory] = useState(null);
   const [tags, setTags] = useState([]);
+  const [itemDescription, setItemDescription] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [severity, setSeverity] = useState('success');
@@ -78,12 +79,17 @@ const UploadPhotos = ({isDrawerOpen}) => {
           'Content-Type': 'application/octet-stream',
         },
       });
+
+      const imageTags = response.data.description.tags;      
+      setTags(imageTags);
+
+      const itemDesc = response.data.description.captions[0].text;
+      setItemDescription(itemDesc);
+
       const objects = response.data.objects;
       const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";
       setCategory(objectCategory);
-
-      const imageTags = response.data.description.tags;
-      setTags(imageTags);
+      
       setIsDisabled(false);
     } catch (error) {
       console.error('Error analyzing image:', error);
@@ -122,6 +128,8 @@ const UploadPhotos = ({isDrawerOpen}) => {
     formData.append('file', selectedFile);
     formData.append('category', category); 
     formData.append('tags', tags); 
+    formData.append('itemDescription', itemDescription); 
+    formData.append('comments', comments); 
 
     try {
       const response = await axios.post('http://localhost:5005/api/upload', formData,{
@@ -136,6 +144,7 @@ const UploadPhotos = ({isDrawerOpen}) => {
         setSelectedImage(null); // Clear the uploaded image
         setCategory('');
         setTags([]);
+        setComments('');
       } else {
         setMessage('Failed to upload image');
         setSeverity('error');

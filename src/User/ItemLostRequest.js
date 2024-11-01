@@ -96,20 +96,12 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
       if (response.status === 200) {
       {
-        console.log(response);
-       
         const imageTags = response.data.description.tags;
-        console.log(imageTags)
         setImageTags(imageTags);
         setItemDescription(response.data.description.captions[0].text);
         const itemDesc = response.data.description.captions[0].text;
-        console.log(response.data.description.captions[0].text);
          const objects = response.data.objects;
-         const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";
-        // setCategory(objectCategory);
-        // console.log(category);
-        // console.log(tags);
-        // console.log(itemDescription);
+         const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";        
         searchImage(file,imageTags, itemDesc, objectCategory);
       }  
     } else {

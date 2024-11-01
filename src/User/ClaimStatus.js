@@ -72,7 +72,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                   {/* <CardMedia component="img" height="200" image={item.image} alt="Item" sx={{ objectFit: 'cover' }} /> */}
 
                   <CardMedia>
-                     <ImageDisplay imageId={item.image} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                     <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                   </CardMedia>
                   <CardContent>
                     <Typography variant="h6">{item.itemDescription}</Typography>
