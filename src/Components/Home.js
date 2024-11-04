@@ -222,7 +222,7 @@ const userClaims = [
       <Collapse in={openUploadMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
               <List component="div" disablePadding sx={{color:'#fff'}}>
                   <ListItem button component={Link} to="Identified Items" onClick={handleClose}>
-                      <ListItemText primary="Create"  sx={{color:'#fff'}}  />
+                      <ListItemText primary="Upload"  sx={{color:'#fff'}}  />
                   </ListItem>
                   <ListItem button component={Link} to="Identified Items/View" onClick={handleClose}>
                       <ListItemText primary="View"  sx={{color:'#fff'}} />
