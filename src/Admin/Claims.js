@@ -151,34 +151,14 @@ function Claims({isDrawerOpen }) {
   const [similarItemOpen, setSimilarItemOpen] = useState(false);
   const [selectedSimilarItem, setSelectedSimilarItem] = useState(null);
 
-//   const handleItemClick = (request) => {
-//     onCardClick(request); // Pass the selected request to Home
-// };
-
 const navigate = useNavigate();
-
-// const handleCardClick = (request) => {
-//   const relatedImages = getRelatedImages(); 
-//   navigate('/itemdetails', { state: { selectedRequest: request, relatedImages: relatedImages } });
-// };
-
-
-// const getRelatedImages = () => {
-//   if (!selectedRequest) return [];
-//   const { Color, ItemCategory, Brand } = selectedRequest;
-
-//   return allRelatedImages.filter(image =>
-//     image.Color.toLowerCase() === Color.toLowerCase() ||
-//     image.ItemCategory.toLowerCase() === ItemCategory.toLowerCase() ||
-//     image.Brand.toLowerCase() === Brand.toLowerCase()
-//   );
-// };
 
 const [claimRequests, setClaimRequests] = useState(staticClaimRequests);
 
 const handleCardClick = (request) => {
   const relatedImages = getRelatedImages(request);
-  navigate('/itemdetails', { state: { selectedRequest: request, relatedImages } });
+  // navigate('./itemdetails', { state: { selectedRequest: request, relatedImages } });
+  navigate('../Item Details', { state: { selectedRequest: request, relatedImages } });
 };
 
 const getRelatedImages = (request) => {
@@ -189,17 +169,6 @@ const getRelatedImages = (request) => {
     image.Brand.toLowerCase() === Brand.toLowerCase()
   );
 };
-
-  // const handleCardClick = (request) => {
-  //   navigate('/itemdetails', { state: { selectedRequest: request, relatedImages } });
-  // };
-
-  // const filteredClaims = claimRequests.filter(request => {
-  //   return (
-  //     request.Description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     request.claimedBy.toLowerCase().includes(searchQuery.toLowerCase())
-  //   );
-  // });
 
   useEffect(() => {
     const fetchClaimRequests = async () => {
@@ -291,140 +260,6 @@ const getRelatedImages = (request) => {
             </Grid>
           ))}
         </Grid>
-
-       {/* Main Item Modal */}
-      {/* <Modal open={open} onClose={handleClose}>
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          }}>
-            {selectedRequest && (
-              <Box sx={{
-                bgcolor: 'white',
-                borderRadius: '8px',
-                padding: '20px',
-                maxWidth: '800px',
-                width: '100%',
-                boxShadow: 24,
-                position: 'relative',
-              }}>
-                <IconButton onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
-                  <CloseIcon />
-                </IconButton>
-                <Typography variant="h5" gutterBottom>{selectedRequest.Description}</Typography>
-                <Typography variant="h6">Claimed By: {selectedRequest.claimedBy}</Typography> 
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
-                    <CardMedia
-                      component="img"
-                      height="300"
-                      image={selectedRequest.ItemPhoto}
-                      alt="Item"
-                      sx={{ borderRadius: '8px' }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Typography variant="h6">Details</Typography>
-                    <Typography><strong>Color:</strong> {selectedRequest.Color}</Typography>
-                    <Typography><strong>Size:</strong> {selectedRequest.Size}</Typography>
-                    <Typography><strong>Brand:</strong> {selectedRequest.Brand}</Typography>
-                    <Typography><strong>Model:</strong> {selectedRequest.Model}</Typography>
-                    <Typography><strong>Distinguishing Features:</strong> {selectedRequest.DistinguishingFeatures}</Typography>
-                    <Typography><strong>Item Category:</strong> {selectedRequest.ItemCategory}</Typography>
-                    <Typography><strong>Serial Number:</strong> {selectedRequest.SerialNumber}</Typography>
-                    <Typography><strong>Date When Lost:</strong> {new Date(selectedRequest.DateTimeWhenLost).toLocaleString()}</Typography>
-                    <Typography><strong>Location:</strong> {selectedRequest.Location}</Typography>
-                    <Typography><strong>Item Value:</strong> ${selectedRequest.ItemValue.toFixed(2)}</Typography>
-                    <Typography><strong>Proof of Ownership:</strong> {selectedRequest.ProofofOwnership}</Typography>
-                    <Typography><strong>How the Item Lost:</strong> {selectedRequest.HowtheItemLost}</Typography>
-                    <Typography><strong>Reference Number:</strong> {selectedRequest.ReferenceNumber}</Typography>
-                    <Typography><strong>Additional Information:</strong> {selectedRequest.AdditionalInformation}</Typography>
-                    <Typography><strong>Other Relevant Details:</strong> {selectedRequest.OtherRelevantDetails}</Typography>
-                  </Grid>
-                </Grid>
-
-                <Typography variant="h6" sx={{ marginTop: '20px' }}>Matched Items</Typography>
-                <Box sx={{ display: 'flex', overflowX: 'auto', marginTop: '10px' }}>
-                  {getRelatedImages().map(image => (
-                    <Card
-                      key={image.id}
-                      onClick={() => handleSimilarItemClick(image)}
-                      sx={{ minWidth: '120px', marginRight: '10px', cursor: 'pointer' }}
-                    >
-                      <CardMedia
-                        component="img"
-                        height="100"
-                        image={image.ItemPhoto}
-                        alt={`Related ${image.id}`}
-                      />
-                    </Card>
-                  ))}
-                </Box>
-              </Box>
-            )}
-          </Box>
-        </Modal> */}
-
-        {/* Similar Item Modal */}
-       {/* <Modal open={similarItemOpen} onClose={handleClose}>
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          }}>
-            {selectedSimilarItem && (
-              <Box sx={{
-                bgcolor: 'white',
-                borderRadius: '8px',
-                padding: '20px',
-                maxWidth: '800px',
-                width: '100%',
-                boxShadow: 24,
-                position: 'relative',
-              }}>
-                <IconButton onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
-                  <CloseIcon />
-                </IconButton>
-                <Typography variant="h5" gutterBottom>{selectedSimilarItem.Description}</Typography>
-                <Typography variant="h6">Claimed By: {selectedSimilarItem.claimedBy}</Typography> 
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
-                    <CardMedia
-                      component="img"
-                      height="300"
-                      image={selectedSimilarItem.ItemPhoto}
-                      alt="Item"
-                      sx={{ borderRadius: '8px' }}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                  <Typography variant="h6">Details</Typography>
-                    <Typography><strong>Color:</strong> {selectedSimilarItem.Color}</Typography>
-                    <Typography><strong>Size:</strong> {selectedSimilarItem.Size}</Typography>
-                    <Typography><strong>Brand:</strong> {selectedSimilarItem.Brand}</Typography>
-                    <Typography><strong>Model:</strong> {selectedSimilarItem.Model}</Typography>
-                    <Typography><strong>Distinguishing Features:</strong> {selectedSimilarItem.DistinguishingFeatures}</Typography>
-                    <Typography><strong>Item Category:</strong> {selectedSimilarItem.ItemCategory}</Typography>
-                    <Typography><strong>Serial Number:</strong> {selectedSimilarItem.SerialNumber}</Typography>
-                    <Typography><strong>Date When Lost:</strong> {new Date(selectedSimilarItem.DateTimeWhenLost).toLocaleString()}</Typography>
-                    <Typography><strong>Location:</strong> {selectedSimilarItem.Location}</Typography>
-                    <Typography><strong>Item Value:</strong> ${selectedSimilarItem.ItemValue.toFixed(2)}</Typography>
-                    <Typography><strong>Proof of Ownership:</strong> {selectedSimilarItem.ProofofOwnership}</Typography>
-                    <Typography><strong>How the Item Lost:</strong> {selectedSimilarItem.HowtheItemLost}</Typography>
-                    <Typography><strong>Reference Number:</strong> {selectedSimilarItem.ReferenceNumber}</Typography>
-                    <Typography><strong>Additional Information:</strong> {selectedSimilarItem.AdditionalInformation}</Typography>
-                    <Typography><strong>Other Relevant Details:</strong> {selectedSimilarItem.OtherRelevantDetails}</Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-            )}
-          </Box>
-        </Modal>*/}
       </div>
     </Box>  
     </div>
