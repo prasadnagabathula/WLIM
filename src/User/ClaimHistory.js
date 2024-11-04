@@ -89,11 +89,11 @@ const ClaimHistory = ({ isDrawerOpen }) => {
             <TableBody>
               {itemLostRequests
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((ilr, index) => (
+                .map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell>{ilr.description}</TableCell>
+                    <TableCell>{item.description}</TableCell>
                     <TableCell>
-                      <DateFormat date={ilr.createdDate} />
+                      <DateFormat date={item.createdDate} />
                     </TableCell>
 
                     <TableCell>
@@ -101,12 +101,12 @@ const ClaimHistory = ({ isDrawerOpen }) => {
                         variant="contained"
                         onClick={() => markAsResolved(index)}
                         sx={{
-                          backgroundColor: ilr.resolved ? 'green' : 'grey',
-                          color: 'white',
+                          backgroundColor: item.isActive ? 'green !important' : 'grey !important',
+                          color: item.isActive ? 'white' : 'black',
                         }}
-                        disabled={ilr.resolved}
+                        disabled={item.isActive}
                       >
-                        {ilr.resolved ? 'Resolved' : 'Not Resolved'}
+                        {item.isActive ? 'Resolved' : 'Not Resolved'}
                       </Button>
 
                     </TableCell>

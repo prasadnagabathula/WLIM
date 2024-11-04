@@ -66,29 +66,28 @@ const ClaimStatus = ({ isDrawerOpen }) => {
         {uploadedItems.length === 0 ? (
           <Typography>No claims submitted yet.</Typography>
         ) : (
-          <Grid container spacing={3} justifyContent="center">
-            {uploadedItems.map((item, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card sx={{ cursor: 'pointer', boxShadow: 3 }} onClick={() => handleCardClick(item)}>
-                  {/* <CardMedia component="img" height="200" image={item.image} alt="Item" sx={{ objectFit: 'cover' }} /> */}
+          <Grid container spacing={3} justifyContent="flex-start">
+  {uploadedItems.map((item, index) => (
+    <Grid item xs={12} sm={6} md={4} key={index}>
+      <Card sx={{ cursor: 'pointer', boxShadow: 3 }} onClick={() => handleCardClick(item)}>
+        <CardMedia>
+          <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
+        </CardMedia>
+        <CardContent>
+          {/* <Typography variant="h6" textAlign="left">{item.itemDescription}</Typography> */}
+          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
+          {/* <Typography sx={{ textAlign: 'left', margin: '0px 10px'}}><b>Requested By:</b> {item.createdBy}</Typography>
+          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
+            <b>Requested Date:</b>{" "}
+            <DateFormat date={item.createdDate} />
+          </Typography> */}
+          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Resolved' : 'Not Resolved'}</Typography>
+        </CardContent>
+      </Card>
+    </Grid>
+  ))}
+</Grid>
 
-                  <CardMedia>
-                    <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
-                  </CardMedia>
-                  <CardContent>
-                    <Typography variant="h6">{item.itemDescription}</Typography>
-                    <Typography><b>Description:</b> {item.description}</Typography>
-                    <Typography><b>Requested By:</b> {item.createdBy}</Typography>
-                    <Typography>
-                      <b>Requested Date:</b>{" "}                    
-                      <DateFormat date={item.createdDate} />
-                    </Typography>
-                    <Typography><b>Status:</b> {item.status}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
         )}
 
         {/* Modal for item details */}
@@ -101,25 +100,25 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                 </Button>
                 <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                   <Box sx={{ flex: 1 }}>
-                    <img src={selectedItem.image} alt="Uploaded" style={{ width: '100%', height: 'auto', borderRadius: '10px' }} />
+                    <ImageDisplay imageId={selectedItem.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
                   </Box>
                   <CardContent sx={{ flex: 2 }}>
                     <Typography variant="h5" gutterBottom>{selectedItem.itemDescription}</Typography>
                     <Typography><b>Description:</b> {selectedItem.description}</Typography>
-                    <Typography><b>Brand:</b> {selectedItem.brand}</Typography>
+                    <Typography><b>Item Category:</b> {selectedItem.itemCategory}</Typography>
+                    {/* <Typography><b>Brand:</b> {selectedItem.brand}</Typography>
                     <Typography><b>Model: </b>{selectedItem.model}</Typography>
                     <Typography><b>Color:</b> {selectedItem.color}</Typography>
-                    <Typography><b>Serial Number:</b> {selectedItem.serialNumber}</Typography>
-                    <Typography><b>Requested By:</b> {selectedItem.requestedBy}</Typography>
-                    <Typography><b>Requested Date:</b> {selectedItem.dateTimeWhenLost}</Typography>
-                    <Typography><b>Location:</b> {selectedItem.location}</Typography>
-                    <Typography><b>Status: </b>{selectedItem.status}</Typography>
-                    <Typography><b>Size: </b>{selectedItem.size}</Typography>
-                    <Typography><b>Item Category:</b> {selectedItem.itemCategory}</Typography>
-                    <Typography><b>Value Of the Item:</b> {selectedItem.itemValue}</Typography>
-                    <Typography><b>Proof Of Ownership:</b> {selectedItem.proofofOwnership}</Typography>
-                    <Typography><b>How the Item Lost:</b> {selectedItem.howTheItemLost}</Typography>
-                    <Typography><b>Additional Information: </b>{selectedItem.additionalInformation}</Typography>
+                    <Typography><b>Serial Number:</b> {selectedItem.serialNumber}</Typography> */}
+                    <Typography><b>Requested By:</b> {selectedItem.createdBy}</Typography>
+                    <Typography><b>Requested Date:</b><DateFormat date={selectedItem.createdDate} /></Typography>
+                    {/* <Typography><b>Location:</b> {selectedItem.location}</Typography> */}
+                    <Typography><b>Status: </b>{selectedItem.isActive ? 'Resolved' : 'Not Resolved'}</Typography>
+                    {/* <Typography><b>Size: </b>{selectedItem.size}</Typography> */}
+                    {/* <Typography><b>Value Of the Item:</b> {selectedItem.itemValue}</Typography> */}
+                    {/* <Typography><b>Proof Of Ownership:</b> {selectedItem.proofofOwnership}</Typography> */}
+                    {/* <Typography><b>How the Item Lost:</b> {selectedItem.howTheItemLost}</Typography> */}
+                    {/* <Typography><b>Additional Information: </b>{selectedItem.additionalInformation}</Typography> */}
                   </CardContent>
                 </Box>
               </Box>
