@@ -1,13 +1,13 @@
 import React, { useState, useEffect,useCallback } from 'react';
 import axios from 'axios';
-import { Box, Typography, TextField, Button, Grid, Snackbar, Alert } from '@mui/material';
+import { Box, Dialog, DialogActions, AlertDialog,DialogContent, DialogTitle, Typography, TextField, Button, Grid, Snackbar, Alert } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { height, styled } from '@mui/system';
 import ImageDisplay from '../imageDisplay';
 import _ from 'lodash'; 
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 
-function ItemLostRequest({ isDrawerOpen, userName }) {
+function ItemLostRequest({ isDrawerOpen, userName}) {
   const [marginLeft, setMarginLeft] = useState(100);
   const [itemLostRequests, setItemLostRequests] = useState([]);
 
@@ -363,8 +363,8 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
             fullWidth
             startIcon={!uploadedImage && <CloudUploadIcon />}
             sx={{
-              width: '300px',
-              height: '300px',
+              width: '250px',
+              height: '250px',
               border: '2px dashed #888',
               borderRadius: '10px',
               display: 'flex',
@@ -376,7 +376,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               cursor: 'pointer',
-              marginTop: '100px',
+              marginTop: '10px',
               marginBottom: '20px',
               color: 'black',
               transition: 'all 0.3s ease-in-out',
@@ -400,28 +400,29 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
         <Box>
 
           <form className="upload-form">
-            <Box flex="1" display="flex" flexDirection="column" alignItems="flex-start" maxWidth={750} maxHeight={650}>
+            <Box flex="1" display="flex" flexDirection="column" alignItems="flex-start" width={550} height={650}>
               <TextField
                 label="Search"
                 variant="outlined"                
                 fullWidth
                 value={searchText}
                 onChange={handleSearchChange}
-                style={{ marginBottom: '20px' }}
+                style={{ marginBottom: '20px', marginTop: '10px' }}
               />
               <Box
                 display="flex"
                 flexWrap="wrap"
                 justifyContent="center"
                 sx={{
-                  maxHeight: '500px',
+                  backgroundColor: '#eee',
+                  maxHeight: '270px',
                   overflowY: 'auto',
                   '&::-webkit-scrollbar': {
                     width: '5px',
                   },
                   '&::-webkit-scrollbar-thumb': {
-                    backgroundColor: 'black',
-                    borderRadius: '5px',
+                    backgroundColor: '#0d416b',
+                    borderRadius: '4px',
                   },
                   '&::-webkit-scrollbar-track': {
                     backgroundColor: 'lightgrey',
@@ -454,62 +455,60 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
                 ))) : <Typography>{resultResponseMessage}</Typography>}
               </Box>
 
-                {itemSelected  && ( <Box display={"flex"} justifyContent="center"  >
-                                    <Box mt={2} sx={{
-                                    display: 'flex',
-                                    width: 133,
-                                    alignItems: 'left',
-                                    justifyContent: 'center',
-                                    fontFamily: 'Lato',
-                                    textAlign: 'center',
-                                    color: '#229954',
-                                    marginLeft: 20,
-                                    
-                                    }}>
-                                    <DoneAllIcon sx={{marginTop:2}} /> <p><b>Selected Item :</b> {selectedItemDetails.itemDescription}</p>
-                                    </Box>                                   
-
-                                    <Box  height="40px" display="flex" justifyContent="right" mt={2} sx={{
-                                    display: 'flex',
-                                    width: 230,
-                                    marginTop: "40px"
-                                    }} >
-                                          <Button
-                                              variant="contained"
-                                              color="primary"
-                                              onClick={handleClaimItem}
-                                              disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
-                                              width="300px"
-                                          >
-                                              Claim the Item
-                                          </Button>
-                                      </Box>
+                {itemSelected  && ( <Box sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  width: '100%', 
+                  mt: 2
+                }}  >
+                  <Box sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontFamily: 'Lato',
+                  color: '#229954',
+                  
+                  }}>
+                    <DoneAllIcon /> <p><b>Selected Item :</b> {selectedItemDetails.itemDescription}</p>
+                  </Box>                                   
+                  <Box  height="40px" sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '100%',
+                  mt: 2
+                  }} >
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleClaimItem}
+                        disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
+                        width="300px"
+                    >
+                        Claim the Item
+                    </Button>
+                  </Box>
               </Box>
               )}
             </Box>
           </form>
         </Box>
       </Box>
-
-      {/* </Grid> */}
-      {/* </Grid> */}
-      {/* <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-        message={responseMessage}
-      /> */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        sx={{ ml:'34%',mb: 2 }}
-        >
-        <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
-        {responseMessage}
-        </Alert>
-        </Snackbar>
+      <Dialog 
+      open={snackbarOpen} 
+      onClose={handleCloseSnackbar} maxWidth="lg" 
+      fullWidth 
+      sx={{ width: '400px', marginLeft:'550px' }}>
+        <DialogTitle>Alert</DialogTitle>
+        <DialogContent>
+          <Alert severity={severity}>{responseMessage}</Alert>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseSnackbar} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
