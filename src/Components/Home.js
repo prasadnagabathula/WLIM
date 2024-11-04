@@ -31,18 +31,6 @@ function Home() {
     const [username, setUsername] = useState('')
 
     const [uploadedItems, setUploadedItems] = useState([]);
-    // const [uploadedData, setUploadedData] = useState([]);
-
-    // useEffect(() => {
-    //   const storedItems = JSON.parse(localStorage.getItem('uploadedData'));
-    //   if (storedItems) {
-    //     setUploadedData(storedItems);
-    //   }
-    // }, []);
-  
-    // useEffect(() => {
-    //   localStorage.setItem('uploadedData', JSON.stringify(uploadedData));
-    // }, [uploadedData]);
 
   const handleRequestSubmit = (newRequest) => {
     setUploadedItems((prev) => [...prev, newRequest]);
