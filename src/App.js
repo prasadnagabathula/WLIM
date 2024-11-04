@@ -32,7 +32,7 @@ function App() {
         <Route path="/upload" element={<UploadPhotos />} />
         <Route path="/search" element={<SearchPhotos />} />
         <Route path="/items" element={<SearchItems />} />
-        <Route path="/itemdetails" element={<ItemDetails />} />
+        {/* <Route path="/itemdetails" element={<ItemDetails />} /> */}
         <Route path="/profile" element={<Profile />} />    
       </Routes>
     </Router>
