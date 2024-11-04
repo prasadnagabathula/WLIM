@@ -1,271 +1,211 @@
 import React, { useEffect, useState } from 'react';
-import {Box,Accordion,AccordionSummary,AccordionDetails,IconButton,TextField,InputAdornment, Card,CardContent, CardMedia,Typography,Modal,Grid,Button,} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import { TextField, MenuItem, Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import axios from '../Components/AuthService'; // Assuming your auth service file is named AuthService.js
+import ImageDisplay from '../imageDisplay';
+import DateFormat from '../Components/DateFormat';
+import { useNavigate } from 'react-router-dom';
 
-const staticClaimRequests = [  
-  {
-    id: 1,
-    claimedBy: "John Doe",
-    Description: "Black leather wallet lost",
-    Color: "Black",
-    Size: "N/A",
-    Brand: "Gucci",
-    Model: "Marmont",
-    DistinguishingFeatures: "Minor scratches",
-    ItemCategory: "Wallet",
-    SerialNumber: "1234567890",
-    DateTimeWhenLost: "2024-10-20T10:30:00",
-    Location: "Main Street, City Center",
-    ItemValue: 150.00,
-    ItemPhoto: "/gucci.jfif", 
-    ProofofOwnership: "Receipt",
-    HowtheItemLost: "Left on the bus",
-    ReferenceNumber: "REF12345",
-    AdditionalInformation: "Contact for more details",
-    OtherRelevantDetails: "N/A",
-  },
-  {
-    id: 2,
-    claimedBy: "Lily",
-    Description: "Red backpack lost",
-    Color: "Red",
-    Size: "Medium",
-    Brand: "Nike",
-    Model: "Air",
-    DistinguishingFeatures: "Zipper broken",
-    ItemCategory: "Backpack",
-    SerialNumber: "0987654321",
-    DateTimeWhenLost: "2024-10-19T14:00:00",
-    Location: "City Park",
-    ItemValue: 75.00,
-    ItemPhoto: "/nike.jfif", 
-    ProofofOwnership: "None",
-    HowtheItemLost: "Forgot in the park",
-    ReferenceNumber: "REF54321",
-    AdditionalInformation: "Call if found",
-    OtherRelevantDetails: "N/A",
-  },
-];
+const Claims = ({ isDrawerOpen }) => {
+  const [marginLeft, setMarginLeft] = useState(100);
+  const [marginRight, setMarginRight] = useState(100);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItemId, setSelectedItemId] = useState('');
+  const [selectedItemDesc, setSelectedItemDesc] = useState('');
+  const [uploadedItems, setUploadedItems] = useState([]);
+  const [userName, setUserName] = useState('');
+  const [status, setStatus] = useState('');
+  const [comments, setComments] = useState('');
+  const navigate = useNavigate();
+  const [currentClaimReq, setCurrentCliamReq] = useState({
+    isActive: '',
+    additionalInformation: ''
+  });
 
-
-const allRelatedImages = [
-  {
-    id: 1,
-    claimedBy: "Harry",
-    Description: "Levis Red sling bag",
-    Color: "Red",
-    Size: "N/A",
-    Brand: "Levis",
-    Model: "N/A",
-    DistinguishingFeatures: "Minor scratches",
-    ItemCategory: "Bags",
-    SerialNumber: "1234567890",
-    DateTimeWhenLost: "2024-10-20T10:30:00",
-    Location: "Main Street, City Center",
-    ItemValue: 150.00,
-    ItemPhoto: "/related1.jfif", 
-    ProofofOwnership: "Receipt",
-    HowtheItemLost: "Left on the bus",
-    ReferenceNumber: "REF12345",
-    AdditionalInformation: "Contact for more details",
-    OtherRelevantDetails: "N/A",
-  },
-  {
-    id: 2,
-    claimedBy: "Sonia",
-    Description: "Black backpack",
-    Color: "Black",
-    Size: "Medium",
-    Brand: "Skybags",
-    Model: "Air",
-    DistinguishingFeatures: "Zipper broken",
-    ItemCategory: "Backpack",
-    SerialNumber: "0987654321",
-    DateTimeWhenLost: "2024-10-19T14:00:00",
-    Location: "City Park",
-    ItemValue: 75.00,
-    ItemPhoto: "/related2.jfif", 
-    ProofofOwnership: "None",
-    HowtheItemLost: "Forgot in the park",
-    ReferenceNumber: "REF54321",
-    AdditionalInformation: "Call if found",
-    OtherRelevantDetails: "N/A",
-  },
-  {
-    id: 3,
-    claimedBy: "Charles",
-    Description: "Grey leather wallet lost",
-    Color: "Grey",
-    Size: "N/A",
-    Brand: "Gucci",
-    Model: "Marmont",
-    DistinguishingFeatures: "Minor scratches",
-    ItemCategory: "Wallet",
-    SerialNumber: "1234567890",
-    DateTimeWhenLost: "2024-10-20T10:30:00",
-    Location: "Main Street, City Center",
-    ItemValue: 150.00,
-    ItemPhoto: "/related3.jfif", 
-    ProofofOwnership: "Receipt",
-    HowtheItemLost: "Left on the bus",
-    ReferenceNumber: "REF12345",
-    AdditionalInformation: "Contact for more details",
-    OtherRelevantDetails: "N/A",
-  },
-  {
-    id: 4,
-    claimedBy: "Selena",
-    Description: "Black wallet lost",
-    Color: "Black",
-    Size: "Small",
-    Brand: "Mat&Harbour",
-    Model: "Air",
-    DistinguishingFeatures: "Worn out",
-    ItemCategory: "Wallet",
-    SerialNumber: "0987654321",
-    DateTimeWhenLost: "2024-10-19T14:00:00",
-    Location: "City Park",
-    ItemValue: 75.00,
-    ItemPhoto: "/related4.jfif", 
-    ProofofOwnership: "None",
-    HowtheItemLost: "Forgot in the park",
-    ReferenceNumber: "REF54321",
-    AdditionalInformation: "Call if found",
-    OtherRelevantDetails: "N/A",
-  },
-  // { id: 1, image: '/related1.jfif', color: 'Red', category: 'Bag', brand: 'Lavie', image: '/related1.jfif', description:'Red shiny bag'  },
-  // { id: 2, image: '/related2.jfif', color: 'Black', category: 'Backpack', brand: 'SkyBags', image: '/related2.jfif', description:'Black backpack'  },
-  // { id: 3, image: '/related3.jfif', color: 'Grey', category: 'Wallet', brand: 'Gucci', image: '/related3.jfif', description:'Gucci wallet'  },
-  // { id: 4, image: '/related4.jfif', color: 'Black', category: 'Wallet', brand: 'Mast&Harbour', image: '/related4.jfif', description:'Black wallet'  },
-];
-
-function Claims({isDrawerOpen }) {
-
-  // const [claimRequests, setClaimRequests] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [similarItemOpen, setSimilarItemOpen] = useState(false);
-  const [selectedSimilarItem, setSelectedSimilarItem] = useState(null);
-
-const navigate = useNavigate();
-
-const [claimRequests, setClaimRequests] = useState(staticClaimRequests);
-
-const handleCardClick = (request) => {
-  const relatedImages = getRelatedImages(request);
-  // navigate('./itemdetails', { state: { selectedRequest: request, relatedImages } });
-  navigate('../Item Details', { state: { selectedRequest: request, relatedImages } });
-};
-
-const getRelatedImages = (request) => {
-  const { Color, ItemCategory, Brand } = request;
-  return allRelatedImages.filter(image =>
-    image.Color.toLowerCase() === Color.toLowerCase() ||
-    image.ItemCategory.toLowerCase() === ItemCategory.toLowerCase() ||
-    image.Brand.toLowerCase() === Brand.toLowerCase()
-  );
-};
-
+  // Decode token to get the username
   useEffect(() => {
-    const fetchClaimRequests = async () => {
-      const response = await fetch('/api/claim-requests');
-      const data = await response.json();
-      setClaimRequests(data);
-    };
-    fetchClaimRequests();
+    const token = localStorage.getItem('oauth2');
+    if (token) {
+      const decoded = jwtDecode(token);
+      console.log("Decoded token:", decoded); // Debugging to verify token structure
+      setUserName(decoded?.UserName); // Assuming `userName` is part of the token payload
+    }
   }, []);
 
-  // const handleCardClick = (request) => {
-  //   setSelectedRequest(request);
-  //   setOpen(true);
+  // Adjust margins based on drawer state
+  useEffect(() => {
+    setMarginLeft(isDrawerOpen ? 400 : 100);
+    setMarginRight(isDrawerOpen ? 50 : 0);
+  }, [isDrawerOpen]);
+
+  // Fetch claims from the API and filter them based on `userName`
+  useEffect(() => {
+    const fetchClaims = async () => {
+      try {
+        const response = await axios.get('https://localhost:7237/api/LostItemRequest');
+        console.log("Fetched claims:", response.data);
+        const userClaims = response.data;
+        console.log("User claims:", userClaims);
+        setUploadedItems(userClaims);
+      } catch (error) {
+        console.error('Error fetching claims:', error);
+      }
+    };
+    if (userName) fetchClaims(); // Fetch claims only if `userName` is set
+  }, [userName]);
+
+  // const handleSubmit = async () => {
+  //   if (currentClaimReq.id) {
+  //     try {
+  //       const response = await axios.put(`https://localhost:7237/api/LostItemrequest/${currentClaimReq.id}`, {
+  //         isActive: status === 'Pending',
+  //         additionalInformation: comments
+  //       });
+  //       console.log('Updated claim:', response.data);
+  //       alert('Form submitted successfully!');
+  //       handleClose(); // Close modal after submitting
+  //     } catch (error) {
+  //       console.error('Error updating claim:', error);
+  //     }
+  //   }
   // };
+  const handleSubmit = async () => {
+    console.log('Submit button clicked');
+    console.log('Current Claim ID:', selectedItemId);
+    console.log('isActive:', status === 'Pending');
+    console.log('Comments:', comments);
+    console.log('Description:', selectedItemDesc);
+    const selectedClaim = {
+      id: selectedItemId,
+      isActive: status === 'Pending',
+      additionalInformation: comments,
+      description: selectedItemDesc
+    };
 
-  const handleClose = () => {
-    setOpen(false);
-    setSelectedRequest(null);
-
-    setSimilarItemOpen(false);
-    setSelectedSimilarItem(null);
+    if (selectedItemId) {
+      try {
+        const response = await axios.put(`https://localhost:7237/api/LostItemRequest/${selectedItemId}`, selectedClaim);
+        console.log('Updated claim:', response.data);
+        alert('Form submitted successfully!');
+        handleClose(); // Close modal after submitting
+      } catch (error) {
+        console.error('Error updating claim:', error);
+      }
+    } else {
+      console.log('Claim ID is not defined');
+    }
   };
 
 
-  // const [page, setPage] = useState(0);
-  // const [rowsPerPage, setRowsPerPage] = useState(5);
-  // const [searchQuery, setSearchQuery] = useState(''); 
+  const handleStatusChange = (event) => {
+    const newStatus = event.target.value;
+    setStatus(newStatus);
+    setCurrentCliamReq((prev) => ({
+      ...prev,
+      isActive: newStatus === 'Pending'
+    }));
+  };
 
+  const handleCardClick = (item) => {
+    setSelectedItem(item);
+    setSelectedItemId(item.id);
+    setSelectedItemDesc(item.description);
+    setStatus(item.isActive ? 'Pending' : 'Resolved');
+    setOpenModal(true);
+  };
 
-  const [marginLeft, setMarginLeft] = useState(100); 
-  const [marginRight, setMarginRight] = useState(100); 
-
-    useEffect(() => {
-      // Adjust margin dynamically based on drawer state
-      setMarginLeft(isDrawerOpen ? 240 : 0);
-      setMarginRight(isDrawerOpen ? 0 : 0); 
-    }, [isDrawerOpen]);
+  const handleClose = () => {
+    setOpenModal(false);
+    setSelectedItem(null);
+    setComments('');
+  };
 
   return (
-    <div>
-      <Box  sx={{
-      textAlign: 'center',
-      mt: 2,
-      ml: `${marginLeft}px`,
-      mr:`${marginRight}px`,
-      transition: 'margin-left 0.3s', 
-    }}>
-      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <Box sx={{ textAlign: 'center', mt: 2, ml: `${marginLeft}px`, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
+      <Container>
         <Typography variant="h4" gutterBottom>
           Claim Requests
         </Typography>
-        <div style={{ display: 'flex', marginBottom: '20px', width: '100%' }}>
-            <TextField
-                label="Search"
-                variant="outlined"
-                value={searchQuery}  
-                onChange={(e) => setSearchQuery(e.target.value)}
-                InputProps={{
-                    endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton edge="end">
-                                <SearchIcon />
-                            </IconButton>
-                        </InputAdornment>
-                    ),
-                }}
-                style={{ flexGrow: 1, marginRight: '10px',color:'#0d416b' }}
-            />
-        </div>
-        <Grid container spacing={2}>
-          {/* {staticClaimRequests.map((request) => ( */}
-          {claimRequests.map((request) => (
-            <Grid item xs={12} sm={6} md={4} key={request.id}>
-              <Card onClick={() => handleCardClick(request)} sx={{ cursor: 'pointer' }}>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={request.ItemPhoto}
-                  alt="Item"
-                  sx={{objectFit:'contain'}}
-                />
-                <CardContent>
-                  <Typography variant="h6">{request.Description}</Typography>
-                  <Typography color="text.secondary">Claimed By: {request.claimedBy}</Typography> 
-                  <Typography color="text.secondary">Claimed Date: {new Date(request.DateTimeWhenLost).toLocaleDateString()}</Typography>
-                  <Typography color="text.secondary">Status: Pending</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </div>
-    </Box>  
-    </div>
+        {uploadedItems.length === 0 ? (
+          <Typography>No claims submitted yet.</Typography>
+        ) : (
+          <Grid container spacing={3} justifyContent="flex-start">
+            {uploadedItems.map((item, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card sx={{ cursor: 'pointer', boxShadow: 3 }} onClick={() => handleCardClick(item)}>
+                  <CardMedia>
+                    <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
+                  </CardMedia>
+                  <CardContent>
+                    <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
+                    <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Pending' : 'Resolved'}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
 
-  )
-}
+        {/* Modal for item details */}
+        <Modal open={openModal} onClose={handleClose}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+            {selectedItem && (
+              <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width: '100%', boxShadow: 24, position: 'relative' }}>
+                <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
+                  <CloseIcon />
+                </Button>
+                <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                  <Box sx={{ flex: 1 }}>
+                    <ImageDisplay imageId={selectedItem.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
+                  </Box>
+                  <CardContent sx={{ flex: 2 }}>
+                    <Typography variant="h5" gutterBottom>{selectedItem.itemDescription}</Typography>
+                    <Typography><b>Description:</b> {selectedItem.description}</Typography>
+                    <Typography><b>Item Category:</b> {selectedItem.itemCategory}</Typography>
+                    <Typography><b>Requested By:</b> {selectedItem.createdBy}</Typography>
+                    <Typography><b>Requested Date:</b><DateFormat date={selectedItem.createdDate} /></Typography>
+                    <TextField
+                      select
+                      label="Status"
+                      value={status}
+                      onChange={handleStatusChange}
+                      fullWidth
+                      sx={{ mt: 4 }}
+                    >
+                      {['Pending', 'Resolved'].map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                    <TextField
+                      label="Comments"
+                      multiline
+                      rows={2}
+                      fullWidth
+                      value={comments}
+                      onChange={(e) => setComments(e.target.value)}
+                      sx={{ mt: 3 }}
+                    />
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, mt: 5 }}>
+                      <Button variant="contained" color="primary" onClick={handleSubmit}>
+                        Submit
+                      </Button>
+                      <Button variant="outlined" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Box>
+              </Box>
+            )}
+          </Box>
+        </Modal>
+      </Container>
+    </Box>
+  );
+};
 
-export default Claims
- 
+export default Claims;
