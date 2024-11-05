@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Box, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, Typography, Button } from '@mui/material';
+import { Table, Box, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, Typography, Button, TableSortLabel } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-import DateFormat from '../Components/DateFormat'; 
+import DateFormat from '../Components/DateFormat';
 
 const ClaimHistory = ({ isDrawerOpen }) => {
   const [page, setPage] = useState(0);
@@ -11,6 +11,8 @@ const ClaimHistory = ({ isDrawerOpen }) => {
   const [marginRight, setMarginRight] = useState(100);
   const [itemLostRequests, setItemLostRequests] = useState([]);
   const [userName, setUserName] = useState('');
+  const [order, setOrder] = useState('desc'); // Order of sorting: 'asc' or 'desc'
+  const [orderBy, setOrderBy] = useState('createdDate'); // Column to sort by
 
   // Decode token to get the username
   useEffect(() => {
@@ -43,6 +45,32 @@ const ClaimHistory = ({ isDrawerOpen }) => {
     };
     fetchItemLostRequests();
   }, [userName]);
+
+  const handleSort = (property) => {
+    const isDesc = orderBy === property && order === 'desc';
+    setOrder(isDesc ? 'asc' : 'desc');
+    setOrderBy(property);
+  };
+
+  const sortedCliamHistory = [...itemLostRequests].sort((a, b) => {
+    const valueA = a[orderBy] || '';
+    const valueB = b[orderBy] || '';
+
+    if (typeof valueA === 'string' && typeof valueB === 'string') {
+      return order === 'desc'
+        ? valueB.localeCompare(valueA)
+        : valueA.localeCompare(valueB);
+    } else if (valueA instanceof Date && valueB instanceof Date) {
+      return order === 'desc'
+        ? valueB - valueA
+        : valueA - valueB;
+    } else {
+      return order === 'desc'
+        ? (valueA > valueB ? 1 : -1)
+        : (valueB > valueA ? 1 : -1);
+    }
+  });
+
 
   // Handle pagination
   const handleChangePage = (event, newPage) => {
@@ -80,14 +108,38 @@ const ClaimHistory = ({ isDrawerOpen }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell><b>Description</b></TableCell>
-                <TableCell><b>Requested Date</b></TableCell>
-                <TableCell><b>Status</b></TableCell>                
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'description'}
+                    direction={orderBy === 'description' ? order : 'desc'}
+                    onClick={() => handleSort('description')}
+                  >
+                    <b>Description</b>
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'createdDate'}
+                    direction={orderBy === 'createdDate' ? order : 'desc'}
+                    onClick={() => handleSort('createdDate')}
+                  >
+                    <b>Requested Date</b>
+                  </TableSortLabel>
+                </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={orderBy === 'isActive'}
+                    direction={orderBy === 'isActive' ? order : 'desc'}
+                    onClick={() => handleSort('isActive')}
+                  >
+                    <b>Status</b>
+                  </TableSortLabel>
+                </TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {itemLostRequests
+              {sortedCliamHistory
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((item, index) => (
                   <TableRow key={index}>
@@ -97,7 +149,7 @@ const ClaimHistory = ({ isDrawerOpen }) => {
                     </TableCell>
 
                     <TableCell>
-                    <Button
+                      <Button
                         variant="contained"
                         onClick={() => markAsResolved(index)}                        
                         sx={{
@@ -112,7 +164,7 @@ const ClaimHistory = ({ isDrawerOpen }) => {
 
                     </TableCell>
                     <TableCell>
-                     
+
                     </TableCell>
                   </TableRow>
                 ))}

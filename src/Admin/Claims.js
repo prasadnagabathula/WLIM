@@ -19,16 +19,13 @@ const Claims = ({ isDrawerOpen }) => {
   const [status, setStatus] = useState('');
   const [comments, setComments] = useState('');
   const navigate = useNavigate();
-  const [message, setMessage] = useState('');
-  
+  const [message, setMessage] = useState('');  
   const [severity, setSeverity] = useState('success');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [currentClaimReq, setCurrentCliamReq] = useState({
     isActive: '',
     additionalInformation: ''
   });
-
-
 
   // Decode token to get the username
   useEffect(() => {
@@ -93,6 +90,8 @@ const Claims = ({ isDrawerOpen }) => {
     if (selectedItemId) {
       try {
         const response = await axios.put(`https://localhost:7237/api/LostItemRequest/${selectedItemId}`, selectedClaim);
+        console.log('Updated claim:', response.data);
+        alert('Form submitted successfully!');
         if (response.status === 200) {
           setMessage('Image uploaded successfully!');
           setSeverity('success');
