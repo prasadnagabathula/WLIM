@@ -21,6 +21,7 @@ function Login() {
   const validatePassword = (password) => {
     return password.length >= 3; // Password must be at least 6 characters
   };
+  
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
     // Remove the error when user starts typing

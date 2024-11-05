@@ -409,6 +409,12 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
                 onChange={handleSearchChange}
                 style={{ marginBottom: '20px', marginTop: '10px' }}
               />
+              {/* Display results count */}
+              {searchText && (
+                <Typography variant="body2" color="textSecondary" style={{ marginBottom: '20px', color:'#89023e' }}>
+                  {results.length > 0 ? `Showing ${results.length} result${results.length > 1 ? 's' : ''}` : 'No results found'}
+                </Typography>
+              )}
               <Box
                 display="flex"
                 flexWrap="wrap"
