@@ -73,26 +73,26 @@ const [hoveredIndex, setHoveredIndex] = useState(null); // Track which thumbnail
     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
     '&:hover': {
-      transform: 'scale(1.05)',
+      transform: 'scale(1.5)',
       boxShadow: '0 6px 12px rgba(0, 0, 0, 0.3)',
     },
     backgroundColor: '#ffffff',
 }));
 
-const HoveredImagePopup = styled(Box)(({ theme }) => ({
-  position: 'relative', // Ensures the pop-up doesn't scroll with the container
-  bottom: '15px', // Adjust as needed to avoid overlap
-  rigth: '25px', // Adjust as needed for alignment
-  width: '200px',
-  height: '200px',
-  backgroundColor: '#ffffff',
-  borderRadius: '15px',
-  border: '2px solid #2196F3',
-  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-  zIndex: 1000,
-  display: hoveredImage ? 'block' : 'none',
-  transition: 'all 0.3s ease',
-  }));
+// const HoveredImagePopup = styled(Box)(({ theme }) => ({
+//   position: 'relative', // Ensures the pop-up doesn't scroll with the container
+//   top: '0px', // Adjust as needed to avoid overlap
+//   left: '20px', // Adjust as needed for alignment
+//   width: '200px',
+//   height: '200px',
+//   backgroundColor: '#ffffff',
+//   borderRadius: '15px',
+//   border: '2px solid #2196F3',
+//   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+//   zIndex: 1000,
+//   display: hoveredImage ? 'block' : 'none',
+//   transition: 'all 0.3s ease',
+//   }));
 
 
   // Helper function to safely convert a value to lowercase
@@ -167,11 +167,11 @@ const filteredData = uploadedData.filter((item) =>
                         >
                           <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                         </ThumbnailBox>
-                        {hoveredImage && hoveredIndex === index && (
+                        {/* {hoveredImage && hoveredIndex === index && (
                           <HoveredImagePopup>
                           <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
                           </HoveredImagePopup>
-                          )}
+                          )} */}
                     </TableCell>
                     <TableCell>{item.itemDescription}</TableCell>
                     <TableCell>{item.category}</TableCell>
