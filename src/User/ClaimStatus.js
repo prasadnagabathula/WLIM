@@ -81,7 +81,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
             <b>Requested Date:</b>{" "}
             <DateFormat date={item.createdDate} />
           </Typography> */}
-          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Resolved' : 'Not Resolved'}</Typography>
+          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Resolved' : 'Pending'}</Typography>
         </CardContent>
       </Card>
     </Grid>
@@ -110,10 +110,10 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                     <Typography><b>Model: </b>{selectedItem.model}</Typography>
                     <Typography><b>Color:</b> {selectedItem.color}</Typography>
                     <Typography><b>Serial Number:</b> {selectedItem.serialNumber}</Typography> */}
-                    <Typography><b>Requested By:</b> {selectedItem.createdBy}</Typography>
+                    {/* <Typography><b>Requested By:</b> {selectedItem.createdBy}</Typography> */}
                     <Typography><b>Requested Date:</b><DateFormat date={selectedItem.createdDate} /></Typography>
                     {/* <Typography><b>Location:</b> {selectedItem.location}</Typography> */}
-                    <Typography><b>Status: </b>{selectedItem.isActive ? 'Resolved' : 'Not Resolved'}</Typography>
+                    <Typography><b>Status: </b>{selectedItem.isActive ? 'Resolved' : 'Pending'}</Typography>
                     {/* <Typography><b>Size: </b>{selectedItem.size}</Typography> */}
                     {/* <Typography><b>Value Of the Item:</b> {selectedItem.itemValue}</Typography> */}
                     {/* <Typography><b>Proof Of Ownership:</b> {selectedItem.proofofOwnership}</Typography> */}

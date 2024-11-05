@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { TextField, MenuItem, Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container } from '@mui/material';
+import { TextField, MenuItem, Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container,Alert, Snackbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from '../Components/AuthService'; // Assuming your auth service file is named AuthService.js
 import ImageDisplay from '../imageDisplay';
@@ -19,6 +19,9 @@ const Claims = ({ isDrawerOpen }) => {
   const [status, setStatus] = useState('');
   const [comments, setComments] = useState('');
   const navigate = useNavigate();
+  const [message, setMessage] = useState('');  
+  const [severity, setSeverity] = useState('success');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [currentClaimReq, setCurrentCliamReq] = useState({
     isActive: '',
     additionalInformation: ''
@@ -89,6 +92,12 @@ const Claims = ({ isDrawerOpen }) => {
         const response = await axios.put(`https://localhost:7237/api/LostItemRequest/${selectedItemId}`, selectedClaim);
         console.log('Updated claim:', response.data);
         alert('Form submitted successfully!');
+        if (response.status === 200) {
+          setMessage('Image uploaded successfully!');
+          setSeverity('success');
+        }
+        // console.log('Updated claim:', response.data);
+        // alert('Form submitted successfully!');
         handleClose(); // Close modal after submitting
       } catch (error) {
         console.error('Error updating claim:', error);
@@ -98,6 +107,9 @@ const Claims = ({ isDrawerOpen }) => {
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
   const handleStatusChange = (event) => {
     const newStatus = event.target.value;
@@ -201,6 +213,17 @@ const Claims = ({ isDrawerOpen }) => {
                 </Box>
               </Box>
             )}
+            <Snackbar
+              open={snackbarOpen}
+              autoHideDuration={6000}
+              onClose={handleCloseSnackbar}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              sx={{ mb:2 }}
+            >
+              <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
+                {message}
+              </Alert>
+            </Snackbar>
           </Box>
         </Modal>
       </Container>

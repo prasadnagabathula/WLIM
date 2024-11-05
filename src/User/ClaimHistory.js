@@ -151,14 +151,15 @@ const ClaimHistory = ({ isDrawerOpen }) => {
                     <TableCell>
                       <Button
                         variant="contained"
-                        onClick={() => markAsResolved(index)}
+                        onClick={() => markAsResolved(index)}                        
                         sx={{
                           backgroundColor: item.isActive ? 'green !important' : 'grey !important',
-                          color: item.isActive ? 'white' : 'black',
+                          color: item.isActive ? 'white !important' : 'black !important',
+                          width:'150px'
                         }}
                         disabled={item.isActive}
                       >
-                        {item.isActive ? 'Resolved' : 'Not Resolved'}
+                        {item.isActive ? 'Resolved' : 'Pending'}
                       </Button>
 
                     </TableCell>

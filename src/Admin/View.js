@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, InputAdornment, IconButton, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, CircularProgress, TableSortLabel } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import DateFormat from '../Components/DateFormat';
+import { styled } from '@mui/system';
+import ImageDisplay from '../imageDisplay';
 
 function View({ isDrawerOpen }) {
   const [page, setPage] = useState(0);
@@ -15,6 +17,9 @@ function View({ isDrawerOpen }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [order, setOrder] = useState('desc'); // Order of sorting: 'asc' or 'desc'
   const [orderBy, setOrderBy] = useState('createdDate');
+  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+  const [hoveredImage, setHoveredImage] = useState(null); // To store hovered thumbnail image
+  const [hoveredIndex, setHoveredIndex] = useState(null); // Track which thumbnail is hovered
 
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 240 : 0);
@@ -32,7 +37,7 @@ function View({ isDrawerOpen }) {
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
-        const data = await response.json();
+        const data = await response.json();        
         setUploadedData(data); // Store the API response in the state
         setLoading(false); // Set loading to false once data is fetched
       } catch (err) {
@@ -43,7 +48,6 @@ function View({ isDrawerOpen }) {
 
     fetchUploadedItems(); // Call the API fetching function
   }, []);
-
 
   const handleSort = (property) => {
     const isDesc = orderBy === property && order === 'desc';
@@ -69,7 +73,7 @@ function View({ isDrawerOpen }) {
         : (valueB > valueA ? 1 : -1);
     }
   });
-
+  
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -78,6 +82,44 @@ function View({ isDrawerOpen }) {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const handleThumbnailClick = (image, index) => {
+    setHoveredImage(image);
+    setHoveredIndex(index); // Set the index to track hovered thumbnail
+    };
+
+  const ThumbnailBox = styled(Box)(({ theme }) => ({
+    position: 'relative',
+    width: '100px',
+    height: '100px',
+    margin: '10px',
+    borderRadius: '15px',
+    overflow: 'hidden',
+    cursor: 'pointer',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    '&:hover': {
+      transform: 'scale(1.5)',
+      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.3)',
+    },
+    backgroundColor: '#ffffff',
+}));
+
+// const HoveredImagePopup = styled(Box)(({ theme }) => ({
+//   position: 'relative', // Ensures the pop-up doesn't scroll with the container
+//   top: '0px', // Adjust as needed to avoid overlap
+//   left: '20px', // Adjust as needed for alignment
+//   width: '200px',
+//   height: '200px',
+//   backgroundColor: '#ffffff',
+//   borderRadius: '15px',
+//   border: '2px solid #2196F3',
+//   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+//   zIndex: 1000,
+//   display: hoveredImage ? 'block' : 'none',
+//   transition: 'all 0.3s ease',
+//   }));
+
 
   // Helper function to safely convert a value to lowercase
   const safeToLowerCase = (value) => (value ? value.toString().toLowerCase() : '');
@@ -129,6 +171,7 @@ function View({ isDrawerOpen }) {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell><b>Item Photo</b></TableCell>
                   <TableCell>
                     <TableSortLabel
                           active={orderBy === 'itemDescription'}
@@ -184,11 +227,26 @@ function View({ isDrawerOpen }) {
                     </TableSortLabel>
                   </TableCell>
                 </TableRow>
-
               </TableHead>
               <TableBody>
                 {filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item, index) => (
                   <TableRow key={index}>
+                    <TableCell>
+                          <ThumbnailBox onClick={
+                          () => handleThumbnailClick(item.filePath, index)                         
+                        }
+                          style={{
+                            border: selectedThumbnail === item.filePath ? '2px solid #2196F3' : 'none', // Highlight selected thumbnail
+                          }}
+                        >
+                          <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                        </ThumbnailBox>
+                        {/* {hoveredImage && hoveredIndex === index && (
+                          <HoveredImagePopup>
+                          <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
+                          </HoveredImagePopup>
+                          )} */}
+                    </TableCell>
                     <TableCell>{item.itemDescription}</TableCell>
                     <TableCell>{item.category}</TableCell>
                     <TableCell>{item.tags}</TableCell>

@@ -190,6 +190,7 @@ const UploadPhotos = ({isDrawerOpen}) => {
                       borderRadius: '8px',
                       padding: '20px',
                       cursor: 'pointer',
+                      margin:'20px 60px',
                     }}
                   >
                     {selectedImage ? (
@@ -218,8 +219,8 @@ const UploadPhotos = ({isDrawerOpen}) => {
                 <TextField
                   label="Comments"
                   variant="outlined"
-                  fullWidth
                   value={comments}
+                  style={{ width: '450px'}}                  
                   onChange={(e) => setComments(e.target.value)}
                 />
                 </Box>
