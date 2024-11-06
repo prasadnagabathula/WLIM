@@ -11,9 +11,9 @@ function ItemLostRequest({ isDrawerOpen, userName}) {
   const [marginLeft, setMarginLeft] = useState(100);
   const [itemLostRequests, setItemLostRequests] = useState([]);
 
-    useEffect(() => {
-    setMarginLeft(isDrawerOpen ? 400 : 100);
-  }, [isDrawerOpen]);
+  //   useEffect(() => {
+  //   setMarginLeft(isDrawerOpen ? 400 : 100);
+  // }, [isDrawerOpen]);
 
   const [results, setResults] = useState([]);
   const [imageTags, setImageTags] = useState([]);
@@ -148,7 +148,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
 
   //setSelectedImageId(item.id);
   useEffect(() => {
-    setMarginLeft(isDrawerOpen ? 260 : 250);
+    setMarginLeft(isDrawerOpen ? 260 : 0);
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
 
@@ -346,17 +346,22 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
   };
 
   return (
-    <Box sx={{ textAlign: 'center', mt: 2, ml: `${marginLeft}px`, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
-
-      {/* <Grid container spacing={3}> */}
-      {/* <Grid item xs={6}> */}
+    <Box sx={{ 
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      textAlign: 'center', mt: 2, ml: {xs: 0, sm: 0, md: `${marginLeft}px`}, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
       <Box sx={{
         display: 'flex',
-        justifyContent: 'space-around',
-        // border: '2px solid red'
+        flexDirection: {xs: 'column', sm: 'column', md: 'row'},
+        justifyContent: 'center',
+        gap: 2,
+        width: {xs: '100%', sm: '100%', md: 'auto'},
       }}>
-        <Box>
-
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}>
           <Button
             variant="contained"
             component="label"
@@ -397,10 +402,21 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
         </Box>
         {/* </Grid> */}
         {/* <Grid item xs={6}> */}
-        <Box>
-
-          <form className="upload-form">
-            <Box flex="1" display="flex" flexDirection="column" alignItems="flex-start" width={550} height={650}>
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
+          <Box component='form' sx={{
+          width: {xs: '90%', sm: '90%'},
+        }}>
+            <Box sx={{
+              flex: "1",
+              display: "flex",
+              flexDirection: "column",
+              // alignItems: "flex-start",
+              width: {xs: '100%', sm: '100%', md: 500},
+              height:'100%',
+            }}>
               <TextField
                 label="Search"
                 variant="outlined"                
@@ -497,7 +513,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
               </Box>
               )}
             </Box>
-          </form>
+          </Box>
         </Box>
       </Box>
       <Dialog 

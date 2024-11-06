@@ -135,7 +135,7 @@ const Claims = ({ isDrawerOpen }) => {
   };
 
   return (
-    <Box sx={{ textAlign: 'center', mt: 2, ml: `${marginLeft}px`, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
+    <Box sx={{ textAlign: 'center', mt: 2, ml: {sm: 0, md: `${marginLeft}px`}, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
       <Container>
         <Typography variant="h4" gutterBottom>
           Claim Requests
@@ -162,14 +162,15 @@ const Claims = ({ isDrawerOpen }) => {
 
         {/* Modal for item details */}
         <Modal open={openModal} onClose={handleClose}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center',  height: '100%' }}>
             {selectedItem && (
-              <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width: '100%', boxShadow: 24, position: 'relative' }}>
+              <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width:{ xs: '90%', sm: '90%', md: '100%'}, position: 'relative' }}>
                 <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
                   <CloseIcon />
                 </Button>
-                <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
-                  <Box sx={{ flex: 1 }}>
+                <Box sx={{ display: 'flex', flexDirection: {xs: 'column', sm: 'column', md: 'row'}, gap: 2, pt: 4 }}>
+                  {/* <Box sx={{ flex: 1, border: '2px solid red' }}> */}
+                  <Box sx={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
                     <ImageDisplay imageId={selectedItem.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
                   </Box>
                   <CardContent sx={{ flex: 2 }}>
