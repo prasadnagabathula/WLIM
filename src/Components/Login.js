@@ -21,7 +21,7 @@ function Login() {
   const validatePassword = (password) => {
     return password.length >= 3; // Password must be at least 6 characters
   };
-  
+
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
     // Remove the error when user starts typing
@@ -69,7 +69,6 @@ function Login() {
     }
     try {
       const response = await axios.post(`http://172.17.31.61:5241/api/Login?emailId=${email}&password=${password}`);
-      console.log(response);
       if (response.status === 200) {
         localStorage.setItem('oauth2', response.data.token);
         localStorage.setItem('userName', response.data.name);
@@ -135,7 +134,8 @@ function Login() {
             xs={12}
             md={6}
             sx={{
-              display: 'flex',
+              // display: 'flex',
+              display: {xs: 'none', sm: 'none', md: 'flex'},
               justifyContent: 'center',
               alignItems: 'center',
               backgroundColor: 'rgba(0, 170, 231, 0.4)',

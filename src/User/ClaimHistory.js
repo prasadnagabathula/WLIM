@@ -27,7 +27,7 @@ const ClaimHistory = ({ isDrawerOpen }) => {
   // Adjust margins based on drawer state
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 260 : 100);
-    setMarginRight(isDrawerOpen ? 50 : 0);
+    setMarginRight(isDrawerOpen ? 50 : 100);
   }, [isDrawerOpen]);
 
   // Fetch items and filter based on userName
@@ -95,8 +95,8 @@ const ClaimHistory = ({ isDrawerOpen }) => {
     <Box sx={{
       textAlign: 'center',
       mt: 2,
-      ml: `${marginLeft}px`,
-      mr: `${marginRight}px`,
+      ml: {sm: 0, md: `${marginLeft}px`},
+      mr: {sm: 0, md:`${marginRight}px`},
       transition: 'margin-left 0.3s',
     }}>
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>

@@ -212,7 +212,7 @@ const userClaims = [
   const renderAdminForms = () => (
     <>
       <ListItem 
-        button sx={{color:'#fff'}}
+        sx={{color:'#fff'}}
         component={Link} to=""
         onClick={handleUploadMenu}
       >
@@ -221,17 +221,17 @@ const userClaims = [
       </ListItem>
       <Collapse in={openUploadMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
               <List component="div" disablePadding sx={{color:'#fff'}}>
-                  <ListItem button component={Link} to="Identified Items" onClick={handleClose}>
+                  <ListItem component={Link} to="Identified Items" onClick={handleClose}>
                       <ListItemText primary="Upload"  sx={{color:'#fff'}}  />
                   </ListItem>
-                  <ListItem button component={Link} to="Identified Items/View" onClick={handleClose}>
+                  <ListItem component={Link} to="Identified Items/View" onClick={handleClose}>
                       <ListItemText primary="View"  sx={{color:'#fff'}} />
                   </ListItem>
               </List> 
       </Collapse>
 
       <ListItem 
-        button sx={{color:'#fff'}}
+        sx={{color:'#fff'}}
         component={Link} to="Claim Requests"
         onClick={(event) => handleClick(event, 'claims')}
       >
@@ -244,7 +244,7 @@ const userClaims = [
   const renderUserForms = () => (
     <>
     <ListItem 
-        button sx={{color:'#fff'}}
+        sx={{color:'#fff'}}
         component={Link} to="Lost Item Request"
         onClick={(event) => handleClick(event, 'claimHistory')}
       >
@@ -253,7 +253,7 @@ const userClaims = [
       </ListItem> 
 
       <ListItem 
-        button sx={{color:'#fff'}}
+        sx={{color:'#fff'}}
         component={Link} to=""
         onClick={handleItemRequestMenu}
       >
@@ -262,10 +262,10 @@ const userClaims = [
       </ListItem>
       <Collapse in={openItemRequestMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
               <List component="div" disablePadding sx={{color:'#fff'}}>
-                  <ListItem button component={Link} to="View All Lost Item Requests" onClick={handleClose}>
+                  <ListItem component={Link} to="View All Lost Item Requests" onClick={handleClose}>
                       <ListItemText primary="Claim Status"  sx={{color:'#fff'}}  />
                   </ListItem>
-                  <ListItem button component={Link} to="View All Requests/Claim History" onClick={handleClose}>
+                  <ListItem component={Link} to="View All Requests/Claim History" onClick={handleClose}>
                       <ListItemText primary="Claim History"  sx={{color:'#fff'}}  />
                   </ListItem>
               </List> 
@@ -293,12 +293,14 @@ const userClaims = [
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       
           {/* Left menu icon and Logo container */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
               <MenuOutlinedIcon sx={{ color: 'black', fontSize: '32px' }} />
             </IconButton>
-            <img src='/miraclelogo.jpg' alt="Miracle Logo" style={{ width: '170px',marginLeft:'13px'}} />
-          </div> 
+            <Box sx={{width: {xs:'140px', sm:'140px', md:'170px'}}}>
+              <img src='/miraclelogo.jpg' alt="Miracle Logo" style={{ width: '170px',marginLeft:'13px'}} />
+            </Box>  
+          </Box> 
           <Box flexGrow={1} />
 
           {/* Username and Profile Avatar */}

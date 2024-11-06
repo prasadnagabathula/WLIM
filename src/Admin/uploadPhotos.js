@@ -48,8 +48,8 @@ const UploadPhotos = ({isDrawerOpen}) => {
 
 
   const UploadBox = styled(Box)({
-    width: '300px',
-    height: '300px',
+    // width: '300px',
+    // height: '300px',
     border: '2px dashed #888',
     borderRadius: '10px',
     display: 'flex',
@@ -161,25 +161,31 @@ const UploadPhotos = ({isDrawerOpen}) => {
     <div>
       <Box
         sx={{
+          display: 'flex',
           textAlign: 'center',
           mt: 2,
-          ml: `${marginLeft}px`,
+          ml: {sm: 0, md: `${marginLeft}px`},
           mr: `${marginRight}px`,
           transition: 'margin-left 0.3s',
         }}
       >
         <Grid container justifyContent="center" alignItems="center" spacing={2}>
           <Box sx={{mt: 4}}>
-            <Typography variant="h4" gutterBottom sx={{ fontFamily: 'Lato', mb:4 }}>
+            <Typography variant="h5" sx={{ fontFamily: 'Lato', mb:4, fontSize: {md: '30px'} }}>
               Unleashing the Power of Visual Recognition
             </Typography>
   
             <Box sx={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center'
+              alignItems: 'center',
             }}>
-              <form onSubmit={handleSubmit}>
+              <Box component='form' onSubmit={handleSubmit} sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
                 <label htmlFor="upload-image">
                   <UploadBox
                     sx={{
@@ -190,7 +196,9 @@ const UploadPhotos = ({isDrawerOpen}) => {
                       borderRadius: '8px',
                       padding: '20px',
                       cursor: 'pointer',
-                      margin:'20px 60px',
+                      width: '300px',
+                      height: '300px',
+                      // margin:'20px 60px',
                     }}
                   >
                     {selectedImage ? (
@@ -215,19 +223,15 @@ const UploadPhotos = ({isDrawerOpen}) => {
                   onChange={handleFileChange}
                 />
 
-<Box >
                 <TextField
                   label="Comments"
                   variant="outlined"
                   value={comments}
-                  style={{ width: '450px'}}                  
+                  sx={{width: {xs: '100%',sm:'400px', md:'450px'}}}
+                  // style={{ width: '450px'}}                  
                   onChange={(e) => setComments(e.target.value)}
                 />
-                </Box>
-                <Box display="flex" gap={3} justifyContent="center" alignItems="center" marginTop={4}>
-
-                
-
+                <Box display="flex" gap={3} justifyContent="center" alignItems="center" marginTop={3}>
                   <Button type="submit" variant="outlined" color="primary" disabled={isDisabled}>
                     {isDisabled ? "Getting image properties, wait..." : "Upload"}
                   </Button>
@@ -239,7 +243,7 @@ const UploadPhotos = ({isDrawerOpen}) => {
                     Clear
                   </Button>
                 </Box>
-              </form>
+              </Box>
             </Box>
             <Snackbar
               open={snackbarOpen}
