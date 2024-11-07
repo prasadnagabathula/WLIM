@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { TextField, MenuItem, Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container,Alert, Snackbar } from '@mui/material';
+import { TextField, MenuItem, Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container, Alert, Snackbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from '../Components/AuthService'; // Assuming your auth service file is named AuthService.js
 import ImageDisplay from '../imageDisplay';
@@ -20,7 +20,7 @@ const Claims = ({ isDrawerOpen }) => {
   const [status, setStatus] = useState('');
   const [comments, setComments] = useState('');
   const navigate = useNavigate();
-  const [message, setMessage] = useState('');  
+  const [message, setMessage] = useState('');
   const [severity, setSeverity] = useState('success');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [currentClaimReq, setCurrentCliamReq] = useState({
@@ -56,7 +56,7 @@ const Claims = ({ isDrawerOpen }) => {
       const endDate = dayjs(); // Current date
       return endDate.diff(startDate, 'day');
     }
-    
+
     const startDate = dayjs(createdDate);
     const endDate = dayjs(updatedDate);
     return endDate.diff(startDate, 'day');
@@ -82,7 +82,7 @@ const Claims = ({ isDrawerOpen }) => {
   //   if (currentClaimReq.id) {
   //     try {
   //       const response = await axios.put(`https://localhost:7237/api/LostItemrequest/${currentClaimReq.id}`, {
-  //         isActive: status === 'Pending',
+  //         isActive: status === 'Disclaimed',
   //         additionalInformation: comments
   //       });
   //       console.log('Updated claim:', response.data);
@@ -96,12 +96,12 @@ const Claims = ({ isDrawerOpen }) => {
   const handleSubmit = async () => {
     console.log('Submit button clicked');
     console.log('Current Claim ID:', selectedItemId);
-    console.log('isActive:', status === 'Pending');
+    console.log('isActive:', status === 'Disclaimed');
     console.log('Comments:', comments);
     console.log('Description:', selectedItemDesc);
     const selectedClaim = {
       id: selectedItemId,
-      isActive: status === 'Pending',
+      isActive: status === 'Disclaimed',
       additionalInformation: comments,
       description: selectedItemDesc
     };
@@ -135,7 +135,7 @@ const Claims = ({ isDrawerOpen }) => {
     setStatus(newStatus);
     setCurrentCliamReq((prev) => ({
       ...prev,
-      isActive: newStatus === 'Pending'
+      isActive: newStatus === 'Disclaimed'
     }));
   };
 
@@ -143,7 +143,7 @@ const Claims = ({ isDrawerOpen }) => {
     setSelectedItem(item);
     setSelectedItemId(item.id);
     setSelectedItemDesc(item.description);
-    setStatus(item.isActive ? 'Pending' : 'Resolved');
+    setStatus(item.isActive ? 'Disclaimed' : 'Claimed');
     setOpenModal(true);
   };
 
@@ -154,7 +154,7 @@ const Claims = ({ isDrawerOpen }) => {
   };
 
   return (
-    <Box sx={{ textAlign: 'center', mt: 2, ml: {sm: 0, md: `${marginLeft}px`}, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
+    <Box sx={{ textAlign: 'center', mt: 2, ml: { sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
       <Container>
         <Typography variant="h4" gutterBottom>
           Claim Requests
@@ -164,34 +164,44 @@ const Claims = ({ isDrawerOpen }) => {
         ) : (
           <Grid container spacing={3} justifyContent="flex-start">
             {uploadedItems.map((item, index) => {
-              //const daysAgo = calculateDaysAgo(item.createdDate);
+              // Determine the background color based on the status
+              const cardBackgroundColor = item.isActive ? '#ff8a80' : '#C8E6C9'; // Light orange for Disclaimed, light green for Claimed
+
               return (
-                < Grid item xs = { 12} sm = { 6} md = { 4} key = { index } >
-                  <Card sx={{ cursor: 'pointer', boxShadow: 3 }} onClick={() => handleCardClick(item)}>
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Card sx={{
+                    cursor: 'pointer',
+                    boxShadow: 3,
+                    backgroundColor: cardBackgroundColor, // Apply the background color here
+                    '&:hover': {
+                      backgroundColor: item.isActive ? '#d32f2f' : '#A5D6A7' // Change color on hover for visual feedback
+                    }
+                  }} onClick={() => handleCardClick(item)}>
                     <CardMedia>
                       <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
                     </CardMedia>
                     <CardContent>
                       <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Pending' : 'Resolved'}</Typography>
+                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Disclaimed' : 'Claimed'}</Typography>
                       <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)} days</Typography>
                     </CardContent>
                   </Card>
-              </Grid>
-            );
-          })}
+                </Grid>
+              );
+            })}
           </Grid>
+
         )}
 
         {/* Modal for item details */}
         <Modal open={openModal} onClose={handleClose}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center',  height: '100%' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
             {selectedItem && (
-              <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width:{ xs: '90%', sm: '90%', md: '100%'}, position: 'relative' }}>
+              <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width: { xs: '90%', sm: '90%', md: '100%' }, position: 'relative' }}>
                 <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
                   <CloseIcon />
                 </Button>
-                <Box sx={{ display: 'flex', flexDirection: {xs: 'column', sm: 'column', md: 'row'}, gap: 2, pt: 4 }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, gap: 2, pt: 4 }}>
                   {/* <Box sx={{ flex: 1, border: '2px solid red' }}> */}
                   <Box sx={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
                     <ImageDisplay imageId={selectedItem.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
@@ -210,7 +220,7 @@ const Claims = ({ isDrawerOpen }) => {
                       fullWidth
                       sx={{ mt: 4 }}
                     >
-                      {['Pending', 'Resolved'].map((option) => (
+                      {['Disclaimed', 'Claimed'].map((option) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
@@ -242,7 +252,7 @@ const Claims = ({ isDrawerOpen }) => {
               autoHideDuration={6000}
               onClose={handleCloseSnackbar}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              sx={{ mb:2 }}
+              sx={{ mb: 2 }}
             >
               <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
                 {message}
