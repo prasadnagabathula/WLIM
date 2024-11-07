@@ -4,6 +4,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import DateFormat from '../Components/DateFormat';
 import { styled } from '@mui/system';
 import ImageDisplay from '../imageDisplay';
+import dayjs from 'dayjs';
 
 function View({ isDrawerOpen }) {
   const [page, setPage] = useState(0);
@@ -26,6 +27,19 @@ function View({ isDrawerOpen }) {
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
 
+  const calculateDaysAgo = (createdDate, updatedDate) => {
+    if (!updatedDate) {
+      // If no updatedDate, return the difference between createdDate and current date
+      const startDate = dayjs(createdDate);
+      const endDate = dayjs(); // Current date
+      return endDate.diff(startDate, 'day');
+    }
+
+    const startDate = dayjs(createdDate);
+    const endDate = dayjs(updatedDate);
+    return endDate.diff(startDate, 'day');
+  };
+  
   useEffect(() => {
     // Fetch data from the API when the component loads
     const fetchUploadedItems = async () => {
@@ -225,7 +239,16 @@ function View({ isDrawerOpen }) {
                     >
                       <b>Created Date</b>
                     </TableSortLabel>
-                  </TableCell>
+                      </TableCell>
+                      <TableCell>
+                        <TableSortLabel
+                          active={orderBy === 'age'}
+                          direction={orderBy === 'age' ? order : 'desc'}
+                          onClick={() => handleSort('age')}
+                        >
+                          <b>Age</b>
+                        </TableSortLabel>
+                      </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -255,6 +278,8 @@ function View({ isDrawerOpen }) {
                     <TableCell>
                       <DateFormat date={item.createdDate} />
                     </TableCell>
+                    <TableCell>{calculateDaysAgo(item.createdDate, item.updatedDate)} days</TableCell>
+
                   </TableRow>
                 ))}
               </TableBody>
