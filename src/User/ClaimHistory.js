@@ -95,8 +95,8 @@ const ClaimHistory = ({ isDrawerOpen }) => {
     <Box sx={{
       textAlign: 'center',
       mt: 2,
-      ml: {sm: 0, md: `${marginLeft}px`},
-      mr: {sm: 0, md:`${marginRight}px`},
+      ml: { sm: 0, md: `${marginLeft}px` },
+      mr: { sm: 0, md: `${marginRight}px` },
       transition: 'margin-left 0.3s',
     }}>
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -151,15 +151,15 @@ const ClaimHistory = ({ isDrawerOpen }) => {
                     <TableCell>
                       <Button
                         variant="contained"
-                        onClick={() => markAsResolved(index)}                        
+                        onClick={() => markAsResolved(index)}
                         sx={{
-                          backgroundColor: item.isActive ? 'green !important' : 'grey !important',
-                          color: item.isActive ? 'white !important' : 'black !important',
-                          width:'150px'
+                          backgroundColor: item.isActive ? 'grey !important' : 'green !important',
+                          color: item.isActive ? 'black !important' : 'white !important',
+                          width: '150px'
                         }}
                         disabled={item.isActive}
                       >
-                        {item.isActive ? 'Resolved' : 'Pending'}
+                        {item.isActive ? 'Pending' : 'Resolved'}
                       </Button>
 
                     </TableCell>

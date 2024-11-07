@@ -4,7 +4,7 @@ import { Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Con
 import CloseIcon from '@mui/icons-material/Close';
 import axios from '../Components/AuthService'; // Assuming your auth service file is named authService.js
 import ImageDisplay from '../imageDisplay';
-import DateFormat from '../Components/DateFormat'; 
+import DateFormat from '../Components/DateFormat';
 
 const ClaimStatus = ({ isDrawerOpen }) => {
   const [marginLeft, setMarginLeft] = useState(100);
@@ -58,7 +58,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
   };
 
   return (
-    <Box sx={{ textAlign: 'center', mt: 2, ml: {sm: 0, md: `${marginLeft}px`}, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
+    <Box sx={{ textAlign: 'center', mt: 2, ml: { sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
       <Container>
         <Typography variant="h4" gutterBottom>
           Claim Status
@@ -67,26 +67,26 @@ const ClaimStatus = ({ isDrawerOpen }) => {
           <Typography>No claims submitted yet.</Typography>
         ) : (
           <Grid container spacing={3} justifyContent="flex-start">
-  {uploadedItems.map((item, index) => (
-    <Grid item xs={12} sm={6} md={4} key={index}>
-      <Card sx={{ cursor: 'pointer', boxShadow: 3 }} onClick={() => handleCardClick(item)}>
-        <CardMedia>
-          <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
-        </CardMedia>
-        <CardContent>
-          {/* <Typography variant="h6" textAlign="left">{item.itemDescription}</Typography> */}
-          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
-          {/* <Typography sx={{ textAlign: 'left', margin: '0px 10px'}}><b>Requested By:</b> {item.createdBy}</Typography>
+            {uploadedItems.map((item, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card sx={{ cursor: 'pointer', boxShadow: 3 }} onClick={() => handleCardClick(item)}>
+                  <CardMedia>
+                    <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
+                  </CardMedia>
+                  <CardContent>
+                    {/* <Typography variant="h6" textAlign="left">{item.itemDescription}</Typography> */}
+                    <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
+                    {/* <Typography sx={{ textAlign: 'left', margin: '0px 10px'}}><b>Requested By:</b> {item.createdBy}</Typography>
           <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
             <b>Requested Date:</b>{" "}
             <DateFormat date={item.createdDate} />
           </Typography> */}
-          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Resolved' : 'Pending'}</Typography>
-        </CardContent>
-      </Card>
-    </Grid>
-  ))}
-</Grid>
+                    <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Pending' : 'Resolved'}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
 
         )}
 
@@ -94,11 +94,11 @@ const ClaimStatus = ({ isDrawerOpen }) => {
         <Modal open={openModal} onClose={handleClose}>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
             {selectedItem && (
-              <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width: '100%', width:{ xs: '90%', sm: '90%', md: '100%'}, position: 'relative' }}>
+              <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width: '100%', width: { xs: '90%', sm: '90%', md: '100%' }, position: 'relative' }}>
                 <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
                   <CloseIcon />
                 </Button>
-                <Box sx={{ display: 'flex', flexDirection: {xs: 'column', sm: 'column', md: 'row'}, gap: 2, pt: 4 }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, gap: 2, pt: 4 }}>
                   <Box sx={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
                     <ImageDisplay imageId={selectedItem.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
                   </Box>
@@ -113,7 +113,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                     {/* <Typography><b>Requested By:</b> {selectedItem.createdBy}</Typography> */}
                     <Typography><b>Requested Date:</b><DateFormat date={selectedItem.createdDate} /></Typography>
                     {/* <Typography><b>Location:</b> {selectedItem.location}</Typography> */}
-                    <Typography><b>Status: </b>{selectedItem.isActive ? 'Resolved' : 'Pending'}</Typography>
+                    <Typography><b>Status: </b>{selectedItem.isActive ? 'Pending' : 'Resolved'}</Typography>
                     {/* <Typography><b>Size: </b>{selectedItem.size}</Typography> */}
                     {/* <Typography><b>Value Of the Item:</b> {selectedItem.itemValue}</Typography> */}
                     {/* <Typography><b>Proof Of Ownership:</b> {selectedItem.proofofOwnership}</Typography> */}
