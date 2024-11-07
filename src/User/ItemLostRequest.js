@@ -518,11 +518,10 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
       </Box>
       <Dialog 
       open={snackbarOpen} 
-      onClose={handleCloseSnackbar} maxWidth="lg" 
-      fullWidth 
-      sx={{ width: '400px', marginLeft:'550px' }}>
+      onClose={handleCloseSnackbar}
+      sx={{ height: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <DialogTitle>Alert</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{width: {xs: '300px', sm: '300px', md: '500px'}}}>
           <Alert severity={severity}>{responseMessage}</Alert>
         </DialogContent>
         <DialogActions>
