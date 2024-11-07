@@ -6,6 +6,7 @@ import axios from '../Components/AuthService'; // Assuming your auth service fil
 import ImageDisplay from '../imageDisplay';
 import DateFormat from '../Components/DateFormat';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 const Claims = ({ isDrawerOpen }) => {
   const [marginLeft, setMarginLeft] = useState(100);
@@ -42,6 +43,24 @@ const Claims = ({ isDrawerOpen }) => {
     setMarginLeft(isDrawerOpen ? 400 : 100);
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
+
+  const calculateDaysAgo = (createdDate, updatedDate) => {
+    // if (!updatedDate) {
+    //   // If no updatedDate, return 0 days
+    //   return 0;
+    // }
+
+    if (!updatedDate) {
+      // If no updatedDate, return the difference between createdDate and current date
+      const startDate = dayjs(createdDate);
+      const endDate = dayjs(); // Current date
+      return endDate.diff(startDate, 'day');
+    }
+    
+    const startDate = dayjs(createdDate);
+    const endDate = dayjs(updatedDate);
+    return endDate.diff(startDate, 'day');
+  };
 
   // Fetch claims from the API and filter them based on `userName`
   useEffect(() => {
@@ -144,19 +163,23 @@ const Claims = ({ isDrawerOpen }) => {
           <Typography>No claims submitted yet.</Typography>
         ) : (
           <Grid container spacing={3} justifyContent="flex-start">
-            {uploadedItems.map((item, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card sx={{ cursor: 'pointer', boxShadow: 3 }} onClick={() => handleCardClick(item)}>
-                  <CardMedia>
-                    <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
-                  </CardMedia>
-                  <CardContent>
-                    <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
-                    <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Pending' : 'Resolved'}</Typography>
-                  </CardContent>
-                </Card>
+            {uploadedItems.map((item, index) => {
+              //const daysAgo = calculateDaysAgo(item.createdDate);
+              return (
+                < Grid item xs = { 12} sm = { 6} md = { 4} key = { index } >
+                  <Card sx={{ cursor: 'pointer', boxShadow: 3 }} onClick={() => handleCardClick(item)}>
+                    <CardMedia>
+                      <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
+                    </CardMedia>
+                    <CardContent>
+                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
+                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Pending' : 'Resolved'}</Typography>
+                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)} days</Typography>
+                    </CardContent>
+                  </Card>
               </Grid>
-            ))}
+            );
+          })}
           </Grid>
         )}
 
