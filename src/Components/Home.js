@@ -297,9 +297,7 @@ const userClaims = [
             <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
               <MenuOutlinedIcon sx={{ color: 'black', fontSize: '32px' }} />
             </IconButton>
-            <Box sx={{width: {xs:'140px', sm:'140px', md:'170px'}}}>
-              <img src='/miraclelogo.jpg' alt="Miracle Logo" style={{ width: '170px',marginLeft:'13px'}} />
-            </Box>  
+              <img src='/miraclelogo.jpg' alt="Miracle Logo" style={{ width: '160px',marginLeft:'12px'}} />
           </Box> 
           <Box flexGrow={1} />
 
