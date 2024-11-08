@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Routes, Route, Link, useLocation  } from 'react-router-dom';
-import { AppBar,Divider, Toolbar, IconButton, Typography, Drawer, Box, List, ListItem, ListItemText, Avatar, Menu, MenuItem, CssBaseline, Collapse } from '@mui/material';
+import { AppBar,Divider, Toolbar, IconButton, Typography, Drawer, Box, List, ListItem, ListItemText, Avatar, Menu, MenuItem, CssBaseline, Collapse, ListItemButton } from '@mui/material';
 import DriveFolderUploadOutlinedIcon from '@mui/icons-material/DriveFolderUploadOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -16,6 +16,9 @@ import View from '../Admin/View';
 import ItemLostRequest from '../User/ItemLostRequest';
 import ItemDetails from '../Admin/ItemDetails';
 import UploadPhotos from '../Admin/uploadPhotos';
+import { ListItemIcon } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccounts';
 
 function Home() {
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
@@ -211,14 +214,32 @@ const userClaims = [
   
   const renderAdminForms = () => (
     <>
-      <ListItem 
-        sx={{color:'#fff'}}
+        <ListItem disablePadding sx={{color:'#fff'}} component={Link} to=""
+        onClick={handleUploadMenu}>
+          <ListItemButton >
+            <ListItemIcon  sx={{color:'#fff'}}>
+              <DriveFolderUploadOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Identified Items" className="drawer-text" />
+          </ListItemButton>
+        </ListItem>
+      {/* <ListItem 
+        sx={{ color:'#fff', display: 'flex' }}
         component={Link} to=""
         onClick={handleUploadMenu}
       >
-        <ListItemText primary="Identified Items" className="drawer-text" />
-        <DriveFolderUploadOutlinedIcon />
-      </ListItem>
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          border: '2px solid red',
+          width: '100%',
+          height: '100px'
+        }}>
+          <DriveFolderUploadOutlinedIcon />
+          <ListItemText primary="Identified Items" className="drawer-text" />
+
+        </Box>
+      </ListItem> */}
       <Collapse in={openUploadMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
               <List component="div" disablePadding sx={{color:'#fff'}}>
                   <ListItem component={Link} to="Identified Items" onClick={handleClose}>
@@ -230,35 +251,47 @@ const userClaims = [
               </List> 
       </Collapse>
 
-      <ListItem 
+      <ListItem disablePadding
         sx={{color:'#fff'}}
         component={Link} to="Claim Requests"
         onClick={(event) => handleClick(event, 'claims')}
       >
-        <ListItemText primary="Claim Requests"  />
-        <DescriptionOutlinedIcon />
+        <ListItemButton >
+            <ListItemIcon  sx={{color:'#fff'}}>
+            <DescriptionOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Claim Requests"  />
+          </ListItemButton>
       </ListItem>     
     </>
   );
 
   const renderUserForms = () => (
     <>
-    <ListItem 
+    <ListItem disablePadding
         sx={{color:'#fff'}}
         component={Link} to="Lost Item Request"
         onClick={(event) => handleClick(event, 'claimHistory')}
       >
-        <ListItemText primary="Lost Item Request" />
-        <LibraryAddOutlinedIcon />
+        <ListItemButton >
+            <ListItemIcon  sx={{color:'#fff'}}>
+              <LibraryAddOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Lost Item Request" />
+        </ListItemButton>
       </ListItem> 
 
-      <ListItem 
+      <ListItem disablePadding
         sx={{color:'#fff'}}
         component={Link} to=""
         onClick={handleItemRequestMenu}
       >
-        <ListItemText primary="View All Lost Item Requests" className="drawer-text" />
-        <VisibilityOutlinedIcon />
+        <ListItemButton >
+            <ListItemIcon  sx={{color:'#fff'}}>
+              <VisibilityOutlinedIcon />  
+            </ListItemIcon>
+            <ListItemText primary="View All Lost Item Requests" className="drawer-text" />
+        </ListItemButton>
       </ListItem>
       <Collapse in={openItemRequestMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
               <List component="div" disablePadding sx={{color:'#fff'}}>
@@ -284,113 +317,267 @@ const userClaims = [
   }, []);
 
   return (
-    <div style={{fontFamily:'Montserrat'}}>
+    <div style={{ fontFamily: 'Montserrat' }}>
       <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-
-      {/* AppBar */}
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor:'#fff' }}>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      
-          {/* Left menu icon and Logo container */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
-              <MenuOutlinedIcon sx={{ color: 'black', fontSize: '32px' }} />
-            </IconButton>
-              <img src='/miraclelogo.jpg' alt="Miracle Logo" style={{ width: '160px',marginLeft:'12px'}} />
+        <CssBaseline />
+  
+        {/* AppBar */}
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: '#fff' }}>
+          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            
+            {/* Welcome message and Username */}
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+           <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
+           <MenuOutlinedIcon sx={{ color: 'black', fontSize: '32px' }} />
+             </IconButton>
           </Box> 
-          <Box flexGrow={1} />
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="h5" sx={{ 
+                backgroundImage: 'linear-gradient(to right, #9F2B68, #232527,#2368a0 )',  
+                WebkitBackgroundClip: 'text',  // For webkit browsers like Chrome and Safari
+                backgroundClip: 'text',  // Standard background clip (for other browsers)
+                color: 'transparent', 
+                fontWeight: 'bold', 
+              }}>
+                Welcome back, {userData.name || 'User'}!
+              </Typography>
+            </Box>
+            <Box flexGrow={1} />
 
-          {/* Username and Profile Avatar */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ marginRight: 2, textAlign: 'center' }}>
-              <Typography variant="body1" sx={{ color: '#232527' }}>
-                {userData.name || 'U'}
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#004687', fontSize:'14px' }}>
-                {userData.role || 'User'}
-              </Typography>
-            </div>
             <IconButton onClick={handleProfileMenuClick} color="inherit">
-              <Avatar src={userData.photo} sx={{ bgcolor: '#00aae7' }}>
-                {userData.name ? userData.name[0] : 'U'}
-              </Avatar>
+             <ManageAccountsOutlinedIcon src={userData.photo} sx={{ bgcolor: '#915F6D', fontSize: '2rem'  }}>
+             </ManageAccountsOutlinedIcon>
             </IconButton>
-          </div> 
-         
-          {/* Profile Menu */}
-          <Menu
-            anchorEl={profileMenuAnchorEl}
-            open={Boolean(profileMenuAnchorEl)}
-           onClose={() => setProfileMenuAnchorEl(null)}
-          >
-            <MenuItem onClick={handleProfileMenuClose} sx={{fontFamily:'Lato'}}>Profile</MenuItem>
-            <MenuItem onClick={handleLogout} sx={{fontFamily:'Lato'}}>Logout</MenuItem>
-          </Menu> 
-        </Toolbar>
-      </AppBar>
-      <Drawer
+
+            {/* Profile Menu (if needed for dropdown actions) */}
+            <Menu
+              anchorEl={profileMenuAnchorEl}
+              open={Boolean(profileMenuAnchorEl)}
+              onClose={() => setProfileMenuAnchorEl(null)}
+            >
+              <MenuItem onClick={handleProfileMenuClose} sx={{ fontFamily: 'Lato' }}>Profile</MenuItem>
+            </Menu>
+          </Toolbar>
+        </AppBar>
+  
+        {/* Drawer */}
+        <Drawer
           variant="persistent"
           anchor="left"
           open={isDrawerOpen}
           sx={{
+            width: 250,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
               width: 250,
-              flexShrink: 0,
-              '& .MuiDrawer-paper': {
-                  width: 250,
-                  boxSizing: 'border-box',
-                  backgroundColor: 'black',
-                  color: 'white',
-                  fontFamily: 'Montserrat, sans-serif',
-                  '&::-webkit-scrollbar': {
-                      width: '0px', // Hide scrollbar
-                  },
-                  '&::-webkit-scrollbar-thumb': {
-                      background: 'transparent', 
-                  },
-                  '&::-webkit-scrollbar-track': {
-                      background: 'transparent', 
-                  },
-                },
-            }}
-          >
+              boxSizing: 'border-box',
+              background: 'linear-gradient(to bottom, #1a1a2e, #16213e)', 
+              color: 'white',
+              fontFamily: 'Montserrat, sans-serif',
+              '&::-webkit-scrollbar': {
+                width: '0px',
+              },
+            },
+          }}
+        >
           <Toolbar />
-          <Box  className="drawer-invisible-scrollbar" sx={{ overflow: 'auto' }}>
-            <List className="drawer-text">
+          <Box sx={{ overflow: 'auto' }}>
+            {/* Logo */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 2 }}>
+              <img src='/miraclelogo.png' alt="Miracle Logo" style={{ width: '160px' }} />
+            </Box>
+  
+            {/* Profile Section */}
+            <Box sx={{ textAlign: 'center', py: 2 ,display: 'flex',flexDirection:'row', justifyContent: 'center'}}>
+              <Box sx={{ display: 'flex',flexDirection:'row', justifyContent: 'center', mb: 2 }}>
+                <Avatar
+                  src={userData.photo || ''}
+                  sx={{
+                    bgcolor: '#00aae7',
+                    width: 56,
+                    height: 56,
+                    fontSize: 24, 
+                    mr: 2, 
+                  }}
+                >
+                  {!userData.photo ? userData.name?.[0] : null} 
+                </Avatar>
+              </Box>
+
+              {/* Name and Role Section */}
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#00aae7' }}>
+                  {userData.name || 'User'}
+                </Typography>
+
+                <Typography variant="body2" sx={{ color: '#737373' }}>
+                  {userData.role || 'User'}
+                </Typography>
+              </Box>
+            </Box>
+  
+            {/* Menu Options */}
+            <List>
               {userData.role === 'Admin' ? renderAdminForms() : renderUserForms()}
             </List>
+  
+            {/* Logout Button */}
+            <Box sx={{ position: 'absolute', bottom: 16, width: '100%', cursor:'pointer' }}>
+              <ListItem button onClick={handleLogout}>
+                <ListItemIcon>
+                  <LogoutIcon sx={{ color: 'white' }} />
+                </ListItemIcon>
+                <ListItemText primary="Log out" /> 
+              </ListItem>
+            </Box>
           </Box>
         </Drawer>
-      </Box>
-
-      {/* Submenu */}
-      <Menu
-        anchorEl={subMenuAnchorEl}
-        open={Boolean(subMenuAnchorEl)}
-        onClose={handleSubMenuClose}
-      >
-        {currentSubMenu?.subMenu?.map((subItem) => (
-          <MenuItem key={subItem} onClick={() => setView(subItem.toLowerCase())}>{subItem}</MenuItem>
-        ))}
-      </Menu>
-
-      {/* Main Content */}
-      <Box component="main" sx={{ flexGrow: 1, bgcolor: '#f5f5f5', p: 3, height: '100vh', overflow: 'auto' }}>
-        <Toolbar />
-        <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen}  />
-        <Routes>
-        <Route path='/' element={<Default isDrawerOpen={isDrawerOpen} />} />
-          <Route path='Identified Items' element={<UploadPhotos  isDrawerOpen={isDrawerOpen} />} />
-          <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
-          <Route path='Lost Item Request' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />
-          <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
-          <Route path='Identified Items/View' element={<View isDrawerOpen={isDrawerOpen} />} />
-          <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
-          <Route path='View All Lost Item Requests' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
-        </Routes>
-      </Box>
+        </Box>
+  
+        {/* Main Content */}
+        <Box component="main" sx={{ flexGrow: 1, bgcolor: '#f5f5f5', p: 3, height: '100vh', overflow: 'auto' }}>
+          <Toolbar />
+          <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen} />
+          <Routes>
+            <Route path='/' element={<Default isDrawerOpen={isDrawerOpen} />} />
+            <Route path='Identified Items' element={<UploadPhotos isDrawerOpen={isDrawerOpen} />} />
+            <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
+            <Route path='Lost Item Request' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
+            <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
+            <Route path='Identified Items/View' element={<View isDrawerOpen={isDrawerOpen} />} />
+            <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
+            <Route path='View All Lost Item Requests' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
+          </Routes>
+        </Box>
     </div>
-  )
+  );
+  
+  // return (
+  //   <div style={{fontFamily:'Montserrat'}}>
+  //     <Box sx={{ display: 'flex' }}>
+  //     <CssBaseline />
+
+  //     {/* AppBar */}
+  //     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor:'#fff' }}>
+  //       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      
+  //         {/* Left menu icon and Logo container */}
+  //         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+  //           <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
+  //             <MenuOutlinedIcon sx={{ color: 'black', fontSize: '32px' }} />
+  //           </IconButton>
+  //             <img src='/miraclelogo.jpg' alt="Miracle Logo" style={{ width: '160px',marginLeft:'12px'}} />
+  //         </Box> 
+  //         <Box flexGrow={1} />
+
+  //         {/* Username and Profile Avatar */}
+  //         <div style={{ display: 'flex', alignItems: 'center' }}>
+  //           <div style={{ marginRight: 2, textAlign: 'center' }}>
+  //             <Typography
+  //               variant="body1"
+  //               sx={{
+  //                 color: '#232527',
+  //                 whiteSpace: 'nowrap',
+  //                 overflow: 'hidden',
+  //                 textOverflow: 'ellipsis',
+  //                 maxWidth: {
+  //                   xs: '100px',   
+  //                   sm: '120px',  
+  //                   md: '500px'   
+  //                 },
+  //                 // display: 'inline-block',
+  //               }}
+  //             >
+  //               {userData.name?.length > 9
+  //                 ? `${userData.name.slice(0, 7)}..`
+  //                 : userData.name?.length > 20
+  //                 ? `${userData.name.slice(0, 20)}...` 
+  //                 : userData.name || 'U'} 
+  //             </Typography>
+  //             <Typography variant="body2" sx={{ color: '#004687', fontSize:'14px' }}>
+  //               {userData.role || 'User'}
+  //             </Typography>
+  //           </div>
+  //           <IconButton onClick={handleProfileMenuClick} color="inherit">
+  //             <Avatar src={userData.photo} sx={{ bgcolor: '#00aae7' }}>
+  //               {userData.name ? userData.name[0] : 'U'}
+  //             </Avatar>
+  //           </IconButton>
+  //         </div> 
+         
+  //         {/* Profile Menu */}
+  //         <Menu
+  //           anchorEl={profileMenuAnchorEl}
+  //           open={Boolean(profileMenuAnchorEl)}
+  //          onClose={() => setProfileMenuAnchorEl(null)}
+  //         >
+  //           <MenuItem onClick={handleProfileMenuClose} sx={{fontFamily:'Lato'}}>Profile</MenuItem>
+  //           <MenuItem onClick={handleLogout} sx={{fontFamily:'Lato'}}>Logout</MenuItem>
+  //         </Menu> 
+  //       </Toolbar>
+  //     </AppBar>
+  //     <Drawer
+  //         variant="persistent"
+  //         anchor="left"
+  //         open={isDrawerOpen}
+  //         sx={{
+  //             width: 250,
+  //             flexShrink: 0,
+  //             '& .MuiDrawer-paper': {
+  //                 width: 250,
+  //                 boxSizing: 'border-box',
+  //                 backgroundColor: 'black',
+  //                 color: 'white',
+  //                 fontFamily: 'Montserrat, sans-serif',
+  //                 '&::-webkit-scrollbar': {
+  //                     width: '0px', // Hide scrollbar
+  //                 },
+  //                 '&::-webkit-scrollbar-thumb': {
+  //                     background: 'transparent', 
+  //                 },
+  //                 '&::-webkit-scrollbar-track': {
+  //                     background: 'transparent', 
+  //                 },
+  //               },
+  //           }}
+  //         >
+  //         <Toolbar />
+  //         <Box  className="drawer-invisible-scrollbar" sx={{ overflow: 'auto' }}>
+  //           <List className="drawer-text">
+  //             {userData.role === 'Admin' ? renderAdminForms() : renderUserForms()}
+  //           </List>
+  //         </Box>
+  //       </Drawer>
+  //     </Box>
+
+  //     {/* Submenu */}
+  //     <Menu
+  //       anchorEl={subMenuAnchorEl}
+  //       open={Boolean(subMenuAnchorEl)}
+  //       onClose={handleSubMenuClose}
+  //     >
+  //       {currentSubMenu?.subMenu?.map((subItem) => (
+  //         <MenuItem key={subItem} onClick={() => setView(subItem.toLowerCase())}>{subItem}</MenuItem>
+  //       ))}
+  //     </Menu>
+
+  //     {/* Main Content */}
+  //     <Box component="main" sx={{ flexGrow: 1, bgcolor: '#f5f5f5', p: 3, height: '100vh', overflow: 'auto' }}>
+  //       <Toolbar />
+  //       <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen}  />
+  //       <Routes>
+  //       <Route path='/' element={<Default isDrawerOpen={isDrawerOpen} />} />
+  //         <Route path='Identified Items' element={<UploadPhotos  isDrawerOpen={isDrawerOpen} />} />
+  //         <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
+  //         <Route path='Lost Item Request' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />
+  //         <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
+  //         <Route path='Identified Items/View' element={<View isDrawerOpen={isDrawerOpen} />} />
+  //         <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
+  //         <Route path='View All Lost Item Requests' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
+  //       </Routes>
+  //     </Box>
+  //   </div>
+  // )
 }
 
 export default Home

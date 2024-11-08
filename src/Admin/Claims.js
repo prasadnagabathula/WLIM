@@ -8,7 +8,7 @@ import DateFormat from '../Components/DateFormat';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
-const Claims = ({ isDrawerOpen }) => {
+const Claims = ({ isDrawerOpen }) => {  
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
   const [openModal, setOpenModal] = useState(false);
