@@ -18,13 +18,13 @@ const CustomBreadcrumbs = ({ paths, isDrawerOpen, currentPath }) => {
                         key={index}
                         component={path.link ? Link : 'span'} 
                         to={path.link}
-                        sx={{}}
+                        sx={{fontSize:{xs:'14px', sm:'14px', md:'20px'}}}
                         style={{
                             textDecoration: 'none',
                             color: path.link === currentPath ? '#00aae7' : 'inherit', 
                             pointerEvents: path.link === currentPath ? 'none' : 'auto', 
                             fontFamily: 'Lato',
-                            fontSize:{xs:'14px', sm:'14px', md:'20px'}
+                            
                         }}
                     >
                         {path.label}

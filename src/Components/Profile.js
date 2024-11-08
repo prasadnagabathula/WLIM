@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Avatar,Grid,Box,Button,TextField,Typography,Snackbar,IconButton, AppBar,Toolbar,CssBaseline,Alert} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { useNavigate } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 function Profile() {
 
@@ -109,6 +111,10 @@ function Profile() {
             setEmailCharError('You cannot enter more than 30 characters');
         }
     };
+
+    const handleDeletePhoto = () => {
+        setPhoto(null); // Reset the photo to null when the delete button is clicked
+    };
       
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', minHeight: '100vh' }}>
@@ -125,21 +131,35 @@ function Profile() {
             </AppBar>
 
             <Box sx={{ mt: 8, width: '100%', maxWidth: '600px', px: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', mb: 2 }}>
-                    <label htmlFor="icon-button-file" style={{ cursor: 'pointer' }}>
-                        <Avatar src={photo} sx={{ width: 140, height: 140, mb: 2 }}>
-                            {name[0] || 'U'}
-                        </Avatar>
-                    </label>
-                    <input
-                        accept="image/png, image/jpeg, image/avif"
-                        style={{ display: 'none' }}
-                        id="icon-button-file"
-                        type="file"
-                        onChange={handleFileChange}
-                    />
-                    <Typography sx={{ fontFamily: 'Montserrat', fontSize: { xs: '20px', sm: '30px' } }}>{name}</Typography>
-                </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', mb: 2 }}>
+          <label htmlFor="icon-button-file" style={{ cursor: 'pointer' }}>
+            <Avatar src={photo} sx={{ width: 140, height: 140, mb: 2 }}>
+              {!photo && (name[0] || 'U')} 
+            </Avatar>
+          </label>
+
+          {/* Delete Icon Button */}
+          <IconButton
+            onClick={handleDeletePhoto}
+            sx={{
+              position: 'absolute', 
+              top: '37%',  
+              right: '42%', 
+              bgcolor: 'rgba(255, 255, 255, 0.7)', 
+            }}
+          >
+            <DeleteIcon sx={{ color: '#d32f2f' }} />
+          </IconButton>
+
+          <input
+            accept="image/png, image/jpeg, image/avif"
+            style={{ display: 'none' }}
+            id="icon-button-file"
+            type="file"
+            onChange={handleFileChange}
+          />
+          <Typography sx={{ fontFamily: 'Montserrat', fontSize: { xs: '20px', sm: '30px' } }}>{name}</Typography>
+        </Box>
 
                 <Grid container spacing={2} sx={{ mt: 2 }}>
                     <Grid item xs={12} sm={6}>
