@@ -24,7 +24,7 @@ const UploadPhotos = ({isDrawerOpen}) => {
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
   const [comments, setComments] = useState('');
-  const [categoryOptions, setCategoryOptions] = useState(""); 
+  const [categoryOptions, setCategoryOptions] = useState([...CATEGORY_OPTIONS]);
 
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 300 : 100);
@@ -101,13 +101,12 @@ const UploadPhotos = ({isDrawerOpen}) => {
       
       const combinedText = [...imageTags, itemDesc, objectCategory].join(" ").toLowerCase();
 
-      console.log(combinedText);
-
-      const matchedCategory = CATEGORY_OPTIONS.find((category) =>
-        combinedText.toLowerCase().includes(category.toLowerCase())
+      let matchedCategory = CATEGORY_OPTIONS.find((category) =>
+        combinedText.includes(category.toLowerCase())
       ) || "Others";
-      setCategory(toInitialCapitalCase(matchedCategory));
-      setCategoryOptions(CATEGORY_OPTIONS); 
+
+      setCategory(toInitialCapitalCase(matchedCategory));      
+      setCategoryOptions([...CATEGORY_OPTIONS]);
 
       setIsDisabled(false);
     } catch (error) {
