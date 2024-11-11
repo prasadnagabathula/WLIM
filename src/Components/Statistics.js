@@ -56,7 +56,7 @@ const Statistics = () => {
         <Grid container spacing={2} sx={{ flex: 1 }}>
           
           {/* Claim Requests */}
-          <Grid item xs={4}> 
+          <Grid item  xs={12} sm={4} md={4}> 
             <Box sx={{ textAlign: 'center', p: 4, bgcolor:"#AFDBF5" }}>
               <Typography variant="body1" color="textSecondary">
                 Claim Requests
@@ -68,7 +68,7 @@ const Statistics = () => {
           </Grid>
 
           {/* Pending Requests */}
-          <Grid item xs={4}> {/* Each box takes 1/3 of the available width */}
+          <Grid item xs={12} sm={4} md={4}> {/* Each box takes 1/3 of the available width */}
             <Box sx={{ textAlign: 'center', p: 4, bgcolor: '#f8d7da', borderRadius: 1 }}>
               <Typography variant="body1" color="textSecondary">
                 Pending Requests
@@ -80,7 +80,7 @@ const Statistics = () => {
           </Grid>
 
           {/* Successfully Claimed */}
-          <Grid item xs={4}> {/* Each box takes 1/3 of the available width */}
+          <Grid item xs={12} sm={4} md={4}> {/* Each box takes 1/3 of the available width */}
             <Box sx={{ textAlign: 'center', p: 4, bgcolor: '#d4edda', borderRadius: 1 }}>
               <Typography variant="body1" color="textSecondary">
                 Successfully Claimed
@@ -95,9 +95,7 @@ const Statistics = () => {
       </Paper>
     </Box>
 
-
   );
-
   //   <Box
   //     sx={{
   //       display: 'flex',
