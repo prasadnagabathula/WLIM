@@ -40,15 +40,17 @@ const DashboardOverview = () => {
         justifyContent: 'space-between',
         gap: 3, 
         flex: 1, 
+        flexDirection: { xs: 'column', sm: 'row' }, 
       }}
     >
-
+  
       {/* Statistics Container */}
-      <Paper elevation={5} sx={{ p: 2, display: 'flex', flexDirection: 'column', flex: 1, height:'90%' }}>
-        <Grid container spacing={2}>
+      <Paper elevation={5} sx={{ p: 2, display: 'flex', flexDirection: 'column', flex: 1, height: '90%' }}>
+        <Grid container spacing={2} sx={{ flex: 1 }}>
+          
           {/* Upper Left Part: Claim Requests */}
-          <Grid item xs={6}>
-            <Box sx={{ textAlign: 'center', p: 4 }}>
+          <Grid item xs={12} sm={6} md={6}> 
+            <Box sx={{ textAlign: 'center', p: 4 , bgcolor:"#AFDBF5"}}>
               <Typography variant="body1" color="textSecondary">
                 Claim Requests
               </Typography>
@@ -57,9 +59,9 @@ const DashboardOverview = () => {
               </Typography>
             </Box>
           </Grid>
-
+  
           {/* Upper Right Part: Pending Requests */}
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6} md={6}>
             <Box sx={{ textAlign: 'center', p: 4, bgcolor: '#f8d7da', borderRadius: 1 }}>
               <Typography variant="body1" color="textSecondary">
                 Pending Requests
@@ -69,9 +71,9 @@ const DashboardOverview = () => {
               </Typography>
             </Box>
           </Grid>
-
+  
           {/* Lower Left Part: Successfully Claimed Requests */}
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6} md={6}> 
             <Box sx={{ textAlign: 'center', p: 4, bgcolor: '#d4edda', borderRadius: 1 }}>
               <Typography variant="body1" color="textSecondary">
                 Successfully Claimed
@@ -81,10 +83,10 @@ const DashboardOverview = () => {
               </Typography>
             </Box>
           </Grid>
-
+  
           {/* Lower Right Part: Identified Items */}
-          <Grid item xs={6}>
-            <Box sx={{ textAlign: 'center', p: 4 }}>
+          <Grid item xs={12} sm={6} md={6}>
+            <Box sx={{ textAlign: 'center', p: 4 , backgroundColor:"#BDB5D5"}}>
               <Typography variant="body1" color="textSecondary">
                 Identified Items
               </Typography>
@@ -95,14 +97,14 @@ const DashboardOverview = () => {
           </Grid>
         </Grid>
       </Paper>
-
+  
       {/* Graph Container */}
-      <Paper elevation={5} sx={{ p: 3, mb: 3, flex: 1 , height:'90%'}}>
+      <Paper elevation={5} sx={{ p: 3, mb: 3, flex: 1, height: '90%' }}>
         <Typography variant="h6" sx={{ mb: 2 }}>Request Trends</Typography>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="name" />   
             <YAxis />
             <Tooltip />
             <Line type="monotone" dataKey="value" stroke="#8884d8" />
@@ -111,6 +113,7 @@ const DashboardOverview = () => {
       </Paper>
     </Box>
   );
+  
 };
 
 export default DashboardOverview;
