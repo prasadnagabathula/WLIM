@@ -1,17 +1,6 @@
 // constants.js
-export const CATEGORY_OPTIONS = [
-    "Electronics",
-    "Accessories",
-    "Personal Items",
-    "Apparel",
-    "Documents",
-    "Stationery",
-    "Food Containers",
-    "Drink Containers",
-    "Bag",
-    "Health Products",
-    "Hygiene Products",
-    "Sports",
+export const CATEGORY_OPTIONS = [  
+    "Bag",  
     "Watch",
     "Tool",        
     "Headphone",
@@ -26,6 +15,16 @@ export const CATEGORY_OPTIONS = [
     "Coat",
     "Blazor",
     "Jerkin",
-    "Others"
-    
+    "Electronics",
+    "Accessories",
+    "Personal Items",
+    "Apparel",
+    "Documents",
+    "Stationery",
+    "Food Containers",
+    "Drink Containers",
+    "Health Products",
+    "Hygiene Products",
+    "Sports",
+    "Others"    
 ];
