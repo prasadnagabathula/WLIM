@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Box } from '@mui/material';
 import DashboardOverview from './DashboardOverview';
+import Statistics from './Statistics';
 
 function Default({ isDrawerOpen }) {
     const [marginLeft, setMarginLeft] = useState(100); // Default margin
@@ -47,12 +48,8 @@ function Default({ isDrawerOpen }) {
               gap: 2, // Adds space between the graph and stats containers
             }}
           >
-            <DashboardOverview 
-              totalClaims={100} 
-              pendingRequests={20} 
-              claimedRequests={50} 
-              identifiedItems={30} 
-            />
+            {/* <DashboardOverview /> */}
+            {localStorage.getItem('userRole') === 'Admin' ? <DashboardOverview/> : <Statistics/>}
           </Box>
   
           <Typography variant="h5" sx={{ 

@@ -1,8 +1,22 @@
-import React from 'react';
+import * as React from 'react';
 import { Box, Grid, Typography, Paper } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import axios from 'axios';
 
-const DashboardOverview = ({ totalClaims, pendingRequests, claimedRequests, identifiedItems }) => {
+const DashboardOverview = () => {
+
+  const [dataCount, setDataCount] = React.useState({});
+
+  React.useEffect(() => {
+    axios.get('https://localhost:7237/api/LostItemRequest/ClaimsCount')
+    .then(response => {
+      console.log(response);
+      setDataCount(response.data);
+    }).catch(error => {
+      console.log(error);
+    });
+  },[]);
+
   const data = [
     { name: 'Jan', value: 400 },
     { name: 'Feb', value: 300 },
@@ -30,7 +44,7 @@ const DashboardOverview = ({ totalClaims, pendingRequests, claimedRequests, iden
     >
 
       {/* Statistics Container */}
-      <Paper elevation={3} sx={{ p: 2, display: 'flex', flexDirection: 'column', flex: 1, height:'90%' }}>
+      <Paper elevation={5} sx={{ p: 2, display: 'flex', flexDirection: 'column', flex: 1, height:'90%' }}>
         <Grid container spacing={2}>
           {/* Upper Left Part: Claim Requests */}
           <Grid item xs={6}>
@@ -39,7 +53,7 @@ const DashboardOverview = ({ totalClaims, pendingRequests, claimedRequests, iden
                 Claim Requests
               </Typography>
               <Typography variant="h5" fontWeight="bold">
-                {totalClaims || 0}
+                {dataCount.claimRequestCount || 0}
               </Typography>
             </Box>
           </Grid>
@@ -51,7 +65,7 @@ const DashboardOverview = ({ totalClaims, pendingRequests, claimedRequests, iden
                 Pending Requests
               </Typography>
               <Typography variant="h5" fontWeight="bold">
-                {pendingRequests || 0}
+                {dataCount.pendingRequestCount || 0}
               </Typography>
             </Box>
           </Grid>
@@ -63,7 +77,7 @@ const DashboardOverview = ({ totalClaims, pendingRequests, claimedRequests, iden
                 Successfully Claimed
               </Typography>
               <Typography variant="h5" fontWeight="bold">
-                {claimedRequests || 0}
+                {dataCount.successRequestCount || 0}
               </Typography>
             </Box>
           </Grid>
@@ -75,7 +89,7 @@ const DashboardOverview = ({ totalClaims, pendingRequests, claimedRequests, iden
                 Identified Items
               </Typography>
               <Typography variant="h5" fontWeight="bold">
-                {identifiedItems || 0}
+                {dataCount.identifiedItemsCount || 0}
               </Typography>
             </Box>
           </Grid>
@@ -83,7 +97,7 @@ const DashboardOverview = ({ totalClaims, pendingRequests, claimedRequests, iden
       </Paper>
 
       {/* Graph Container */}
-      <Paper elevation={3} sx={{ p: 3, mb: 3, flex: 1 , height:'90%'}}>
+      <Paper elevation={5} sx={{ p: 3, mb: 3, flex: 1 , height:'90%'}}>
         <Typography variant="h6" sx={{ mb: 2 }}>Request Trends</Typography>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={data}>
@@ -95,8 +109,6 @@ const DashboardOverview = ({ totalClaims, pendingRequests, claimedRequests, iden
           </LineChart>
         </ResponsiveContainer>
       </Paper>
-
-      
     </Box>
   );
 };

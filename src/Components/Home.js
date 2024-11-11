@@ -439,7 +439,8 @@ const userClaims = [
           <Toolbar />
           <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen} />
           <Routes>
-            <Route path='/' element={<Default isDrawerOpen={isDrawerOpen} />} />
+            {/* <Route path='/' element={localStorage.getItem('userRole') === 'Admin' ? <Default isDrawerOpen={isDrawerOpen} /> : <Statistics isDrawerOpen={isDrawerOpen}/>} /> */}
+            <Route path='/' element={<Default isDrawerOpen={isDrawerOpen} /> } />
             <Route path='Identified Items' element={<UploadPhotos isDrawerOpen={isDrawerOpen} />} />
             <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
             <Route path='Lost Item Request' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
@@ -451,133 +452,6 @@ const userClaims = [
         </Box>
     </div>
   );
-  
-  // return (
-  //   <div style={{fontFamily:'Montserrat'}}>
-  //     <Box sx={{ display: 'flex' }}>
-  //     <CssBaseline />
-
-  //     {/* AppBar */}
-  //     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor:'#fff' }}>
-  //       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      
-  //         {/* Left menu icon and Logo container */}
-  //         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-  //           <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
-  //             <MenuOutlinedIcon sx={{ color: 'black', fontSize: '32px' }} />
-  //           </IconButton>
-  //             <img src='/miraclelogo.jpg' alt="Miracle Logo" style={{ width: '160px',marginLeft:'12px'}} />
-  //         </Box> 
-  //         <Box flexGrow={1} />
-
-  //         {/* Username and Profile Avatar */}
-  //         <div style={{ display: 'flex', alignItems: 'center' }}>
-  //           <div style={{ marginRight: 2, textAlign: 'center' }}>
-  //             <Typography
-  //               variant="body1"
-  //               sx={{
-  //                 color: '#232527',
-  //                 whiteSpace: 'nowrap',
-  //                 overflow: 'hidden',
-  //                 textOverflow: 'ellipsis',
-  //                 maxWidth: {
-  //                   xs: '100px',   
-  //                   sm: '120px',  
-  //                   md: '500px'   
-  //                 },
-  //                 // display: 'inline-block',
-  //               }}
-  //             >
-  //               {userData.name?.length > 9
-  //                 ? `${userData.name.slice(0, 7)}..`
-  //                 : userData.name?.length > 20
-  //                 ? `${userData.name.slice(0, 20)}...` 
-  //                 : userData.name || 'U'} 
-  //             </Typography>
-  //             <Typography variant="body2" sx={{ color: '#004687', fontSize:'14px' }}>
-  //               {userData.role || 'User'}
-  //             </Typography>
-  //           </div>
-  //           <IconButton onClick={handleProfileMenuClick} color="inherit">
-  //             <Avatar src={userData.photo} sx={{ bgcolor: '#00aae7' }}>
-  //               {userData.name ? userData.name[0] : 'U'}
-  //             </Avatar>
-  //           </IconButton>
-  //         </div> 
-         
-  //         {/* Profile Menu */}
-  //         <Menu
-  //           anchorEl={profileMenuAnchorEl}
-  //           open={Boolean(profileMenuAnchorEl)}
-  //          onClose={() => setProfileMenuAnchorEl(null)}
-  //         >
-  //           <MenuItem onClick={handleProfileMenuClose} sx={{fontFamily:'Lato'}}>Profile</MenuItem>
-  //           <MenuItem onClick={handleLogout} sx={{fontFamily:'Lato'}}>Logout</MenuItem>
-  //         </Menu> 
-  //       </Toolbar>
-  //     </AppBar>
-  //     <Drawer
-  //         variant="persistent"
-  //         anchor="left"
-  //         open={isDrawerOpen}
-  //         sx={{
-  //             width: 250,
-  //             flexShrink: 0,
-  //             '& .MuiDrawer-paper': {
-  //                 width: 250,
-  //                 boxSizing: 'border-box',
-  //                 backgroundColor: 'black',
-  //                 color: 'white',
-  //                 fontFamily: 'Montserrat, sans-serif',
-  //                 '&::-webkit-scrollbar': {
-  //                     width: '0px', // Hide scrollbar
-  //                 },
-  //                 '&::-webkit-scrollbar-thumb': {
-  //                     background: 'transparent', 
-  //                 },
-  //                 '&::-webkit-scrollbar-track': {
-  //                     background: 'transparent', 
-  //                 },
-  //               },
-  //           }}
-  //         >
-  //         <Toolbar />
-  //         <Box  className="drawer-invisible-scrollbar" sx={{ overflow: 'auto' }}>
-  //           <List className="drawer-text">
-  //             {userData.role === 'Admin' ? renderAdminForms() : renderUserForms()}
-  //           </List>
-  //         </Box>
-  //       </Drawer>
-  //     </Box>
-
-  //     {/* Submenu */}
-  //     <Menu
-  //       anchorEl={subMenuAnchorEl}
-  //       open={Boolean(subMenuAnchorEl)}
-  //       onClose={handleSubMenuClose}
-  //     >
-  //       {currentSubMenu?.subMenu?.map((subItem) => (
-  //         <MenuItem key={subItem} onClick={() => setView(subItem.toLowerCase())}>{subItem}</MenuItem>
-  //       ))}
-  //     </Menu>
-
-  //     {/* Main Content */}
-  //     <Box component="main" sx={{ flexGrow: 1, bgcolor: '#f5f5f5', p: 3, height: '100vh', overflow: 'auto' }}>
-  //       <Toolbar />
-  //       <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen}  />
-  //       <Routes>
-  //       <Route path='/' element={<Default isDrawerOpen={isDrawerOpen} />} />
-  //         <Route path='Identified Items' element={<UploadPhotos  isDrawerOpen={isDrawerOpen} />} />
-  //         <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
-  //         <Route path='Lost Item Request' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name}  isDrawerOpen={isDrawerOpen} />} />
-  //         <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
-  //         <Route path='Identified Items/View' element={<View isDrawerOpen={isDrawerOpen} />} />
-  //         <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
-  //         <Route path='View All Lost Item Requests' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
-  //       </Routes>
-  //     </Box>
-  //   </div>
-  // )
 }
 
 export default Home
