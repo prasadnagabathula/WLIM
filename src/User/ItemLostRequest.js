@@ -1,13 +1,13 @@
-import React, { useState, useEffect,useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Box, Dialog, DialogActions, AlertDialog,DialogContent, DialogTitle, Typography, TextField, Button, Grid, Snackbar, Alert } from '@mui/material';
+import { InputLabel, Box, Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, Typography, TextField, Button, Grid, Snackbar, Alert } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { height, styled } from '@mui/system';
 import ImageDisplay from '../imageDisplay';
-import _ from 'lodash'; 
+import _ from 'lodash';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 
-function ItemLostRequest({ isDrawerOpen, userName}) {
+function ItemLostRequest({ isDrawerOpen, userName }) {
   const [marginLeft, setMarginLeft] = useState(100);
   const [itemLostRequests, setItemLostRequests] = useState([]);
 
@@ -61,10 +61,12 @@ function ItemLostRequest({ isDrawerOpen, userName}) {
     requestedBy: userName,
   });
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);  
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [resultResponseMessage, setResultResponseMessage] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
-
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const handleDialogOpen = () => setDialogOpen(true);
+  const handleDialogClose = () => setDialogOpen(false);
 
 
   useEffect(() => {
@@ -81,11 +83,13 @@ function ItemLostRequest({ isDrawerOpen, userName}) {
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
+    setSearchText('');
+    setItemSelected(false);
   };
 
   const analyzeImage = async (imageData, file) => {
     const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
-    
+
     try {
       const response = await axios.post(apiUrl, imageData, {
         headers: {
@@ -95,18 +99,18 @@ function ItemLostRequest({ isDrawerOpen, userName}) {
       });
 
       if (response.status === 200) {
-      {
-        const imageTags = response.data.description.tags;
-        setImageTags(imageTags);
-        setItemDescription(response.data.description.captions[0].text);
-        const itemDesc = response.data.description.captions[0].text;
-         const objects = response.data.objects;
-         const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";        
-        searchImage(file,imageTags, itemDesc, objectCategory);
-      }  
-    } else {
-      console.log('Error analyzing image');
-    }    
+        {
+          const imageTags = response.data.description.tags;
+          setImageTags(imageTags);
+          setItemDescription(response.data.description.captions[0].text);
+          const itemDesc = response.data.description.captions[0].text;
+          const objects = response.data.objects;
+          const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";
+          searchImage(file, imageTags, itemDesc, objectCategory);
+        }
+      } else {
+        console.log('Error analyzing image');
+      }
     } catch (error) {
       console.error('Error analyzing image:', error);
     }
@@ -128,10 +132,10 @@ function ItemLostRequest({ isDrawerOpen, userName}) {
       boxShadow: '0 6px 12px rgba(0, 0, 0, 0.3)',
     },
     backgroundColor: '#ffffff',
-}));
+  }));
 
-// Hovered Image Popup (with position fixed for overlay)
-const HoveredImagePopup = styled(Box)(({ theme }) => ({
+  // Hovered Image Popup (with position fixed for overlay)
+  const HoveredImagePopup = styled(Box)(({ theme }) => ({
     position: 'absolute', // Ensures the pop-up doesn't scroll with the container
     top: '20px', // Adjust as needed to avoid overlap
     left: '20px', // Adjust as needed for alignment
@@ -144,7 +148,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
     zIndex: 1000,
     display: hoveredImage ? 'block' : 'none',
     transition: 'all 0.3s ease',
-}));
+  }));
 
   //setSelectedImageId(item.id);
   useEffect(() => {
@@ -156,32 +160,17 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
   // Function to handle selecting a thumbnail and submitting it via API
   const handleThumbnailClick = async (item) => {
     //console.log(item.filePath);
-      setSelectedThumbnail(item.filePath); // Set the selected image
-      setSelectedItemDetails({ id: item.id, itemDescription: item.itemDescription }); // Capture id and description
-      setItemSelected(true);
-      //setSelectedImageId(item.id);
 
-      setCurrentItemLostRequest({
-        description: selectedItemDetails.itemDescription,
-        color: '',
-        size: '',
-        brand: '',
-        model: '',
-        distinguishingFeatures: '',
-        itemCategory: '',
-        serialNumber: '',
-        dateTimeWhenLost: '',
-        location: '',
-        itemValue: '',
-        itemPhoto: '',
-        proofOfOwnership: '',
-        howTheItemLost: '',
-        referenceNumber: '',
-        additionalInformation: '',
-        otherRelevantDetails: '',
-        requestedBy: userName,
-        claimId: selectedItemDetails.id,
-      });
+    setSelectedThumbnail(item.filePath); // Set the selected image
+    setSelectedItemDetails({ id: item.id, itemDescription: item.itemDescription }); // Capture id and description
+    setItemSelected(true);
+    //setSelectedImageId(item.id);
+
+    setCurrentItemLostRequest({
+      description: item.itemDescription,
+      requestedBy: userName,
+      claimId: selectedItemDetails.id,
+    });
 
   };
 
@@ -200,46 +189,46 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
         const imageUrl = URL.createObjectURL(file);
         setUploadedImage(imageUrl);
         const arrayBuffer = reader.result;
-        analyzeImage(arrayBuffer,file);
+        analyzeImage(arrayBuffer, file);
       };
       reader.readAsArrayBuffer(file);
     }
   };
 
-  const searchImage =  (file, imgTags, itemDesc, category) => {
+  const searchImage = (file, imgTags, itemDesc, category) => {
     //setResults([]);   
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('category', category); 
-    formData.append('tags', imgTags); 
-    formData.append('itemDescription', itemDesc); 
+    formData.append('category', category);
+    formData.append('tags', imgTags);
+    formData.append('itemDescription', itemDesc);
     try {
-    axios.post('http://localhost:5005/api/search', formData,{
-      headers: {
+      axios.post('https://localhost:7215/api/search', formData, {
+        headers: {
           'Content-Type': 'multipart/form-data'
         }
-       })
-       .then ((response) => {
-        //console.log(response)
+      })
+        .then((response) => {
+          //console.log(response)
 
-      if (response.status === 200) {
-        setResults([]);
-        setResultResponseMessage('');
-              const filePaths = response.data.filesMatched.map(item => ({
-                  id: item.id,
-                  itemDescription: item.itemDescription,
-                  filePath: item.filePath
-                }));       
-              setResults(filePaths);
-            } else {
-              setMessage('No items found');
-            
-             }
-    });
-  
-        } catch (error) {
-                console.error("Error occurred while searching:", error);
-            };           
+          if (response.status === 200) {
+            setResults([]);
+            setResultResponseMessage('');
+            const filePaths = response.data.filesMatched.map(item => ({
+              id: item.id,
+              itemDescription: item.itemDescription,
+              filePath: item.filePath
+            }));
+            setResults(filePaths);
+          } else {
+            setMessage('No items found');
+
+          }
+        });
+
+    } catch (error) {
+      console.error("Error occurred while searching:", error);
+    };
   };
 
 
@@ -260,7 +249,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
       setResultResponseMessage('');
       setItemSelected(false);
     }
-    
+
   };
 
   const handleMouseEnter = (image, index) => {
@@ -270,7 +259,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
 
   const debouncedSearch = useCallback(
     _.debounce(async (query) => {
-     
+
       try {
         const response = await fetch(`http://localhost:5005/api/images/search/${query}`, {
           method: 'GET',
@@ -285,9 +274,9 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
             id: item.id,
             itemDescription: item.itemDescription,
             filePath: item.filePath
-          })); 
+          }));
 
-          setResults(filePaths || []); 
+          setResults(filePaths || []);
           setResultResponseMessage(result.message);
         } else {
           setResultResponseMessage('No matching images found');
@@ -301,62 +290,59 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
     []
   );
 
-  const handleClaimItem = async () => {
-    if (!selectedThumbnail) return;
+  const handleSubmit = async () => {
     try {
+      console.log(currentItemLostRequest);
       const response = await axios.post('https://localhost:7237/api/LostItemRequest/Claim', currentItemLostRequest);
-
       if (response.status === 200) {
-        setItemSelected(false);
-        setSelectedItemDetails({ id: null, itemDescription: '' });
         setSeverity('success');
-        setResults([]); 
+        setResults([]);
         setResponseMessage(response.data.message);
         setSnackbarOpen(true);
-        setItemLostRequests((prevRequests) => [...prevRequests, currentItemLostRequest]);
-      // Reset form
-      setCurrentItemLostRequest({
-        description: '',
-        color: '',
-        size: '',
-        brand: '',
-        model: '',
-        distinguishingFeatures: '',
-        itemCategory: '',
-        serialNumber: '',
-        dateTimeWhenLost: '',
-        location: '',
-        itemValue: '',
-        itemPhoto: '',
-        proofOfOwnership: '',
-        howTheItemLost: '',
-        referenceNumber: '',
-        additionalInformation: '',
-        otherRelevantDetails: '',
-        requestedBy: userName,
-        claimId: '',
-      });
-      setUploadedImage(null);
+        // Clear form data and close dialog on successful submission
+        setCurrentItemLostRequest({
+          description: '',
+          color: '',
+          size: '',
+          brand: '',
+          model: '',
+          distinguishingFeatures: '',
+          itemCategory: '',
+          serialNumber: '',
+          dateTimeWhenLost: '',
+          location: '',
+          itemValue: '',
+          itemPhoto: '',
+          proofOfOwnership: '',
+          howTheItemLost: '',
+          referenceNumber: '',
+          additionalInformation: '',
+          otherRelevantDetails: '',
+          requestedBy: 'userName',
+          claimId: '',
+        });
+        handleDialogClose();
+        // Handle success actions like showing snackbar
       }
-      
     } catch (error) {
       console.error('Error submitting the lost item request:', error);
     }
-
   };
 
+
   return (
-    <Box sx={{ 
+    <Box sx={{
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      textAlign: 'center', mt: 2, ml: {xs: 0, sm: 0, md: `${marginLeft}px`}, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
+      textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s'
+    }}>
       <Box sx={{
         display: 'flex',
-        flexDirection: {xs: 'column', sm: 'column', md: 'row'},
+        flexDirection: { xs: 'column', sm: 'column', md: 'row' },
         justifyContent: 'center',
         gap: 2,
-        width: {xs: '100%', sm: '100%', md: 'auto'},
+        width: { xs: '100%', sm: '100%', md: 'auto' },
       }}>
         <Box sx={{
           display: 'flex',
@@ -392,7 +378,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
           >
             {!uploadedImage && 'Search by Photo'}
             <input
-            id="upload-image"
+              id="upload-image"
               type="file"
               accept="image/*"
               style={{ display: 'none' }}
@@ -407,19 +393,19 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
           justifyContent: 'center'
         }}>
           <Box component='form' sx={{
-          width: {xs: '90%', sm: '90%'},
-        }}>
+            width: { xs: '90%', sm: '90%' },
+          }}>
             <Box sx={{
               flex: "1",
               display: "flex",
               flexDirection: "column",
               // alignItems: "flex-start",
-              width: {xs: '100%', sm: '100%', md: 500},
-              height:'100%',
+              width: { xs: '100%', sm: '100%', md: 500 },
+              height: '100%',
             }}>
               <TextField
                 label="Search"
-                variant="outlined"                
+                variant="outlined"
                 fullWidth
                 value={searchText}
                 onChange={handleSearchChange}
@@ -427,7 +413,7 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
               />
               {/* Display results count */}
               {searchText && (
-                <Typography variant="body2" color="textSecondary" style={{ marginBottom: '20px', color:'#89023e' }}>
+                <Typography variant="body2" color="textSecondary" style={{ marginBottom: '20px', color: '#89023e' }}>
                   {results.length > 0 ? `Showing ${results.length} result${results.length > 1 ? 's' : ''}` : 'No results found'}
                 </Typography>
               )}
@@ -464,69 +450,119 @@ const HoveredImagePopup = styled(Box)(({ theme }) => ({
                       <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                     </ThumbnailBox>
 
-                        {/* Hovered Image Popup */}
-                        {/* {hoveredImage && hoveredIndex === index && (
+                    {/* Hovered Image Popup */}
+                    {/* {hoveredImage && hoveredIndex === index && (
                           <HoveredImagePopup>
                             <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
                           </HoveredImagePopup>
                         )} */}
-                        
-                        
-                      </Box>
-              
+
+
+                  </Box>
+
                 ))) : <Typography>{resultResponseMessage}</Typography>}
               </Box>
 
-                {itemSelected  && ( <Box sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  width: '100%', 
-                  mt: 2
-                }}  >
-                  <Box sx={{
+              {itemSelected && (<Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                width: '100%',
+                mt: 2
+              }}  >
+                <Box sx={{
                   display: 'flex',
                   alignItems: 'center',
                   fontFamily: 'Lato',
                   color: '#229954',
-                  
-                  }}>
-                    <DoneAllIcon /> <p><b>Selected Item :</b> {selectedItemDetails.itemDescription}</p>
-                  </Box>                                   
-                  <Box  height="40px" sx={{
+
+                }}>
+                  <DoneAllIcon /> <p><b>Selected Item :</b> {selectedItemDetails.itemDescription}</p>
+                </Box>
+                <Box height="40px" sx={{
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
                   width: '100%',
                   mt: 2
-                  }} >
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleClaimItem}
-                        disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
-                        width="300px"
-                    >
-                        Claim the Item
-                    </Button>
-                  </Box>
+                }} >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleDialogOpen}
+                    disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
+                    width="300px"
+                  >
+                    Claim the Item
+                  </Button>
+                </Box>
               </Box>
               )}
             </Box>
           </Box>
         </Box>
       </Box>
-      <Dialog 
-      open={snackbarOpen} 
-      onClose={handleCloseSnackbar}
-      sx={{ height: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+      <Dialog
+        open={snackbarOpen}
+        onClose={handleCloseSnackbar}
+        sx={{ height: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <DialogTitle>Alert</DialogTitle>
-        <DialogContent sx={{width: {xs: '300px', sm: '300px', md: '500px'}}}>
+        <DialogContent sx={{ width: { xs: '300px', sm: '300px', md: '500px' } }}>
           <Alert severity={severity}>{responseMessage}</Alert>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseSnackbar} color="primary">
             Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={dialogOpen} onClose={handleDialogClose}
+        PaperProps={{
+          style: {
+            width: '600px', // Set a custom width here
+            maxWidth: '800px', // Set max width if needed
+          },
+        }}
+      >
+        <DialogTitle>Add More Info About Claim Item</DialogTitle>
+        <DialogContent>
+          {[
+            { label: 'Description', name: 'description', maxLength: 50 },
+            { label: 'Color', name: 'color', maxLength: 50 },
+            { label: 'Size', name: 'size', maxLength: 20 },
+            { label: 'Brand', name: 'brand', maxLength: 50 },
+            { label: 'Model', name: 'model', maxLength: 50 },
+            { label: 'Distinguishing Features', name: 'distinguishingFeatures', maxLength: 100 },
+            { label: 'Item Category', name: 'itemCategory', maxLength: 50 },
+            { label: 'Serial Number', name: 'serialNumber', maxLength: 50 },
+            { label: 'Date and Time When Lost', name: 'dateTimeWhenLost', type: 'datetime-local' },
+            { label: 'Location', name: 'location', maxLength: 100 },
+            { label: 'Item Value', name: 'itemValue', type: 'number', inputProps: { min: 0 } },
+            { label: 'Proof of Ownership', name: 'proofOfOwnership', maxLength: 100 },
+            { label: 'How the Item Was Lost', name: 'howTheItemLost', maxLength: 100 },
+            { label: 'Reference Number', name: 'referenceNumber', maxLength: 50 },
+            { label: 'Other Relevant Details', name: 'otherRelevantDetails', maxLength: 200 },
+          ].map(({ label, name, maxLength, type = 'text', inputProps = {} }) => (
+            <React.Fragment key={name}>
+              <InputLabel>{label}</InputLabel>
+              <TextField
+                margin="dense"
+                name={name}
+                value={currentItemLostRequest[name]}
+                onChange={handleChange}
+                fullWidth
+                inputProps={{ maxLength, ...inputProps }}
+                type={type}
+              />
+            </React.Fragment>
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="secondary">
+            Cancel
+          </Button>
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
+            Submit
           </Button>
         </DialogActions>
       </Dialog>
