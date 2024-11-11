@@ -7,12 +7,14 @@ import { Button,Grid,Alert, Snackbar, Typography, Box, TextField} from '@mui/mat
 import { fontFamily, styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { CATEGORY_OPTIONS } from '../Components/Constants';
+import CategoryDropdown from './CategoryDropdown';
 
 const UploadPhotos = ({isDrawerOpen}) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [message, setMessage] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState("");
   const [tags, setTags] = useState([]);
   const [itemDescription, setItemDescription] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -22,6 +24,7 @@ const UploadPhotos = ({isDrawerOpen}) => {
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
   const [comments, setComments] = useState('');
+  const [categoryOptions, setCategoryOptions] = useState(""); 
 
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 300 : 100);
@@ -46,6 +49,9 @@ const UploadPhotos = ({isDrawerOpen}) => {
     setSnackbarOpen(false);
   };
 
+  const onCategoryChange = (newCategory) => {
+    setCategory(newCategory);
+  };
 
   const UploadBox = styled(Box)({
     // width: '300px',
@@ -69,6 +75,10 @@ const UploadPhotos = ({isDrawerOpen}) => {
     setMessage('');
   };
 
+  const toInitialCapitalCase = (str) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+ 
   const analyzeImage = async (imageData) => {
     const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
     
@@ -87,9 +97,18 @@ const UploadPhotos = ({isDrawerOpen}) => {
       setItemDescription(itemDesc);
 
       const objects = response.data.objects;
-      const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";
-      setCategory(objectCategory);
+      const objectCategory = objects && objects.length > 0 ? objects[0].object : "Others";    
       
+      const combinedText = [...imageTags, itemDesc, objectCategory].join(" ").toLowerCase();
+
+      console.log(combinedText);
+
+      const matchedCategory = CATEGORY_OPTIONS.find((category) =>
+        combinedText.toLowerCase().includes(category.toLowerCase())
+      ) || "Others";
+      setCategory(toInitialCapitalCase(matchedCategory));
+      setCategoryOptions(CATEGORY_OPTIONS); 
+
       setIsDisabled(false);
     } catch (error) {
       console.error('Error analyzing image:', error);
@@ -101,10 +120,10 @@ const UploadPhotos = ({isDrawerOpen}) => {
     setIsDisabled(true);
     const file = e.target.files[0];
     if (file) {
-        // Create a local URL for the selected image
+        
         const imageUrl = URL.createObjectURL(file);
 
-        setSelectedImage(imageUrl); // Set the local URL for rendering
+        setSelectedImage(imageUrl); 
 
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -223,6 +242,14 @@ const UploadPhotos = ({isDrawerOpen}) => {
                   onChange={handleFileChange}
                 />
 
+            
+                <CategoryDropdown 
+                  categoryOptions={categoryOptions}
+                  initialCategory={category}
+                  onCategoryChange={onCategoryChange}
+                />
+
+               
                 <TextField
                   label="Comments"
                   variant="outlined"
