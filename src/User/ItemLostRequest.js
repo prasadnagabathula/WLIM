@@ -353,8 +353,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
             alignItems: 'center',
           }}
         >
-          <FormControl sx={{ width: { xs: '100%', sm: '400px', md: '250px' }, mt: 2 }}>
-            <InputLabel id="location-label">Location</InputLabel>
+          <FormControl sx={{ width: { xs: '250px', sm: '400px', md: '250px' },marginTop: '10px', mb: 3 }}>
+            <InputLabel id="location-label">Location</InputLabel>   
             <Select
               labelId="location-label"
               id="location"
