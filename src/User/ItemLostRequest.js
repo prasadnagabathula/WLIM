@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { InputLabel, Box, Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, Typography, TextField, Button, Grid, Snackbar, Alert } from '@mui/material';
+import { InputLabel, Box, Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, Typography, TextField, Button, Grid, Snackbar, Alert, FormControl, Select, MenuItem } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { height, styled } from '@mui/system';
 import ImageDisplay from '../imageDisplay';
@@ -30,6 +30,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const [selectedItemDetails, setSelectedItemDetails] = useState({ id: null, itemDescription: '' });
   const [itemSelected, setItemSelected] = useState(false);
   const [severity, setSeverity] = useState('success');
+  const [location, setLocation] = useState('');
 
   // const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
@@ -39,6 +40,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
   const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
 
+  const locationOptions = ["New York", "Atlanta", "Los Angeles", "Chicago"];
 
   const [currentItemLostRequest, setCurrentItemLostRequest] = useState({
     description: '',
@@ -344,10 +346,30 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         gap: 2,
         width: { xs: '100%', sm: '100%', md: 'auto' },
       }}>
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'center',
-        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <FormControl sx={{ width: { xs: '100%', sm: '400px', md: '250px' }, mt: 2 }}>
+            <InputLabel id="location-label">Location</InputLabel>
+            <Select
+              labelId="location-label"
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              label="Location"
+            >
+              {locationOptions.map((loc, index) => (
+                <MenuItem key={index} value={loc}>
+                  {loc}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <Button
             variant="contained"
             component="label"
@@ -386,6 +408,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
             />
           </Button>
         </Box>
+
         {/* </Grid> */}
         {/* <Grid item xs={6}> */}
         <Box sx={{
