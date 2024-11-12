@@ -45,21 +45,20 @@ const Claims = ({ isDrawerOpen }) => {
   }, [isDrawerOpen]);
 
   const calculateDaysAgo = (createdDate, updatedDate) => {
-    // if (!updatedDate) {
-    //   // If no updatedDate, return 0 days
-    //   return 0;
-    // }
-
-    if (!updatedDate) {
-      // If no updatedDate, return the difference between createdDate and current date
-      const startDate = dayjs(createdDate);
-      const endDate = dayjs(); // Current date
-      return endDate.diff(startDate, 'day');
-    }
-
     const startDate = dayjs(createdDate);
-    const endDate = dayjs(updatedDate);
-    return endDate.diff(startDate, 'day');
+    const endDate = updatedDate ? dayjs(updatedDate) : dayjs(); // Use updatedDate or current date if not provided
+  
+    const diffInMinutes = endDate.diff(startDate, 'minute');
+    const diffInHours = endDate.diff(startDate, 'hour');
+    const diffInDays = endDate.diff(startDate, 'day');
+  
+    if (diffInDays >= 1) {
+      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    } else if (diffInHours >= 1) {
+      return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    } else {
+      return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+    }
   };
 
   // Fetch claims from the API and filter them based on `userName`
@@ -82,7 +81,7 @@ const Claims = ({ isDrawerOpen }) => {
   //   if (currentClaimReq.id) {
   //     try {
   //       const response = await axios.put(`https://localhost:7237/api/LostItemrequest/${currentClaimReq.id}`, {
-  //         isActive: status === 'Disclaimed',
+  //         isActive: status === 'Claimed',
   //         additionalInformation: comments
   //       });
   //       console.log('Updated claim:', response.data);
@@ -96,12 +95,12 @@ const Claims = ({ isDrawerOpen }) => {
   const handleSubmit = async () => {
     console.log('Submit button clicked');
     console.log('Current Claim ID:', selectedItemId);
-    console.log('isActive:', status === 'Disclaimed');
+    console.log('isActive:', status === 'Claimed');
     console.log('Comments:', comments);
     console.log('Description:', selectedItemDesc);
     const selectedClaim = {
       id: selectedItemId,
-      isActive: status === 'Disclaimed',
+      isActive: status === 'Claimed',
       additionalInformation: comments,
       description: selectedItemDesc
     };
@@ -135,15 +134,16 @@ const Claims = ({ isDrawerOpen }) => {
     setStatus(newStatus);
     setCurrentCliamReq((prev) => ({
       ...prev,
-      isActive: newStatus === 'Disclaimed'
+      isActive: newStatus === 'Claimed'
     }));
   };
 
   const handleCardClick = (item) => {
     setSelectedItem(item);
     setSelectedItemId(item.id);
+   //console.log(item.id);
     setSelectedItemDesc(item.description);
-    setStatus(item.isActive ? 'Disclaimed' : 'Claimed');
+    setStatus(item.isActive ? 'Claimed' : 'Approved');
     setOpenModal(true);
   };
 
@@ -165,7 +165,7 @@ const Claims = ({ isDrawerOpen }) => {
           <Grid container spacing={3} justifyContent="flex-start">
             {uploadedItems.map((item, index) => {
               // Determine the background color based on the status
-              const cardBackgroundColor = item.isActive ? '#E5E4E2' : '#C8E6C9'; // Light orange for Disclaimed, light green for Claimed
+              const cardBackgroundColor = item.isActive ? '#E5E4E2' : '#C8E6C9'; // Light orange for Claimed, light green for Claimed
 
               return (
                 <Grid item xs={12} sm={6} md={4} key={index}>
@@ -182,8 +182,8 @@ const Claims = ({ isDrawerOpen }) => {
                     </CardMedia>
                     <CardContent>
                       <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Disclaimed' : 'Claimed'}</Typography>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)} days</Typography>
+                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Claimed' : 'Approved'}</Typography>
+                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
                     </CardContent>
                   </Card>
                 </Grid>
@@ -220,7 +220,7 @@ const Claims = ({ isDrawerOpen }) => {
                       fullWidth
                       sx={{ mt: 4 }}
                     >
-                      {['Disclaimed', 'Claimed'].map((option) => (
+                      {['Reject', 'Approve'].map((option) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>

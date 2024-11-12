@@ -47,6 +47,18 @@ const DashboardOverview = () => {
       {/* Statistics Container */}
       <Paper elevation={5} sx={{ p: 2, display: 'flex', flexDirection: 'column', flex: 1, height: '90%' }}>
         <Grid container spacing={2} sx={{ flex: 1 }}>
+
+           {/* Lower Right Part: Identified Items */}
+           <Grid item xs={12} sm={6} md={6}>
+            <Box sx={{ textAlign: 'center', p: 4 , backgroundColor:"#BDB5D5"}}>
+              <Typography variant="body1" color="textSecondary">
+                Identified Items
+              </Typography>
+              <Typography variant="h5" fontWeight="bold">
+                {dataCount.identifiedItemsCount || 0}
+              </Typography>
+            </Box>
+          </Grid>
           
           {/* Upper Left Part: Claim Requests */}
           <Grid item xs={12} sm={6} md={6}> 
@@ -76,7 +88,7 @@ const DashboardOverview = () => {
           <Grid item xs={12} sm={6} md={6}> 
             <Box sx={{ textAlign: 'center', p: 4, bgcolor: '#d4edda', borderRadius: 1 }}>
               <Typography variant="body1" color="textSecondary">
-                Successfully Claimed
+                Successfully Returned
               </Typography>
               <Typography variant="h5" fontWeight="bold">
                 {dataCount.successRequestCount || 0}
@@ -84,17 +96,7 @@ const DashboardOverview = () => {
             </Box>
           </Grid>
   
-          {/* Lower Right Part: Identified Items */}
-          <Grid item xs={12} sm={6} md={6}>
-            <Box sx={{ textAlign: 'center', p: 4 , backgroundColor:"#BDB5D5"}}>
-              <Typography variant="body1" color="textSecondary">
-                Identified Items
-              </Typography>
-              <Typography variant="h5" fontWeight="bold">
-                {dataCount.identifiedItemsCount || 0}
-              </Typography>
-            </Box>
-          </Grid>
+         
         </Grid>
       </Paper>
   

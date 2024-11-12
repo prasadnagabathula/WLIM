@@ -40,7 +40,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
   const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
 
-  const locationOptions = ["New York", "Atlanta", "Los Angeles", "Chicago"];
+  const locationOptions = ["New York", "Atlanta", "Tacoma", "Piscataway"];
 
   const [currentItemLostRequest, setCurrentItemLostRequest] = useState({
     description: '',
@@ -61,6 +61,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     additionalInformation: '',
     otherRelevantDetails: '',
     requestedBy: userName,
+    claimId:'',
   });
   const [uploadedImage, setUploadedImage] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -162,6 +163,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   // Function to handle selecting a thumbnail and submitting it via API
   const handleThumbnailClick = async (item) => {
     //console.log(item.filePath);
+    console.log(item.id)
 
     setSelectedThumbnail(item.filePath); // Set the selected image
     setSelectedItemDetails({ id: item.id, itemDescription: item.itemDescription }); // Capture id and description
@@ -171,7 +173,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     setCurrentItemLostRequest({
       description: item.itemDescription,
       requestedBy: userName,
-      claimId: selectedItemDetails.id,
+      claimId: item.id,
     });
 
   };
@@ -204,8 +206,10 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     formData.append('category', category);
     formData.append('tags', imgTags);
     formData.append('itemDescription', itemDesc);
+    formData.append('warehouseLocation', location);
+
     try {
-      axios.post('https://localhost:7215/api/search', formData, {
+      axios.post('http://localhost:5005/api/search', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

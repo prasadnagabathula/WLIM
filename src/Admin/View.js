@@ -28,16 +28,20 @@ function View({ isDrawerOpen }) {
   }, [isDrawerOpen]);
 
   const calculateDaysAgo = (createdDate, updatedDate) => {
-    if (!updatedDate) {
-      // If no updatedDate, return the difference between createdDate and current date
-      const startDate = dayjs(createdDate);
-      const endDate = dayjs(); // Current date
-      return endDate.diff(startDate, 'day');
-    }
-
     const startDate = dayjs(createdDate);
-    const endDate = dayjs(updatedDate);
-    return endDate.diff(startDate, 'day');
+    const endDate = updatedDate ? dayjs(updatedDate) : dayjs(); // Use updatedDate or current date if not provided
+  
+    const diffInMinutes = endDate.diff(startDate, 'minute');
+    const diffInHours = endDate.diff(startDate, 'hour');
+    const diffInDays = endDate.diff(startDate, 'day');
+  
+    if (diffInDays >= 1) {
+      return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    } else if (diffInHours >= 1) {
+      return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    } else {
+      return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+    }
   };
   
   useEffect(() => {
@@ -278,7 +282,7 @@ function View({ isDrawerOpen }) {
                     <TableCell>
                       <DateFormat date={item.createdDate} />
                     </TableCell>
-                    <TableCell>{calculateDaysAgo(item.createdDate, item.updatedDate)} days</TableCell>
+                    <TableCell>{calculateDaysAgo(item.createdDate, item.updatedDate)}</TableCell>
 
                   </TableRow>
                 ))}

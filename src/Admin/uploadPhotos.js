@@ -33,7 +33,7 @@ const UploadPhotos = ({ isDrawerOpen }) => {
 
   }, [isDrawerOpen]);
 
-  const locationOptions = ["New York", "Atlanta", "Los Angeles", "Chicago"];
+  const locationOptions = ["New York", "Atlanta", "Tacoma", "Piscataway"];
 
   // Azure Computer Vision API endpoint and key
   const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
@@ -150,7 +150,7 @@ const UploadPhotos = ({ isDrawerOpen }) => {
     formData.append('tags', tags);
     formData.append('itemDescription', itemDescription);
     formData.append('comments', comments);
-    formData.append('location', location);
+    formData.append('warehouseLocation', location);
 
     try {
       const response = await axios.post('http://localhost:5005/api/upload', formData, {
