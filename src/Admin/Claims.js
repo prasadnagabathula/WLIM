@@ -165,7 +165,7 @@ const Claims = ({ isDrawerOpen }) => {
           <Grid container spacing={3} justifyContent="flex-start">
             {uploadedItems.map((item, index) => {
               // Determine the background color based on the status
-              const cardBackgroundColor = item.isActive ? '#E5E4E2' : '#C8E6C9'; // Light orange for Claimed, light green for Claimed
+              const cardBackgroundColor = item.isActive ? '#E5E4E2' : '#C8E6C9'; // Light orange for Disclaimed, light green for Claimed
 
               return (
                 <Grid item xs={12} sm={6} md={4} key={index}>
@@ -174,7 +174,7 @@ const Claims = ({ isDrawerOpen }) => {
                     boxShadow: 3,
                     backgroundColor: cardBackgroundColor, // Apply the background color here
                     '&:hover': {
-                      backgroundColor: item.isActive ? '#C0C0C0' : '#A5D6A7' // Change color on hover for visual feedback
+                      backgroundColor: item.isActive ? '	#FFFDD0' : '#A5D6A7' // Change color on hover for visual feedback
                     }
                   }} onClick={() => handleCardClick(item)}>
                     <CardMedia>
