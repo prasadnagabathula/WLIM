@@ -36,7 +36,9 @@ function Default({ isDrawerOpen }) {
             color: 'transparent', 
             fontWeight: 'bold',            
           }}>
-            Lost Items? Let’s Bring Them Back Home!
+             {localStorage.getItem('userRole') === 'Admin' 
+          ? "Leading with Responsibility: Ensuring Lost Items Find Their Way Home!" 
+          : "Lost Items? Let’s Bring Them Back Home!"}
           </Typography>  
   
           {/* Container for DashboardOverview with Side-by-Side Layout */}
@@ -61,7 +63,9 @@ function Default({ isDrawerOpen }) {
             color: 'transparent', 
             fontWeight: 'bold',
           }}>
-            Finding Solutions for Lost Items: Our Commitment to Accountability
+            {localStorage.getItem('userRole') === 'Admin'
+          ? "Turning Lost Into Found with Admin Expertise."
+          : "Finding Solutions for Lost Items: Our Commitment to Accountability"}
           </Typography>
         </Box>
       </div>
