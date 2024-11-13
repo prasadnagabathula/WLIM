@@ -114,29 +114,29 @@ const ClaimStatus = ({ isDrawerOpen }) => {
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
             {selectedItem && (
               <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width: '100%', position: 'relative' }}>
-                        <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
-                          <CloseIcon />
-                        </Button>                
-                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, pt: 3 }}>
-                        <Box sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
-                    flex: 1 
-                  }}>
-                    <ImageDisplay 
-                      imageId={selectedItem.itemPhoto} 
-                      style={{ 
-                        width: '150px', 
-                        height: '150px', 
-                        objectFit: 'cover', 
-                        borderRadius: '8px', 
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', 
-                        border: '2px solid #e0e0e0', 
-                        marginTop: '20px' 
-                      }} 
-                    />
-                  </Box>
+                <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
+                  <CloseIcon />
+                </Button>                
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, gap: 2, pt: 4 }}>
+                 <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        alignItems: 'center', 
+                        flex: 1 
+                      }}>
+                        <ImageDisplay 
+                          imageId={selectedItem.itemPhoto} 
+                          style={{ 
+                            width: '150px', 
+                            height: '150px', 
+                            objectFit: 'cover', 
+                            borderRadius: '8px', 
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', 
+                            border: '2px solid #e0e0e0', 
+                            marginTop: '20px' 
+                          }} 
+                        />
+                      </Box>
 
                   <CardContent sx={{ flex: 2 }}>
                     <Typography variant="h5" gutterBottom>{selectedItem.itemDescription}</Typography>
@@ -165,7 +165,9 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                       </Typography>
 
                       <Typography variant="body2"><b>Date and Time of Loss:</b></Typography>
-                      <Typography variant="body2">{selectedItem.dateTimeWhenLost}</Typography>
+                      <Typography variant="body2">
+                      <DateFormat date={selectedItem.dateTimeWhenLost} />
+                      </Typography>
 
                       <Typography variant="body2"><b>Location / Area:</b></Typography>
                       <Typography variant="body2" sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>

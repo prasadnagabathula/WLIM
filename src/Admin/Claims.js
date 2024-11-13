@@ -201,17 +201,81 @@ const Claims = ({ isDrawerOpen }) => {
                 <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
                   <CloseIcon />
                 </Button>
+                <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', mb: 2, marginBottom:0, marginLeft:0 }}>
+                    Claim Approval
+                  </Typography>  
+                  <hr></hr>
+                  
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, gap: 2, pt: 4 }}>
-                  {/* <Box sx={{ flex: 1, border: '2px solid red' }}> */}
-                  <Box sx={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
-                    <ImageDisplay imageId={selectedItem.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
-                  </Box>
+                 <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        alignItems: 'center', 
+                        flex: 1 
+                      }}>
+                        <ImageDisplay 
+                          imageId={selectedItem.itemPhoto} 
+                          style={{ 
+                            width: '150px', 
+                            height: '150px', 
+                            objectFit: 'cover', 
+                            borderRadius: '8px', 
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', 
+                            border: '2px solid #e0e0e0', 
+                            marginTop: '0px' 
+                          }} 
+                        />
+                      </Box>
+
                   <CardContent sx={{ flex: 2 }}>
                     <Typography variant="h5" gutterBottom>{selectedItem.itemDescription}</Typography>
-                    <Typography><b>Description:</b> {selectedItem.description}</Typography>
-                    <Typography><b>Item Category:</b> {selectedItem.itemCategory}</Typography>
-                    <Typography><b>Requested By:</b> {selectedItem.createdBy}</Typography>
-                    <Typography><b>Requested Date:</b><DateFormat date={selectedItem.createdDate} /></Typography>
+
+                    {/* Using Grid for aligned labels and content */}
+                    <Box sx={{ display: 'grid', gridTemplateColumns: '150px 1fr', rowGap: 1.5, columnGap: 1 }}>
+                      <Typography><b>Description:</b></Typography>
+                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                        {selectedItem.description}
+                      </Typography>
+
+                      <Typography><b>Item Category:</b></Typography>
+                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                        {selectedItem.itemCategory}
+                      </Typography>
+
+                      <Typography><b>Color:</b></Typography>
+                      <Typography>{selectedItem.color}</Typography>
+
+                      <Typography><b>Brand:</b></Typography>
+                      <Typography>{selectedItem.brand}</Typography>
+
+                      <Typography><b>Distinguishing Features:</b></Typography>
+                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                        {selectedItem.distinguishingFeatures}
+                      </Typography>
+
+                      <Typography ><b>Date and Time of Loss:</b></Typography>
+                      <Typography>
+                      <DateFormat date={selectedItem.dateTimeWhenLost} />
+                      </Typography>
+
+                      <Typography><b>Location / Area:</b></Typography>
+                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                        {selectedItem.location}
+                      </Typography>
+
+                      <Typography><b>Other Details For Communication:</b></Typography>
+                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                        {selectedItem.otherRelevantDetails}
+                      </Typography>
+
+                      <Typography><b>Requested Date:</b></Typography>
+                      <Typography>
+                        <DateFormat date={selectedItem.createdDate} />
+                      </Typography>
+
+                      <Typography><b>Status:</b></Typography>
+                      <Typography>{selectedItem.isActive ? 'Pending' : 'Resolved'}</Typography>
+                    </Box>
                     <TextField
                       select
                       label="Status"
