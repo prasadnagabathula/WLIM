@@ -151,7 +151,7 @@ function Login() {
                 Warehouse Lost Items <br />Management
               </Typography>
               <Typography variant="h6" sx={{ color: 'white' }}>
-                Tracking Every Item: Because Every Asset Counts
+                Tracking Every Item: Every Asset Counts
               </Typography>
             </Box>
           </Grid>

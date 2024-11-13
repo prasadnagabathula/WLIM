@@ -125,6 +125,12 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                     <Typography variant="h5" gutterBottom>{selectedItem.itemDescription}</Typography>
                     <Typography><b>Description:</b> {selectedItem.description}</Typography>
                     <Typography><b>Item Category:</b> {selectedItem.itemCategory}</Typography>
+                    <Typography><b>Color:</b> {selectedItem.color}</Typography>
+                    <Typography><b>Brand:</b> {selectedItem.brand}</Typography>
+                    <Typography><b>Distinguishing Features:</b> {selectedItem.distinguishingFeatures}</Typography>
+                    <Typography><b>Date and Time of Loss:</b> {selectedItem.dateTimeWhenLost}</Typography>
+                    <Typography><b>Location / Area:</b> {selectedItem.location}</Typography>
+                    <Typography><b>Other Details For Communication:</b> {selectedItem.otherRelevantDetails}</Typography>
                     <Typography><b>Requested Date:</b><DateFormat date={selectedItem.createdDate} /></Typography>
                     <Typography><b>Status: </b>{selectedItem.isActive ? 'Pending' : 'Resolved'}</Typography>
                   </CardContent>
