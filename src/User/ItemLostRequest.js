@@ -338,7 +338,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const dialogPaperStyles = {
     width: '600px',
     maxWidth: '800px',
-    background: 'linear-gradient(to right, #add8e6,#a6c7e7,#e0e0e0)',
+    background: 'linear-gradient(to right,#1a1a2e, #16213e,#e0e0e0)',
     padding: 2, 
   };
   
