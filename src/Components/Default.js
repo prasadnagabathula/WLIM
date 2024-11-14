@@ -36,9 +36,10 @@ function Default({ isDrawerOpen }) {
             color: 'transparent', 
             fontWeight: 'bold',            
           }}>
-             {localStorage.getItem('userRole') === 'Admin' 
+            Tracking Every Item: Every Asset Counts
+             {/* {localStorage.getItem('userRole') === 'Admin' 
           ? "Leading with Responsibility: Ensuring Lost Items Find Their Way Home!" 
-          : "Lost Items? Let’s Bring Them Back Home!"}
+          : "Lost Items? Let’s Bring Them Back Home!"} */}
           </Typography>  
   
           {/* Container for DashboardOverview with Side-by-Side Layout */}
