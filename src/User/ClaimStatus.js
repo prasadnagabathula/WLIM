@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container } from '@mui/material';
+import { Box, Typography, Card, CardMedia, CardContent,Tabs, Tab, Modal, Grid, Button, Container } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from '../Components/AuthService'; // Assuming your auth service file is named authService.js
+import axios from '../Components/AuthService'; 
 import ImageDisplay from '../imageDisplay';
 import DateFormat from '../Components/DateFormat';
+import AccessTimeIcon from '@mui/icons-material/AccessTime'; 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'; 
 
 const ClaimStatus = ({ isDrawerOpen }) => {
   const [marginLeft, setMarginLeft] = useState(100);
@@ -13,18 +15,19 @@ const ClaimStatus = ({ isDrawerOpen }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [uploadedItems, setUploadedItems] = useState([]);
   const [userName, setUserName] = useState('');
+  const [value, setValue] = useState(0);
 
   // Decode token to get the username
   useEffect(() => {
     const token = localStorage.getItem('oauth2');
     if (token) {
       const decoded = jwtDecode(token);
-      console.log("Decoded token:", decoded); // Debugging to verify token structure
-      setUserName(decoded?.UserName); // Assuming `userName` is part of the token payload
+      console.log("Decoded token:", decoded);
+      setUserName(decoded?.UserName); 
     }
   }, []);
 
-  // Adjust margins based on drawer state
+
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 250 : 0);
     setMarginRight(isDrawerOpen ? 50 : 0);
@@ -35,10 +38,9 @@ const ClaimStatus = ({ isDrawerOpen }) => {
     const fetchClaims = async () => {
       try {
         const response = await axios.get('https://localhost:7237/api/LostItemRequest');
-        console.log("Fetched claims:", response.data); // Debugging to verify API response data
+        console.log("Fetched claims:", response.data); 
         const userClaims = response.data.filter(item => item.createdBy === userName);
-        console.log("Filtered claims for user:", userClaims); // Debugging to verify filtering
-        console.log(userClaims);
+        console.log("Filtered claims for user:", userClaims); 
         setUploadedItems(userClaims);
       } catch (error) {
         console.error('Error fetching claims:', error);
@@ -57,62 +59,175 @@ const ClaimStatus = ({ isDrawerOpen }) => {
     setSelectedItem(null);
   };
 
+  // Handle Tab change
+  const handleTabChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  // Filter claims into pending and resolved based on `isActive`
+  const pendingClaims = uploadedItems.filter(item => item.isActive);
+  const resolvedClaims = uploadedItems.filter(item => !item.isActive);
+
   return (
     <Box sx={{ textAlign: 'center', mt: 2, ml: { sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
       <Container>
         <Typography variant="h4" gutterBottom>
           Claim Status
         </Typography>
-        {uploadedItems.length === 0 ? (
-          <Typography>No claims submitted yet.</Typography>
-        ) : (
+
+        {/* Tabs for Pending and Resolved with Centering and Custom Styles */}
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Tabs
+            value={value}
+            onChange={handleTabChange}
+            aria-label="Claim Status Tabs"
+            indicatorColor="primary"
+            textColor="secondary"
+            variant="fullwidth"
+            sx={{
+              display: 'flex',
+              justifyContent: 'center', 
+              borderBottom: 1,
+              borderColor: 'divider',
+              marginBottom: 3, 
+              [`@media (max-width:600px)`]: {
+                variant: 'scrollable', 
+              },
+              [`@media (min-width:601px)`]: {
+                variant: 'fullWidth', 
+              },
+            }}
+            scrollButtons="auto" 
+          >
+            <Tab
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <AccessTimeIcon sx={{ color: value === 0 ? '#E97451' : '#888' }} />
+                  Pending
+                </Box>
+              }
+              sx={{
+                color: value === 0 ? '#E97451' : '#888',
+                fontWeight: value === 0 ? 'bold' : 'normal',
+              }}
+            />
+            <Tab
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <CheckCircleIcon sx={{ color: value === 1 ? '#4CAF50' : '#888' }} />
+                  Resolved
+                </Box>
+              }
+              sx={{
+                color: value === 1 ? '#4CAF50' : '#888',
+                fontWeight: value === 1 ? 'bold' : 'normal',
+              }}
+            />
+          </Tabs>
+        </Box>
+
+        {/* Tab Panel for Pending Claims */}
+        {value === 0 && (
+          <Grid container spacing={3} justifyContent="flex-start" >
+            {pendingClaims.length === 0 ? (
+              <Typography>No pending claims.</Typography>
+            ) : (
+              pendingClaims.map((item, index) => {
+                const cardBackgroundColor = item.isActive ? '#F2D2BD' : '#C1E1C1';
+                const cardHoverColor = item.isActive ? '#FBCEB1' : '#93C572';
+                return (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Card
+                      sx={{
+                        cursor: 'pointer',
+                        boxShadow: 3,
+                        backgroundColor: cardBackgroundColor,
+                        '&:hover': {
+                          backgroundColor: cardHoverColor,
+                        },
+                      }}
+                      onClick={() => handleCardClick(item)}
+                    >
+                      <CardMedia>
+                        <ImageDisplay
+                          imageId={item.itemPhoto}
+                          style={{
+                            width: '100px',
+                            height: '100px',
+                            objectFit: 'cover',
+                            margin: '15px 0px 0px 0px',
+                          }}
+                        />
+                      </CardMedia>
+                      <CardContent>
+                        <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
+                          <b>Description:</b> {item.description}
+                        </Typography>
+                        <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
+                          <b>Status:</b> {item.isActive ? 'Pending' : 'Resolved'}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              })
+            )}
+          </Grid>
+        )}
+
+        {/* Tab Panel for Resolved Claims */}
+        {value === 1 && (
           <Grid container spacing={3} justifyContent="flex-start">
-            {uploadedItems.map((item, index) => {
-              const cardBackgroundColor = item.isActive ? '#FAFAFA' : '#E0F2F1';
-              const cardHoverColor = item.isActive ? '#EEEEEE' : '#B2DFDB';
-              return (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card
-                    sx={{
-                      cursor: 'pointer',
-                      boxShadow: 3,
-                      backgroundColor: cardBackgroundColor,
-                      '&:hover': {
-                        backgroundColor: cardHoverColor,
-                      },
-                    }}
-                    onClick={() => handleCardClick(item)}
-                  >
-                    <CardMedia>
-                      <ImageDisplay
-                        imageId={item.itemPhoto}
-                        style={{
-                          width: '100px',
-                          height: '100px',
-                          objectFit: 'cover',
-                          margin: '15px 0px 0px 0px',
-                        }}
-                      />
-                    </CardMedia>
-                    <CardContent>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
-                        <b>Description:</b> {item.description}
-                      </Typography>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
-                        <b>Status:</b> {item.isActive ? 'Pending' : 'Resolved'}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              );
-            })}
+            {resolvedClaims.length === 0 ? (
+              <Typography>No resolved claims.</Typography>
+            ) : (
+              resolvedClaims.map((item, index) => {
+                const cardBackgroundColor = item.isActive ? '#F2D2BD' : '#C1E1C1';
+                const cardHoverColor = item.isActive ? '#FBCEB1' : '#93C572';
+                return (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Card
+                      sx={{
+                        cursor: 'pointer',
+                        boxShadow: 3,
+                        backgroundColor: cardBackgroundColor,
+                        '&:hover': {
+                          backgroundColor: cardHoverColor,
+                        },
+                      }}
+                      onClick={() => handleCardClick(item)}
+                    >
+                      <CardMedia>
+                        <ImageDisplay
+                          imageId={item.itemPhoto}
+                          style={{
+                            width: '100px',
+                            height: '100px',
+                            objectFit: 'cover',
+                            margin: '15px 0px 0px 0px',
+                          }}
+                        />
+                      </CardMedia>
+                      <CardContent>
+                        <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
+                          <b>Description:</b> {item.description}
+                        </Typography>
+                        <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
+                          <b>Status:</b> {item.isActive ? 'Pending' : 'Resolved'}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              })
+            )}
           </Grid>
         )}
 
         {/* Modal for item details */}
         <Modal open={openModal} onClose={handleClose}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-            {selectedItem && (
+           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+             {selectedItem && (
               <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width: '100%', position: 'relative' }}>
                 <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
                   <CloseIcon />
