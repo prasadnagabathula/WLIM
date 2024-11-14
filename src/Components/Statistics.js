@@ -84,7 +84,7 @@ const Statistics = () => {
           <Grid item xs={12} sm={4} md={4}> {/* Each box takes 1/3 of the available width */}
             <Box sx={{ textAlign: 'center', p: 4, bgcolor: '#d4edda', borderRadius: 1 }}>
               <Typography variant="body1" color="textSecondary">
-                Successfully Claimed
+                Returned
               </Typography>
               <Typography variant="h5" fontWeight="bold">
                 {dataCount.successRequestCount || 0}

@@ -26,39 +26,56 @@ const DashboardOverview = () => {
     });
   },[]);
 
-  /*
-  // Sample category data
-    const CATEGORY_OPTIONS = [
-      "Bag", "Watch", "Tool", "Headphone", "Earphone", "Phone", "Bottle", "Book", "Vallet",
-      "Camera", "Key", "Jacket", "Coat", "Blazor", "Jerkin", "Electronics", "Accessories", 
-      "Personal Items", "Apparel", "Documents", "Stationery", "Food Containers", "Drink Containers", 
-      "Health Products", "Hygiene Products", "Sports", "Others"
-    ];
+const CATEGORY_OPTIONS = [
+  "Bag", "Watch", "Tool", "Headphone", "Earphone", "Phone", "Bottle", "Book", "Vallet",
+  "Camera", "Key", "Jacket", "Coat", "Blazor", "Jerkin", "Electronics", "Accessories", 
+  "Personal Items", "Apparel", "Documents", "Stationery", "Food Containers", "Drink Containers", 
+  "Health Products", "Hygiene Products", "Sports", "Others"
+];
 
-    // Random data for demonstration purposes
-    const categoryData = CATEGORY_OPTIONS.map((category) => ({
-      name: category,
-      value: Math.floor(Math.random() * 50),  // Random value for each category
-    }));
+const CATEGORY_COLORS = {
+  "Bag": "#B1E6F3",
+  "Watch": "#72DDF7",
+  "Tool": "#79B8F4",
+  "Headphone": "#D6FFC1",
+  "Earphone": "#B9FFAF",
+  "Phone": "#97FA9A",
+  "Bottle": "#F7ADC3",
+  "Book": "#FCC5D9",
+  "Vallet": "#FADDE3",
+  "Camera": "#FFDBFA",
+  "Key": "#FECCFF",
+  "Jacket": "#D8BBFF",
+  "Coat": "#FAE588",
+  "Blazor": "#FADC5C",
+  "Jerkin": "#FFD000",
+  "Electronics": "#F09191",
+  "Accessories": "#F2B0B0",
+  "Personal Items": "#F3CFCE",
+  "Apparel": "#E7C6A2",
+  "Documents": "#D3B392",
+  "Stationery": "#BFA081",
+  "Food Containers": "#75DAD7",
+  "Drink Containers": "#4EBCBA",
+  "Health Products": "#279E9D",
+  "Hygiene Products": "#FBCA9A",
+  "Sports": "#FCB274",
+  "Others": "#FD9A4D",
+};
 
-    // Function to generate random colors
-    const getRandomColor = () => {
-      const colors = [
-        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40', '#9966FF', '#FF6600', '#66FF66',
-        '#FF33FF', '#6699FF', '#FF9966', '#FF3366', '#99CCFF', '#66FF33', '#00CCFF', '#CC3366'
-      ];
-      return colors[Math.floor(Math.random() * colors.length)];
-    };
+// Random data for demonstration purposes
+const categoryData = CATEGORY_OPTIONS.map((category) => ({
+  name: category,
+  value: Math.floor(Math.random() * 50),  // Random value for each category
+}));
 
 
-    // State to keep track of clicked segment details
-    const [clickedSegment, setClickedSegment] = useState(null);
-  
-    // Handle click on a segment to show category name and count
-    const handlePieClick = (data) => {
-      setClickedSegment(data);
-    };
-    */
+  const [clickedSegment, setClickedSegment] = useState(null);
+
+  // Handle click on a segment to show category name and count
+  const handlePieClick = (data) => {
+    setClickedSegment(data);
+  };    
 
   return (
     <Box
@@ -66,7 +83,7 @@ const DashboardOverview = () => {
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        gap: 3, // Gap between the two rows
+        gap: 2, 
       }}
     >
       {/* First Row: Items card and Graph */}
@@ -130,10 +147,9 @@ const DashboardOverview = () => {
         </Paper>
       </Box>
 
-
       {/* Second Row: PieChart */}
-      {/* <Box sx={{ width: '100%' }}>
-      <Paper elevation={5} sx={{ p: 3 }}>
+      <Box sx={{ width: '60%' }}>
+      <Paper elevation={5} sx={{ p: 2 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>Category Distribution</Typography>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart onClick={handlePieClick}>
@@ -146,15 +162,14 @@ const DashboardOverview = () => {
               labelLine={false}    
             >
               {categoryData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={getRandomColor()} />
+                <Cell key={`cell-${index}`} fill={CATEGORY_COLORS[entry.name]} />
               ))}
             </Pie>
             <Tooltip />
-
           </PieChart>
         </ResponsiveContainer>
       </Paper>
-    </Box>  */}
+    </Box> 
     </Box>
   );
 };
