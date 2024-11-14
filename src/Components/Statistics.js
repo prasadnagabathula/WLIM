@@ -8,10 +8,10 @@ const Statistics = () => {
   const [dataCount, setDataCount] = React.useState({});
 
   React.useEffect(() => {
-    axios.get('https://localhost:7237/api/LostItemRequest/ClaimsCount')
+    axios.get('https://localhost:7237/api/LostItemRequest/DashboardData')
     .then(response => {
       console.log(response);
-      setDataCount(response.data);
+      setDataCount(response.data.lostItemRequestClaimCount);
     }).catch(error => {
       console.log(error);
     });
@@ -55,18 +55,7 @@ const Statistics = () => {
         {/* Outer Grid Structure for Three Equal Boxes in a Row */}
         <Grid container spacing={2} sx={{ flex: 1 }}>
           
-          {/* Claim Requests */}
-          <Grid item  xs={12} sm={4} md={4}> 
-            <Box sx={{ textAlign: 'center', p: 4, bgcolor:"#AFDBF5" }}>
-              <Typography variant="body1" color="textSecondary">
-                Claim Requests
-              </Typography>
-              <Typography variant="h5" fontWeight="bold">
-                {dataCount.claimRequestCount || 0}
-              </Typography>
-            </Box>
-          </Grid>
-
+          
           {/* Pending Requests */}
           <Grid item xs={12} sm={4} md={4}> {/* Each box takes 1/3 of the available width */}
             <Box sx={{ textAlign: 'center', p: 4, bgcolor: '#f8d7da', borderRadius: 1 }}>
@@ -75,6 +64,18 @@ const Statistics = () => {
               </Typography>
               <Typography variant="h5" fontWeight="bold">
                 {dataCount.pendingRequestCount || 0}
+              </Typography>
+            </Box>
+          </Grid>
+
+          {/* Claim Requests */}
+          <Grid item  xs={12} sm={4} md={4}> 
+            <Box sx={{ textAlign: 'center', p: 4, bgcolor:"#AFDBF5" }}>
+              <Typography variant="body1" color="textSecondary">
+                Claim Requests
+              </Typography>
+              <Typography variant="h5" fontWeight="bold">
+                {dataCount.claimRequestCount || 0}
               </Typography>
             </Box>
           </Grid>
@@ -96,78 +97,6 @@ const Statistics = () => {
     </Box>
 
   );
-  //   <Box
-  //     sx={{
-  //       display: 'flex',
-  //       width: '100%',
-  //       justifyContent: 'space-between',
-  //       // gap: 3, 
-  //       flex: 1, 
-  //     }}
-  //   >
-
-  //     {/* Statistics Container */}
-  //     <Paper elevation={5} sx={{ p: 2, display: 'flex', flexDirection: 'column', flex: 1, height: '90%' }}>
-  //       <Grid container spacing={2} sx={{ display: 'grid', gridTemplateRows: '1fr 1fr', gridTemplateColumns: '1fr 1fr', position: 'relative' }}>
-          
-  //         {/* Upper Left Part: Claim Requests */}
-  //         <Grid item xs={6} sx={{ gridRow: '1', gridColumn: '1', textAlign: 'center', p: 4 }}>
-  //           <Box>
-  //             <Typography variant="body1" color="textSecondary">
-  //               Claim Requests
-  //             </Typography>
-  //             <Typography variant="h5" fontWeight="bold">
-  //               {dataCount.claimRequestCount || 0}
-  //             </Typography>
-  //           </Box>
-  //         </Grid>
-
-  //         {/* Upper Right Part: Pending Requests */}
-  //         <Grid item xs={6} sx={{ gridRow: '1', gridColumn: '2', textAlign: 'center', p: 4, bgcolor: '#f8d7da', borderRadius: 1 }}>
-  //           <Box>
-  //             <Typography variant="body1" color="textSecondary">
-  //               Pending Requests
-  //             </Typography>
-  //             <Typography variant="h5" fontWeight="bold">
-  //               {dataCount.pendingRequestCount || 0}
-  //             </Typography>
-  //           </Box>
-  //         </Grid>
-
-  //         {/* Lower Left Part: Successfully Claimed Requests */}
-  //         <Grid item xs={6} sx={{ gridRow: '2', gridColumn: '1', textAlign: 'center', p: 4, bgcolor: '#d4edda', borderRadius: 1 }}>
-  //           <Box>
-  //             <Typography variant="body1" color="textSecondary">
-  //               Successfully Claimed
-  //             </Typography>
-  //             <Typography variant="h5" fontWeight="bold">
-  //               {dataCount.successRequestCount || 0}
-  //             </Typography>
-  //           </Box>
-  //         </Grid>
-
-  //         {/* Empty Space for Bottom Right */}
-  //         <Grid item xs={6} sx={{ gridRow: '2', gridColumn: '2' }} />
-  //       </Grid>
-  //     </Paper>
-
-
-  //     {/* Graph Container */}
-  //     {/* <Paper elevation={5} sx={{ p: 3, mb: 3, flex: 1 , height:'90%'}}>
-  //       <Typography variant="h6" sx={{ mb: 2 }}>Request Trends</Typography>
-  //       <ResponsiveContainer width="100%" height={200}>
-  //         <LineChart data={data}>
-  //           <CartesianGrid strokeDasharray="3 3" />
-  //           <XAxis dataKey="name" />
-  //           <YAxis />
-  //           <Tooltip />
-  //           <Line type="monotone" dataKey="value" stroke="#8884d8" />
-  //         </LineChart>
-  //       </ResponsiveContainer>
-  //     </Paper> */}
-      
-  //   </Box>
-  // );
 };
 
 export default Statistics;

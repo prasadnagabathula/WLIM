@@ -335,6 +335,77 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     }
   };
 
+  const dialogPaperStyles = {
+    width: '600px',
+    maxWidth: '800px',
+    background: 'linear-gradient(to right, #add8e6,#a6c7e7,#e0e0e0)',
+    padding: 2, 
+  };
+  
+  const dialogTitleStyles = {
+    fontWeight: 'bold',
+    color: '#333',
+    fontSize: '1.5rem',
+    borderBottom: '2px solid #ddd',
+    paddingBottom: 1,
+    display:'flex',
+    justifyContent:'center'
+  };
+  
+  const dialogContentStyles = {
+    paddingTop: 2,
+    paddingBottom: 2,
+    backgroundColor: '#fff',
+    borderRadius: '6px',
+  };
+  
+  const textFieldStyles = {
+    marginBottom: 2,
+    '& .MuiInputBase-root': {
+      borderRadius: '8px',
+      border: '1px solid #ccc',
+      '&:hover': {
+        borderColor: '#1976d2', 
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: '#1976d2',
+    },
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '#ccc',
+      },
+      '&:hover fieldset': {
+        borderColor: '#a6c7e7',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#a6c7e7',
+      },
+    },
+  };
+  
+  const dialogActionsStyles = {
+    padding: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: '#f5f5f5',
+    borderTop: '1px solid #ddd',
+    borderRadius: '0 0 8px 8px',
+  };
+  
+  const cancelButtonStyles = {
+    color: '#f44336',
+    '&:hover': {
+      backgroundColor: '#ffebee',
+    },
+  };
+  
+  const submitButtonStyles = {
+    backgroundColor: '#1976d2',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#1565c0',
+    },
+  };
 
   return (
     <Box sx={{
@@ -543,11 +614,52 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={dialogOpen} onClose={handleDialogClose}
+      <Dialog open={dialogOpen} onClose={handleDialogClose} PaperProps={{ sx: dialogPaperStyles }}>
+      <DialogTitle sx={dialogTitleStyles}>More Information About Item</DialogTitle>
+      <DialogContent sx={dialogContentStyles}>
+        {[ 
+          { label: 'Description', name: 'description', maxLength: 50 },
+          { label: 'Color', name: 'color', maxLength: 50 },
+          { label: 'Brand', name: 'brand', maxLength: 50 },
+          { label: 'Distinguishing Features', name: 'distinguishingFeatures', maxLength: 100 },
+          { label: 'Date and Time of Loss', name: 'dateTimeWhenLost', type: 'datetime-local' },
+          { label: 'Location / Area', name: 'location', maxLength: 100 },
+          { label: 'Other Details For Communication', name: 'otherRelevantDetails', maxLength: 200 },
+        ].map(({ label, name, maxLength, type = 'text', inputProps = {} }) => (
+          <React.Fragment key={name}>
+            <InputLabel>{label}</InputLabel>
+            <TextField
+              margin="dense"
+              name={name}
+              value={currentItemLostRequest[name]}
+              onChange={handleChange}
+              fullWidth
+              inputProps={{ maxLength, ...inputProps }}
+              type={type}
+              sx={textFieldStyles}
+            />
+          </React.Fragment>
+        ))}
+      </DialogContent>
+      <DialogActions sx={dialogActionsStyles}>
+        <Button onClick={handleDialogClose} color="secondary" sx={cancelButtonStyles}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+          sx={submitButtonStyles}
+        >
+          Submit
+        </Button>
+      </DialogActions>
+    </Dialog>
+      {/* <Dialog open={dialogOpen} onClose={handleDialogClose}
         PaperProps={{
           style: {
-            width: '600px', // Set a custom width here
-            maxWidth: '800px', // Set max width if needed
+            width: '600px', 
+            maxWidth: '800px', 
           },
         }}
       >
@@ -592,7 +704,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
             Submit
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </Box>
   );
 }

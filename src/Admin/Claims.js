@@ -195,37 +195,64 @@ const Claims = ({ isDrawerOpen }) => {
 
         {/* Modal for item details */}
         <Modal open={openModal} onClose={handleClose}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100vh', 
+              overflowY: 'auto', 
+              p: 2,
+            }}
+          >
             {selectedItem && (
-              <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width: { xs: '90%', sm: '90%', md: '100%' }, position: 'relative' }}>
+              <Box
+                sx={{
+                  bgcolor: 'white',
+                  borderRadius: '8px',
+                  padding: '20px',
+                  maxWidth: '800px',
+                  width: '100%',
+                  position: 'relative',
+                  maxHeight: '90vh', 
+                  overflowY: 'auto',
+                }}
+              >
                 <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
                   <CloseIcon />
                 </Button>
-                <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', mb: 2, marginBottom:0, marginLeft:0 }}>
-                    Claim Approval
-                  </Typography>  
-                  <hr></hr>
-                  
+                <Typography
+                  variant="h5"
+                  align="center"
+                  gutterBottom
+                  sx={{ fontWeight: 'bold', mb: 2, marginBottom: 0, marginLeft: 0 }}
+                >
+                  Claim Approval
+                </Typography>
+                <hr />
+
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, gap: 2, pt: 4 }}>
-                 <Box sx={{ 
-                        display: 'flex', 
-                        justifyContent: 'center', 
-                        alignItems: 'center', 
-                        flex: 1 
-                      }}>
-                        <ImageDisplay 
-                          imageId={selectedItem.itemPhoto} 
-                          style={{ 
-                            width: '150px', 
-                            height: '150px', 
-                            objectFit: 'cover', 
-                            borderRadius: '8px', 
-                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', 
-                            border: '2px solid #e0e0e0', 
-                            marginTop: '0px' 
-                          }} 
-                        />
-                      </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flex: 1,
+                    }}
+                  >
+                    <ImageDisplay
+                      imageId={selectedItem.itemPhoto}
+                      style={{
+                        width: '150px',
+                        height: '150px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                        border: '2px solid #e0e0e0',
+                        marginTop: '0px',
+                      }}
+                    />
+                  </Box>
 
                   <CardContent sx={{ flex: 2 }}>
                     <Typography variant="h5" gutterBottom>{selectedItem.itemDescription}</Typography>
@@ -255,7 +282,7 @@ const Claims = ({ isDrawerOpen }) => {
 
                       <Typography ><b>Date and Time of Loss:</b></Typography>
                       <Typography>
-                      <DateFormat date={selectedItem.dateTimeWhenLost} />
+                        <DateFormat date={selectedItem.dateTimeWhenLost} />
                       </Typography>
 
                       <Typography><b>Location / Area:</b></Typography>
@@ -303,7 +330,7 @@ const Claims = ({ isDrawerOpen }) => {
                       <Button variant="contained" color="primary" onClick={handleSubmit}>
                         Submit
                       </Button>
-                      <Button variant="outlined" onClick={handleClose}>
+                      <Button variant="outlined" color="secondary" onClick={handleClose}>
                         Cancel
                       </Button>
                     </Box>
