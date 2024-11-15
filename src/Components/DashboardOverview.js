@@ -6,32 +6,34 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 
 const DashboardOverview = () => {
 
-  const [chartData, setChartData] = React.useState({});
-  const [chartDataLocations, setChartDataLocations] = React.useState([]);
+  // const [chartData, setChartData] = React.useState({});
+  // const [chartDataLocations, setChartDataLocations] = React.useState([]);
   const [chartItemsData, setChartItemsData] = React.useState([]);
   const [dataCount, setDataCount] = React.useState({});
+  const [categoryData, setCategoryData] = React.useState([]);
 
   React.useEffect(() => {
     axios.get('https://localhost:7237/api/LostItemRequest/DashboardData')
     .then(response => {
       // console.log(response);
       const chartdata = response.data.data;
-      setChartData(chartdata);
+      // setChartData(chartdata);
       const location = Object.keys(response.data.data);
-      setChartDataLocations(location);
+      // setChartDataLocations(location);
       setChartItemsData(location.map(loc => Object.assign({}, { data: chartdata[loc], label: loc })));
       setDataCount(response.data.lostItemRequestClaimCount);
+      
+      const temp = response.data.category;
+      setCategoryData(
+        Object.keys(temp).map((category) => ({
+          name: category,
+          value: temp[category],
+        }))
+      );
     }).catch(error => {
       console.log(error);
     });
   },[]);
-
-const CATEGORY_OPTIONS = [
-  "Bag", "Watch", "Tool", "Headphone", "Earphone", "Phone", "Bottle", "Book", "Vallet",
-  "Camera", "Key", "Jacket", "Coat", "Blazor", "Jerkin", "Electronics", "Accessories", 
-  "Personal Items", "Apparel", "Documents", "Stationery", "Food Containers", "Drink Containers", 
-  "Health Products", "Hygiene Products", "Sports", "Others"
-];
 
 const CATEGORY_COLORS = {
   "Bag": "#B1E6F3",
@@ -63,12 +65,6 @@ const CATEGORY_COLORS = {
   "Others": "#FD9A4D",
 };
 
-// Random data for demonstration purposes
-const categoryData = CATEGORY_OPTIONS.map((category) => ({
-  name: category,
-  value: Math.floor(Math.random() * 50),  // Random value for each category
-}));
-
 
   const [clickedSegment, setClickedSegment] = useState(null);
 
@@ -87,13 +83,15 @@ const categoryData = CATEGORY_OPTIONS.map((category) => ({
       }}
     >
       {/* First Row: Items card and Graph */}
-      <Box sx={{ display: 'flex', width: '100%', gap: 3 }}>
+      <Grid container spacing={3} sx={{ width: '100%' }}>
+      <Grid item xs={12} sm={12} md={6} lg={6} order={{ xs: 2, md: 1 }}>
+
         {/* Statistics Container */}
-        <Paper elevation={5} sx={{ p: 2, display: 'flex', flexDirection: 'column', flex: 1, height: '90%' }}>
-          <Grid container spacing={2} sx={{ flex: 1 }}>
-            {/* Lower Right Part: Identified Items */}
-            <Grid item xs={12} sm={6} md={6}>
-              <Box sx={{ textAlign: 'center', p: 4, backgroundColor: "#BDB5D5" }}>
+        <Paper elevation={5} sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <Grid container spacing={2}>
+            {/* Identified Items */}
+            <Grid item xs={12} sm={6}>
+              <Box sx={{ textAlign: 'center', p: 5, backgroundColor: "#BDB5D5" }}>
                 <Typography variant="body1" color="textSecondary">Items</Typography>
                 <Typography variant="h5" fontWeight="bold">
                   {dataCount.identifiedItemsCount || 0}
@@ -101,9 +99,9 @@ const categoryData = CATEGORY_OPTIONS.map((category) => ({
               </Box>
             </Grid>
 
-            {/* Upper Left Part: Claim Requests */}
-            <Grid item xs={12} sm={6} md={6}> 
-              <Box sx={{ textAlign: 'center', p: 4, bgcolor: "#AFDBF5" }}>
+            {/* Claim Requests */}
+            <Grid item xs={12} sm={6}> 
+              <Box sx={{ textAlign: 'center', p: 5, bgcolor: "#AFDBF5" }}>
                 <Typography variant="body1" color="textSecondary">Claim Requests</Typography>
                 <Typography variant="h5" fontWeight="bold">
                   {dataCount.claimRequestCount || 0}
@@ -111,9 +109,9 @@ const categoryData = CATEGORY_OPTIONS.map((category) => ({
               </Box>
             </Grid>
 
-            {/* Upper Right Part: Pending Requests */}
-            <Grid item xs={12} sm={6} md={6}>
-              <Box sx={{ textAlign: 'center', p: 4, bgcolor: '#f8d7da', borderRadius: 1 }}>
+            {/* Pending Requests */}
+            <Grid item xs={12} sm={6}>
+              <Box sx={{ textAlign: 'center', p: 5, bgcolor: '#f8d7da', borderRadius: 1 }}>
                 <Typography variant="body1" color="textSecondary">Pending Requests</Typography>
                 <Typography variant="h5" fontWeight="bold">
                   {dataCount.pendingRequestCount || 0}
@@ -121,9 +119,9 @@ const categoryData = CATEGORY_OPTIONS.map((category) => ({
               </Box>
             </Grid>
 
-            {/* Lower Left Part: Successfully Claimed Requests */}
-            <Grid item xs={12} sm={6} md={6}> 
-              <Box sx={{ textAlign: 'center', p: 4, bgcolor: '#d4edda', borderRadius: 1 }}>
+            {/* Successfully Claimed Requests */}
+            <Grid item xs={12} sm={6}> 
+              <Box sx={{ textAlign: 'center', p: 5, bgcolor: '#d4edda', borderRadius: 1 }}>
                 <Typography variant="body1" color="textSecondary">Returned</Typography>
                 <Typography variant="h5" fontWeight="bold">
                   {dataCount.successRequestCount || 0}
@@ -132,26 +130,13 @@ const categoryData = CATEGORY_OPTIONS.map((category) => ({
             </Grid>
           </Grid>
         </Paper>
+      </Grid>
 
-        {/* Graph Container */}
-        <Paper elevation={5} sx={{ p: 3, mb: 3, flex: 1, height: '90%' }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Request Trends</Typography>
-          <ResponsiveContainer width="90%" height={200}>
-            <BarChart
-              xAxis={[{ scaleType: 'band', data: ['Week', 'Month', '6 Months', '1 Year', 'Above 1 Year'] }]}
-              series={chartItemsData}
-              width={400}
-              height={400}
-            />
-          </ResponsiveContainer>
-        </Paper>
-      </Box>
-
-      {/* Second Row: PieChart */}
-      <Box sx={{ width: '60%' }}>
-      <Paper elevation={5} sx={{ p: 2 }}>
+        {/* PieChart */}
+        <Grid item xs={12} sm={12} md={6} lg={6} order={{ xs: 1, md: 2 }}>
+        <Paper elevation={5} sx={{ p: 2 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>Category Distribution</Typography>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={250}>
           <PieChart onClick={handlePieClick}>
             <Pie
               data={categoryData}
@@ -168,8 +153,25 @@ const categoryData = CATEGORY_OPTIONS.map((category) => ({
             <Tooltip />
           </PieChart>
         </ResponsiveContainer>
-      </Paper>
-    </Box> 
+      </Paper>  
+
+      </Grid>
+
+      {/* Second Row: Graph Container */}
+      <Grid item xs={12} sm={12} md={12} lg={12} order={{ xs: 3, md: 3 }}>
+      <Paper elevation={5} sx={{ p: 3, mb: 3, flex: 1, height: '90%', mt:3, width:'100%' }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>Request Trends</Typography>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              xAxis={[{ scaleType: 'band', data: ['Week', 'Month', '6 Months', '1 Year', 'Above 1 Year'] }]}
+              series={chartItemsData}
+              width={400}
+              height={400}
+            />
+          </ResponsiveContainer>
+        </Paper>
+    </Grid> 
+    </Grid>
     </Box>
   );
 };

@@ -33,7 +33,8 @@ const UploadPhotos = ({ isDrawerOpen }) => {
 
   }, [isDrawerOpen]);
 
-  const locationOptions = ["New York", "Atlanta", "Tacoma", "Piscataway"];
+  const locationOptions = ["New York", "Atlanta", "Tacoma", 
+    "Piscataway", "Salinas", "Watsonville"];
 
   // Azure Computer Vision API endpoint and key
   const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
