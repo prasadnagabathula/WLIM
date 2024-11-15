@@ -338,13 +338,13 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const dialogPaperStyles = {
     width: '600px',
     maxWidth: '800px',
-    background: 'linear-gradient(to right,#1a1a2e, #16213e,#e0e0e0)',
+    background: 'linear-gradient(to left,#1a1a2e, #16213e,#e0e0e0)',
     padding: 2, 
   };
   
   const dialogTitleStyles = {
     fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
     fontSize: '1.5rem',
     borderBottom: '2px solid #ddd',
     paddingBottom: 1,
