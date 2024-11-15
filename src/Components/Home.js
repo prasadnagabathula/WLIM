@@ -423,7 +423,7 @@ const userClaims = [
   
             {/* Logout Button */}
             <Box sx={{ position: 'absolute', bottom: 16, width: '100%', cursor:'pointer' }}>
-              <ListItem button onClick={handleLogout}>
+              <ListItem onClick={handleLogout}>
                 <ListItemIcon>
                   <LogoutIcon sx={{ color: 'white' }} />
                 </ListItemIcon>
