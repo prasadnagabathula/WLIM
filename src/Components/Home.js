@@ -298,9 +298,9 @@ const userClaims = [
                   <ListItem component={Link} to="View All Lost Item Requests" onClick={handleClose}>
                       <ListItemText primary="Claim Status"  sx={{color:'#fff'}}  />
                   </ListItem>
-                  <ListItem component={Link} to="View All Requests/Claim History" onClick={handleClose}>
+                  {/* <ListItem component={Link} to="View All Requests/Claim History" onClick={handleClose}>
                       <ListItemText primary="Claim History"  sx={{color:'#fff'}}  />
-                  </ListItem>
+                  </ListItem> */}
               </List> 
       </Collapse>  
     </>
