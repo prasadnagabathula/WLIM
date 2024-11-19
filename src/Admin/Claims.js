@@ -95,12 +95,12 @@ const Claims = ({ isDrawerOpen }) => {
   const handleSubmit = async () => {
     console.log('Submit button clicked');
     console.log('Current Claim ID:', selectedItemId);
-    console.log('isActive:', status === 'Claimed');
+    console.log('Status:',status);
     console.log('Comments:', comments);
     console.log('Description:', selectedItemDesc);
     const selectedClaim = {
       id: selectedItemId,
-      isActive: status === 'Claimed',
+      status : status,
       additionalInformation: comments,
       description: selectedItemDesc
     };
@@ -143,7 +143,7 @@ const Claims = ({ isDrawerOpen }) => {
     setSelectedItemId(item.id);
    //console.log(item.id);
     setSelectedItemDesc(item.description);
-    setStatus(item.isActive ? 'Claimed' : 'Approved');
+    setStatus(item.status);
     setOpenModal(true);
   };
 
@@ -316,7 +316,7 @@ const Claims = ({ isDrawerOpen }) => {
                       fullWidth
                       sx={{ mt: 4 }}
                     >
-                      {['Reject', 'Approve'].map((option) => (
+                      {['Reject', 'Approved','Claim','Resolved'].map((option) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
