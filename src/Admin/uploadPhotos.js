@@ -10,6 +10,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { CATEGORY_OPTIONS } from '../Components/Constants';
 import CategoryDropdown from './CategoryDropdown';
 
+
 const UploadPhotos = ({ isDrawerOpen }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [message, setMessage] = useState('');
@@ -26,6 +27,142 @@ const UploadPhotos = ({ isDrawerOpen }) => {
   const [comments, setComments] = useState('');
   const [categoryOptions, setCategoryOptions] = useState([...CATEGORY_OPTIONS]);
   const [location, setLocation] = useState('');
+  const [results, setResults] = useState([]);
+
+  //const { ImageAnalysisClient } = require('@azure-rest/ai-vision-image-analysis');
+  const createClient = require('@azure-rest/ai-vision-image-analysis').default;
+  const { AzureKeyCredential } = require('@azure/core-auth');
+
+  //New East US
+  const endpoint = 'https://cvwlimv40eus.cognitiveservices.azure.com/';
+  const key = 'B1ZBQc0A2DHqj9AYmgaJXK1r7kbKsyddhDgX6Qzr0F5qeai2pOQaJQQJ99AKACYeBjFXJ3w3AAAFACOG8VEg';
+
+  // // Old East US Azure Computer Vision API endpoint and key
+  // const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
+  // const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
+
+  //  //working EastUS2 but Caption, DenseCaptions not supported
+  //  const endpoint = 'https://cvwlimv4.cognitiveservices.azure.com/';
+  //  const key = 'BqlF7mwv0N3YIDqm2PSVf8v6lqi6QVa9II4bFNRZlKDVlqTE60yJJQQJ99AKACHYHv6XJ3w3AAAFACOGEHua';
+
+  // //working Central US but Caption, DenseCaptions not supported
+  //  const endpoint = 'https://cv40wlim.cognitiveservices.azure.com/';
+  //  const key = '2xVlkKnavQD2d2xVwYfmLxLT2XPbgFUdTjdJidnbaPCPWzUYJmPhJQQJ99AKAC1i4TkXJ3w3AAAFACOGFXEe';
+
+  // //East US2
+  //  const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
+  //  const key = '28d34c819ec44d3db09950e8fda64eca';
+
+  const credential = new AzureKeyCredential(key);
+  const client = createClient(endpoint, credential);
+
+  const features = [  
+    'Caption',
+    'DenseCaptions',
+    'Objects',
+    'People',
+    'Read',
+    'SmartCrops',
+    'Tags'
+  ];
+
+  //const imageUrl = `https://learn.microsoft.com/azure/ai-services/computer-vision/media/quickstarts/presentation.png`;
+
+  async function analyzeImageFromBinary(binaryData) {
+//async function analyzeImageFromFile(imageBuffer) {
+  console.log(binaryData);
+  
+  const result = await client.path('/imageanalysis:analyze').post({
+    body: binaryData,
+    queryParameters: {
+      features: features,
+      'smartCrops-aspect-ratios': [0.9, 1.33]
+    },
+     contentType: 'application/octet-stream'
+  });
+
+  const iaResult = result.body;
+
+  console.log(`Model Version: ${iaResult.modelVersion}`);
+  console.log(`Image Metadata: ${JSON.stringify(iaResult.metadata)}`);
+    const parsedResults = [];
+
+    if (iaResult.captionResult) {
+      parsedResults.push(
+        <p key="caption">
+          <strong>Caption:</strong> {iaResult.captionResult.text} 
+          )
+        </p>
+      );
+    }
+
+    if (iaResult.denseCaptionsResult) {
+      parsedResults.push(<strong>Dense Caption:</strong>)
+        iaResult.denseCaptionsResult.values.forEach((denseCaption, index) =>
+        parsedResults.push(
+          <p key={`denseCaption-${index}`}>
+            <strong>{index+1}:</strong> {JSON.stringify(denseCaption.text)}
+          </p>
+        )
+      );
+    }
+
+    // if (iaResult.objectsResult) {
+    //   iaResult.objectsResult.values.forEach((object, index) =>
+    //     parsedResults.push(
+    //       <p key={`object-${index}`}>
+    //         <strong>Object:</strong> {JSON.stringify(object)}
+    //       </p>
+    //     )
+    //   );
+    // }
+
+    // if (iaResult.peopleResult) {
+    //   iaResult.peopleResult.values.forEach((person, index) =>
+    //     parsedResults.push(
+    //       <p key={`person-${index}`}>
+    //         <strong>Person:</strong> {JSON.stringify(person)}
+    //       </p>
+    //     )
+    //   );
+    // }
+
+    // if (iaResult.readResult) {
+    //   iaResult.readResult.blocks.forEach((block, index) =>
+    //     parsedResults.push(
+    //       <p key={`block-${index}`}>
+    //         <strong>Text Block:</strong> {JSON.stringify(block)}
+    //       </p>
+    //     )
+    //   );
+    // }
+
+    // if (iaResult.smartCropsResult) {
+    //   iaResult.smartCropsResult.values.forEach((smartCrop, index) =>
+    //     parsedResults.push(
+    //       <p key={`smartCrop-${index}`}>
+    //         <strong>Smart Crop:</strong> {JSON.stringify(smartCrop)}
+    //       </p>
+    //     )
+    //   );
+    // }
+
+    if (iaResult.tagsResult) {
+      parsedResults.push(<strong>Tag(s):</strong>)
+      iaResult.tagsResult.values.forEach((tag, index) =>
+        parsedResults.push(
+          <p key={`tag-${index}`}>
+            <strong>{index+1}:</strong> {JSON.stringify(tag.name)}
+          </p>
+        )
+      );
+    }
+
+    setResults(parsedResults);
+  
+}
+
+
 
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 300 : 100);
@@ -36,9 +173,7 @@ const UploadPhotos = ({ isDrawerOpen }) => {
   const locationOptions = ["New York", "Atlanta", "Tacoma", 
     "Piscataway", "Salinas", "Watsonville"];
 
-  // Azure Computer Vision API endpoint and key
-  const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
-  const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
+  
 
   const navigate = useNavigate();
 
@@ -84,37 +219,42 @@ const UploadPhotos = ({ isDrawerOpen }) => {
   };
 
   const analyzeImage = async (imageData) => {
-    const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
+    //analyzeImageFromUrl(imageData);
+    // const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
 
-    try {
-      const response = await axios.post(apiUrl, imageData, {
-        headers: {
-          'Ocp-Apim-Subscription-Key': subscriptionKey,
-          'Content-Type': 'application/octet-stream',
-        },
-      });
+    // try {
+    //   const response = await axios.post(apiUrl, imageData, {
+    //     headers: {
+    //       'Ocp-Apim-Subscription-Key': subscriptionKey,
+    //       'Content-Type': 'application/octet-stream',
+    //     },
+    //   });
 
-      const imageTags = response.data.description.tags;
-      setTags(imageTags);
+    //   const imageTags = response.data.description.tags;
+    //   setTags(imageTags);
 
-      const itemDesc = response.data.description.captions[0].text;
-      setItemDescription(itemDesc);
+    //   const iaResult = response.data;
 
-      const objects = response.data.objects;
-      const objectCategory = objects && objects.length > 0 ? objects[0].object : "Others";
+    //   console.log(`Model Version: ${iaResult}`);
 
-      const combinedText = [...imageTags, itemDesc, objectCategory].join(" ").toLowerCase();
+    //   const itemDesc = response.data.description.captions[0].text;
+    //   setItemDescription(itemDesc);
 
-      let matchedCategory = CATEGORY_OPTIONS.find((category) =>
-        combinedText.includes(category.toLowerCase())
-      ) || "Others";
-      setCategory(toInitialCapitalCase(matchedCategory));
-      setCategoryOptions(CATEGORY_OPTIONS);
+    //   const objects = response.data.objects;
+    //   const objectCategory = objects && objects.length > 0 ? objects[0].object : "Others";
 
-      setIsDisabled(false);
-    } catch (error) {
-      console.error('Error analyzing image:', error);
-    }
+    //   const combinedText = [...imageTags, itemDesc, objectCategory].join(" ").toLowerCase();
+
+    //   let matchedCategory = CATEGORY_OPTIONS.find((category) =>
+    //     combinedText.includes(category.toLowerCase())
+    //   ) || "Others";
+    //   setCategory(toInitialCapitalCase(matchedCategory));
+    //   setCategoryOptions(CATEGORY_OPTIONS);
+
+    //   setIsDisabled(false);
+    // } catch (error) {
+    //   console.error('Error analyzing image:', error);
+    // }
   };
 
   const handleFileChange = (e) => {
@@ -122,17 +262,42 @@ const UploadPhotos = ({ isDrawerOpen }) => {
     setIsDisabled(true);
     const file = e.target.files[0];
     if (file) {
+      // Get the original file name and extension
+    const fileName = file.name; // e.g., "image.png" or "photo.jpg"
+    const fileExtension = fileName.split('.').pop(); // Extract extension
 
-      const imageUrl = URL.createObjectURL(file);
+    // Create an object URL
+    const imageUrl = URL.createObjectURL(file);
+    setSelectedImage(imageUrl);
 
-      setSelectedImage(imageUrl);
+    const reader = new FileReader();
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const arrayBuffer = reader.result;
-        analyzeImage(arrayBuffer);
-      };
-      reader.readAsArrayBuffer(file);
+    reader.onloadend = async () => {
+      const arrayBuffer = reader.result; // Binary data of the file
+      const uint8Array = new Uint8Array(arrayBuffer);
+      await analyzeImageFromBinary(uint8Array); // Call analysis function
+    };
+
+    reader.readAsArrayBuffer(file); // Read file as binary data
+
+      // const imageUrl = URL.createObjectURL(file);
+      // setSelectedImage(imageUrl);
+      // console.log(imageUrl);
+      // analyzeImageFromUrl(imageUrl);
+
+    //   const reader = new FileReader();
+    //   reader.onloadend = () => {
+    //   const arrayBuffer = reader.result;
+      
+    //   // Ensure the file is valid and has a proper format
+    //   if (arrayBuffer) {
+    //      analyzeImageFromFile(arrayBuffer);
+    //   } else {
+    //     console.error("Invalid file or unable to read as ArrayBuffer");
+    //   }
+    // };
+
+    // reader.readAsArrayBuffer(file); // Read file as ArrayBuffer
 
     }
   };
@@ -197,7 +362,12 @@ const UploadPhotos = ({ isDrawerOpen }) => {
             <Typography variant="h5" sx={{ fontFamily: 'Lato', mb: 4, fontSize: { md: '30px' } }}>
               Unleashing the Power of Visual Recognition
             </Typography>
-
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap:20,
+            }}> 
             <Box sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -237,7 +407,8 @@ const UploadPhotos = ({ isDrawerOpen }) => {
                       </span>
                     )}
                   </UploadBox>
-                </label>
+                  
+                </label>                
                 <input
                   id="upload-image"
                   type="file"
@@ -292,7 +463,9 @@ const UploadPhotos = ({ isDrawerOpen }) => {
                     Clear
                   </Button>
                 </Box>
-              </Box>
+              </Box>              
+            </Box>
+            <Box>{results}</Box>
             </Box>
             <Snackbar
               open={snackbarOpen}
