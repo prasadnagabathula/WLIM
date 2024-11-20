@@ -15,7 +15,7 @@ import Statistics from './Statistics';
 import View from '../Admin/View';
 import ItemLostRequest from '../User/ItemLostRequest';
 import ItemDetails from '../Admin/ItemDetails';
-import UploadPhotos from '../Admin/uploadPhotos';
+import UploadPhotos from '../Admin/uploadPhotosApi4';
 import { ListItemIcon } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccounts';

@@ -295,6 +295,11 @@ const Claims = ({ isDrawerOpen }) => {
                         {selectedItem.otherRelevantDetails}
                       </Typography>
 
+                      <Typography><b>Requested By:</b></Typography>
+                      <Typography>
+                        {selectedItem.createdBy}
+                      </Typography>
+
                       <Typography><b>Requested Date:</b></Typography>
                       <Typography>
                         <DateFormat date={selectedItem.createdDate} />

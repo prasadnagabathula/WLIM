@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-//import Header from './header'; // Assuming you have a header component
-//import Footer from './footer'; // Assuming you have a footer component
 import './uploadPhotos.css'; // Add any custom styles here
 import { Button, Grid, Alert, Snackbar, Typography, Box, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import {  styled } from '@mui/system';
+import { fontFamily, styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { CATEGORY_OPTIONS } from '../Components/Constants';
 import CategoryDropdown from './CategoryDropdown';
 
-const UploadPhotos = ({ isDrawerOpen }) => {
+
+const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [message, setMessage] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
@@ -26,6 +25,83 @@ const UploadPhotos = ({ isDrawerOpen }) => {
   const [comments, setComments] = useState('');
   const [categoryOptions, setCategoryOptions] = useState([...CATEGORY_OPTIONS]);
   const [location, setLocation] = useState('');
+  const [results, setResults] = useState([]);
+  const [denseCaptions, setDenseCaptions] = useState('');
+
+  const createClient = require('@azure-rest/ai-vision-image-analysis').default;
+  const { AzureKeyCredential } = require('@azure/core-auth');
+
+  //New East US
+  const endpoint = 'https://cvwlimv40eus.cognitiveservices.azure.com/';
+  const key = 'B1ZBQc0A2DHqj9AYmgaJXK1r7kbKsyddhDgX6Qzr0F5qeai2pOQaJQQJ99AKACYeBjFXJ3w3AAAFACOG8VEg';
+ 
+  const credential = new AzureKeyCredential(key);
+  const client = createClient(endpoint, credential);
+
+  const features = [  
+    'Caption',
+    'DenseCaptions',
+    'Objects',
+    'People',
+    'Read',
+    'SmartCrops',
+    'Tags'
+  ];
+
+    async function analyzeImageFromBinary(binaryData) {
+  
+        
+        const result = await client.path('/imageanalysis:analyze').post({
+            body: binaryData,
+            queryParameters: {
+            features: features,
+            'smartCrops-aspect-ratios': [0.9, 1.33]
+            },
+            contentType: 'application/octet-stream'
+        });
+
+        const iaResult = result.body;
+
+        //const imageTags = response.data.description.tags;
+
+        let imageTags = [];  
+        if (iaResult.tagsResult) {         
+            iaResult.tagsResult.values.forEach((tag, index) =>
+                imageTags.push(tag.name)
+            );
+            setTags(imageTags.join(', '));
+          }
+
+        let itemDesc = '';
+        if (iaResult.captionResult) {
+            const itemDesc = iaResult.captionResult.text;
+            setItemDescription(itemDesc);            
+        }
+
+        let denseCaption = [];
+        if (iaResult.denseCaptionsResult) {         
+            iaResult.denseCaptionsResult.values.forEach((caption, index) =>
+                denseCaption.push(caption.text)
+            );
+            setDenseCaptions(denseCaption.join(', '));
+            setComments(denseCaption.join(', '));
+          }
+        
+        const combinedText = [...imageTags, itemDesc, denseCaptions].join(" ").toLowerCase();
+
+        console.log(combinedText);
+
+        let matchedCategory = CATEGORY_OPTIONS.find((category) =>
+            combinedText.includes(category.toLowerCase())
+        ) || "Others";
+        
+        setCategory(toInitialCapitalCase(matchedCategory));
+        setCategoryOptions(CATEGORY_OPTIONS);
+
+        setIsDisabled(false);         
+}
+
+
 
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 300 : 100);
@@ -36,18 +112,16 @@ const UploadPhotos = ({ isDrawerOpen }) => {
   const locationOptions = ["New York", "Atlanta", "Tacoma", 
     "Piscataway", "Salinas", "Watsonville"];
 
-  // Azure Computer Vision API endpoint and key
-  const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
-  const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
+  
 
   const navigate = useNavigate();
 
-  // const handleHome = () => {
-  //   navigate('/'); // Navigates to the Upload page
-  // };
-  // const handleFindItem = () => {
-  //   navigate('/search'); // Navigates to the search page
-  // };
+  const handleHome = () => {
+    navigate('/'); // Navigates to the Upload page
+  };
+  const handleFindItem = () => {
+    navigate('/search'); // Navigates to the search page
+  };
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
@@ -84,37 +158,42 @@ const UploadPhotos = ({ isDrawerOpen }) => {
   };
 
   const analyzeImage = async (imageData) => {
-    const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
+    //analyzeImageFromUrl(imageData);
+    // const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
 
-    try {
-      const response = await axios.post(apiUrl, imageData, {
-        headers: {
-          'Ocp-Apim-Subscription-Key': subscriptionKey,
-          'Content-Type': 'application/octet-stream',
-        },
-      });
+    // try {
+    //   const response = await axios.post(apiUrl, imageData, {
+    //     headers: {
+    //       'Ocp-Apim-Subscription-Key': subscriptionKey,
+    //       'Content-Type': 'application/octet-stream',
+    //     },
+    //   });
 
-      const imageTags = response.data.description.tags;
-      setTags(imageTags);
+    //   const imageTags = response.data.description.tags;
+    //   setTags(imageTags);
 
-      const itemDesc = response.data.description.captions[0].text;
-      setItemDescription(itemDesc);
+    //   const iaResult = response.data;
 
-      const objects = response.data.objects;
-      const objectCategory = objects && objects.length > 0 ? objects[0].object : "Others";
+    //   console.log(`Model Version: ${iaResult}`);
 
-      const combinedText = [...imageTags, itemDesc, objectCategory].join(" ").toLowerCase();
+    //   const itemDesc = response.data.description.captions[0].text;
+    //   setItemDescription(itemDesc);
 
-      let matchedCategory = CATEGORY_OPTIONS.find((category) =>
-        combinedText.includes(category.toLowerCase())
-      ) || "Others";
-      setCategory(toInitialCapitalCase(matchedCategory));
-      setCategoryOptions(CATEGORY_OPTIONS);
+    //   const objects = response.data.objects;
+    //   const objectCategory = objects && objects.length > 0 ? objects[0].object : "Others";
 
-      setIsDisabled(false);
-    } catch (error) {
-      console.error('Error analyzing image:', error);
-    }
+    //   const combinedText = [...imageTags, itemDesc, objectCategory].join(" ").toLowerCase();
+
+    //   let matchedCategory = CATEGORY_OPTIONS.find((category) =>
+    //     combinedText.includes(category.toLowerCase())
+    //   ) || "Others";
+    //   setCategory(toInitialCapitalCase(matchedCategory));
+    //   setCategoryOptions(CATEGORY_OPTIONS);
+
+    //   setIsDisabled(false);
+    // } catch (error) {
+    //   console.error('Error analyzing image:', error);
+    // }
   };
 
   const handleFileChange = (e) => {
@@ -122,17 +201,42 @@ const UploadPhotos = ({ isDrawerOpen }) => {
     setIsDisabled(true);
     const file = e.target.files[0];
     if (file) {
+      // Get the original file name and extension
+    const fileName = file.name; // e.g., "image.png" or "photo.jpg"
+    const fileExtension = fileName.split('.').pop(); // Extract extension
 
-      const imageUrl = URL.createObjectURL(file);
+    // Create an object URL
+    const imageUrl = URL.createObjectURL(file);
+    setSelectedImage(imageUrl);
 
-      setSelectedImage(imageUrl);
+    const reader = new FileReader();
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const arrayBuffer = reader.result;
-        analyzeImage(arrayBuffer);
-      };
-      reader.readAsArrayBuffer(file);
+    reader.onloadend = async () => {
+      const arrayBuffer = reader.result; // Binary data of the file
+      const uint8Array = new Uint8Array(arrayBuffer);
+      await analyzeImageFromBinary(uint8Array); // Call analysis function
+    };
+
+    reader.readAsArrayBuffer(file); // Read file as binary data
+
+      // const imageUrl = URL.createObjectURL(file);
+      // setSelectedImage(imageUrl);
+      // console.log(imageUrl);
+      // analyzeImageFromUrl(imageUrl);
+
+    //   const reader = new FileReader();
+    //   reader.onloadend = () => {
+    //   const arrayBuffer = reader.result;
+      
+    //   // Ensure the file is valid and has a proper format
+    //   if (arrayBuffer) {
+    //      analyzeImageFromFile(arrayBuffer);
+    //   } else {
+    //     console.error("Invalid file or unable to read as ArrayBuffer");
+    //   }
+    // };
+
+    // reader.readAsArrayBuffer(file); // Read file as ArrayBuffer
 
     }
   };
@@ -196,8 +300,7 @@ const UploadPhotos = ({ isDrawerOpen }) => {
           <Box sx={{ mt: 4 }}>
             <Typography variant="h5" sx={{ fontFamily: 'Lato', mb: 4, fontSize: { md: '30px' } }}>
               Unleashing the Power of Visual Recognition
-            </Typography>
-
+            </Typography>            
             <Box sx={{
               display: 'flex',
               flexDirection: 'column',
@@ -237,33 +340,46 @@ const UploadPhotos = ({ isDrawerOpen }) => {
                       </span>
                     )}
                   </UploadBox>
-                </label>
+                  
+                </label>                
                 <input
                   id="upload-image"
                   type="file"
                   accept="image/*"
                   hidden
                   onChange={handleFileChange}
-                />
-
+                />      
 
                 <CategoryDropdown
-                  categoryOptions={categoryOptions}
-                  initialCategory={category}
-                  onCategoryChange={onCategoryChange}
-                />
-
+                    categoryOptions={categoryOptions}
+                    initialCategory={category}
+                    onCategoryChange={onCategoryChange}
+                    />          
 
                 <TextField
-                  label="Comments"
-                  variant="outlined"
-                  value={comments}
-                  sx={{ width: { xs: '100%', sm: '400px', md: '450px' } }}
-                  // style={{ width: '450px'}}                  
-                  onChange={(e) => setComments(e.target.value)}
-                />
+                    label="Comments"
+                    variant="outlined"
+                    value={comments}
+                    multiline
+                    minRows={1} // Minimum height of the textbox
+                    maxRows={6} // Optional: Maximum height before scrolling
+                    sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, marginBottom:'20px' }}
+                    onChange={(e) => setComments(e.target.value)}
+                    />
 
-                <FormControl sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, mt: 2 }}>
+                    <TextField
+                    label="Tags"
+                    variant="outlined"
+                    value={tags}
+                    multiline
+                    minRows={1} // Minimum height of the textbox
+                    maxRows={6} // Optional: Maximum height before scrolling
+                    sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, marginBottom:'5px'  }}
+                    onChange={(e) => setTags(e.target.value)}
+                    />
+
+                <FormControl sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, mt: 2}}>                
+
                   <InputLabel id="location-label">Location</InputLabel>
                   <Select
                     labelId="location-label"
@@ -292,8 +408,8 @@ const UploadPhotos = ({ isDrawerOpen }) => {
                     Clear
                   </Button>
                 </Box>
-              </Box>
-            </Box>
+              </Box>              
+            </Box>            
             <Snackbar
               open={snackbarOpen}
               autoHideDuration={6000}
@@ -313,4 +429,5 @@ const UploadPhotos = ({ isDrawerOpen }) => {
 
 };
 
-export default UploadPhotos;
+export default UploadPhotosApi4;
+
