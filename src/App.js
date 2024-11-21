@@ -10,20 +10,33 @@ import HomePage from './homePage';
 import ProtectedRoute from './Components/ProtectedRoute';
 import ItemDetails from './Admin/ItemDetails';
 import Profile from './Components/Profile';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Lato, Arial, sans-serif',
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          fontFamily: 'Lato, Arial, sans-serif',
+        },
+      },
+    },
+  },
+});
 
 function App() {
 
-  // const [role, setRole] = useState("User");
-  // const myRole = (data) => {
-  //   setRole(data);
-  // }
-
   return (
+
+    <ThemeProvider theme={theme}>
+    <CssBaseline />
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        {/* <Route path={`/${role === "Admin" ? "admin" : "user"}/home/*`} 
-        element={<ProtectedRoute><Home /></ProtectedRoute>} /> */}
         <Route path="/admin/home/*" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/user/home/*" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         {/* Add a catch-all route for unknown URLs */}
@@ -32,10 +45,11 @@ function App() {
         <Route path="/upload" element={<UploadPhotos />} />
         <Route path="/search" element={<SearchPhotos />} />
         <Route path="/items" element={<SearchItems />} />
-        {/* <Route path="/itemdetails" element={<ItemDetails />} /> */}
         <Route path="/profile" element={<Profile />} />    
       </Routes>
     </Router>
+  </ThemeProvider>
+    
   );
 }
 
