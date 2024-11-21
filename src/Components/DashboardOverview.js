@@ -105,7 +105,7 @@ const CATEGORY_COLORS = {
 
             {/* Claim Requests */}
             <Grid item xs={12} sm={6}> 
-              <Box sx={{ textAlign: 'center', p: 5, bgcolor: "#AFDBF5" }}>
+              <Box sx={{ textAlign: 'center', p: {xs:5, sm:5, md:3.6, lg:5}, bgcolor: "#AFDBF5" }}>
                 <Typography variant="body1" color="textSecondary">Claim Requests</Typography>
                 <Typography variant="h5" fontWeight="bold">
                   {dataCount.claimRequestCount || 0}
@@ -115,7 +115,7 @@ const CATEGORY_COLORS = {
 
             {/* Pending Requests */}
             <Grid item xs={12} sm={6}>
-              <Box sx={{ textAlign: 'center', p: 5, bgcolor: '#f8d7da', borderRadius: 1 }}>
+              <Box sx={{ textAlign: 'center', p: {xs:5.5, sm:5.5, md:3.6, lg:5.5}, bgcolor: '#f8d7da', borderRadius: 1 }}>
                 <Typography variant="body1" color="textSecondary">Pending Requests</Typography>
                 <Typography variant="h5" fontWeight="bold">
                   {dataCount.pendingRequestCount || 0}
@@ -125,7 +125,7 @@ const CATEGORY_COLORS = {
 
             {/* Successfully Claimed Requests */}
             <Grid item xs={12} sm={6}> 
-              <Box sx={{ textAlign: 'center', p: 5, bgcolor: '#d4edda', borderRadius: 1 }}>
+              <Box sx={{ textAlign: 'center', p: 5.5, bgcolor: '#d4edda', borderRadius: 1 }}>
                 <Typography variant="body1" color="textSecondary">Returned</Typography>
                 <Typography variant="h5" fontWeight="bold">
                   {dataCount.successRequestCount || 0}

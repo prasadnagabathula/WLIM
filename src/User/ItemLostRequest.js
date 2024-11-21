@@ -31,6 +31,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const [itemSelected, setItemSelected] = useState(false);
   const [severity, setSeverity] = useState('success');
   const [location, setLocation] = useState('');
+  const [locationOptions, setLocationOptions] = useState([]);
 
   // const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
@@ -39,8 +40,6 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   // Azure Computer Vision API endpoint and key
   const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
   const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
-
-  const locationOptions = ["New York", "Atlanta", "Tacoma", "Piscataway"];
 
   const [currentItemLostRequest, setCurrentItemLostRequest] = useState({
     description: '',
@@ -82,6 +81,16 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       }
     };
     fetchItemLostRequests();
+  }, []);
+
+  useEffect(() => {
+    axios.get('https://localhost:7237/api/LostItemRequest/Locations')
+    .then(response => {
+      console.log(response);
+      setLocationOptions(response.data.map(data => data.locations));
+    }).catch(error => {
+      console.log(error);
+    });
   }, []);
 
   const handleCloseSnackbar = () => {
