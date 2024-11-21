@@ -23,7 +23,6 @@ const Claims = ({ isDrawerOpen }) => {
   const [message, setMessage] = useState('');
   const [severity, setSeverity] = useState('success');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [CreatedBy, setCreatedBy] = useState('');
   const [currentClaimReq, setCurrentCliamReq] = useState({
     isActive: '',
     additionalInformation: ''
@@ -99,13 +98,11 @@ const Claims = ({ isDrawerOpen }) => {
     console.log('Status:',status);
     console.log('Comments:', comments);
     console.log('Description:', selectedItemDesc);
-    console.log('CreatedBy  :', CreatedBy);
     const selectedClaim = {
       id: selectedItemId,
       status : status,
       additionalInformation: comments,
-      description: selectedItemDesc,
-      CreatedBy:CreatedBy
+      description: selectedItemDesc
     };
 
     if (selectedItemId) {
@@ -146,9 +143,7 @@ const Claims = ({ isDrawerOpen }) => {
     setSelectedItemId(item.id);
    //console.log(item.id);
     setSelectedItemDesc(item.description);
-    setCreatedBy(item.CreatedBy);
     setStatus(item.status);
-    console.log(item.CreatedBy);
     setOpenModal(true);
   };
 
@@ -302,7 +297,7 @@ const Claims = ({ isDrawerOpen }) => {
 
                       <Typography><b>Requested By:</b></Typography>
                       <Typography>
-                      {selectedItem.CreatedBy}                       
+                        {selectedItem.createdBy}
                       </Typography>
 
                       <Typography><b>Requested Date:</b></Typography>
@@ -321,7 +316,7 @@ const Claims = ({ isDrawerOpen }) => {
                       fullWidth
                       sx={{ mt: 4 }}
                     >
-                      {['Reject', 'Approved','Claim','Resolved'].map((option) => (
+                      {['Reject', 'Approve'].map((option) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
