@@ -12,7 +12,38 @@ const CustomBreadcrumbs = ({ paths, isDrawerOpen, currentPath }) => {
 
     return (
         <Box sx={{ ml: `${marginLeft}px`, transition: 'margin-left 0.3s'}}>
-           <Breadcrumbs separator="›" aria-label="breadcrumb">
+            <Breadcrumbs separator="›" aria-label="breadcrumb">
+                {paths.map((path, index) => {
+                const isNonClickable = ['User', 'Admin'].includes(path.label);
+
+                return isNonClickable ? (
+                    <Typography
+                    key={index}
+                    style={{
+                        color: '#666', 
+                        fontFamily: 'Lato',
+                        fontSize: 'inherit',
+                    }}
+                    >
+                    {path.label}
+                    </Typography>
+                ) : (
+                    <Link
+                    key={index}
+                    to={path.link}
+                    style={{
+                        textDecoration: 'none',
+                        color: path.link === currentPath ? '#00aae7' : 'inherit',
+                        fontFamily: 'Lato',
+                        fontSize: 'inherit',
+                    }}
+                    >
+                    {path.label}
+                    </Link>
+                );
+                })}
+            </Breadcrumbs>
+            {/* <Breadcrumbs separator="›" aria-label="breadcrumb">
                 {paths.map((path, index) => (
                     <Typography
                         key={index}
@@ -30,7 +61,7 @@ const CustomBreadcrumbs = ({ paths, isDrawerOpen, currentPath }) => {
                         {path.label}
                     </Typography>
                 ))}
-            </Breadcrumbs>
+            </Breadcrumbs> */}
       </Box>
         
     );
