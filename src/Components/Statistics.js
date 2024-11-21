@@ -8,36 +8,21 @@ const Statistics = () => {
   const [dataCount, setDataCount] = React.useState({});
 
   React.useEffect(() => {
-    axios.get('https://localhost:7237/api/LostItemRequest/DashboardData')
+    axios.get(`https://localhost:7237/api/LostItemRequest/UserDashboardData${localStorage.getItem('userName')}`)
     .then(response => {
       console.log(response);
-      setDataCount(response.data.lostItemRequestClaimCount);
+      setDataCount(response.data);
     }).catch(error => {
       console.log(error);
     });
   },[]);
-
-  const data = [
-    { name: 'Jan', value: 400 },
-    { name: 'Feb', value: 300 },
-    { name: 'Mar', value: 200 },
-    { name: 'Apr', value: 278 },
-    { name: 'May', value: 189 },
-    { name: 'Jun', value: 239 },
-    { name: 'Jul', value: 349 },
-    { name: 'Aug', value: 200 },
-    { name: 'Sep', value: 278 },
-    { name: 'Oct', value: 389 },
-    { name: 'Nov', value: 150 },
-    { name: 'Dec', value: 400 },
-  ];
 
   return (
     <Box
       sx={{
         display: 'flex',
         width: '100%',
-        justifyContent: 'center', // Center the content horizontally
+        justifyContent: 'center', 
         flex: 1,
       }}
     >
@@ -87,7 +72,7 @@ const Statistics = () => {
                 Returned
               </Typography>
               <Typography variant="h5" fontWeight="bold">
-                {dataCount.successRequestCount || 0}
+                {dataCount.returnedCount || 0}
               </Typography>
             </Box>
           </Grid>

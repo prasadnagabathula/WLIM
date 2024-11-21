@@ -36,31 +36,36 @@ function Default({ isDrawerOpen }) {
             flexDirection: 'column',
             textAlign: 'center',
             mt: 2,
-            ml: { sm: 0, md: `${marginLeft}px` }, // Adjust margin based on drawer state
+            ml: { sm: 0, md: `${marginLeft}px` }, 
             mr: { sm: 0, md: `${marginRight}px` },
-            transition: 'margin-left 0.3s', // Smooth transition
+            transition: 'margin-left 0.3s', 
           }}
         >
-          <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
-            <Autocomplete
-              disablePortal
-              options={["All", ...locations]}
-              value={loc}
-              onChange={(event, value) => {
-                if(value !== null){
-                  setLoc(value)
-                }
-              }}
-              sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Location" />}
-            />
-          </Box>
+          {localStorage.getItem('userRole') === 'Admin' ? 
+            (
+              <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                <Autocomplete
+                  disablePortal
+                  options={["All", ...locations]}
+                  value={loc}
+                  onChange={(event, value) => {
+                    if(value !== null){
+                      setLoc(value)
+                    }
+                  }}
+                  sx={{ width: 300 }}
+                  renderInput={(params) => <TextField {...params} label="Location" />}
+                />
+              </Box>
+            ): null
+          }
+          
           <Typography variant="h5" sx={{ 
             mb: 4,
             pt: 2,
             backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',  
-            WebkitBackgroundClip: 'text',  // For webkit browsers like Chrome and Safari
-            backgroundClip: 'text',  // Standard background clip (for other browsers)
+            WebkitBackgroundClip: 'text',  
+            backgroundClip: 'text', 
             color: 'transparent', 
             fontWeight: 'bold',            
           }}>
@@ -74,9 +79,9 @@ function Default({ isDrawerOpen }) {
           <Box
             sx={{
               display: 'flex',
-              width: '100%', // Ensures the container takes up full width
-              justifyContent: 'space-between', // Ensures space is distributed equally
-              gap: 2, // Adds space between the graph and stats containers
+              width: '100%', 
+              justifyContent: 'space-between', 
+              gap: 2, 
             }}
           >
             {/* <DashboardOverview /> */}

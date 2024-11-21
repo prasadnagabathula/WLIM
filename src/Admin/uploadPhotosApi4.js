@@ -27,6 +27,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   const [location, setLocation] = useState('');
   const [results, setResults] = useState([]);
   const [denseCaptions, setDenseCaptions] = useState('');
+  const [locationOptions, setLocationOptions] = useState([]);
 
   const createClient = require('@azure-rest/ai-vision-image-analysis').default;
   const { AzureKeyCredential } = require('@azure/core-auth');
@@ -109,8 +110,18 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
 
   }, [isDrawerOpen]);
 
-  const locationOptions = ["New York", "Atlanta", "Tacoma", 
-    "Piscataway", "Salinas", "Watsonville"];
+  useEffect(() => {
+    axios.get('https://localhost:7237/api/LostItemRequest/Locations')
+    .then(response => {
+      console.log(response);
+      setLocationOptions(response.data.map(data => data.locations));
+    }).catch(error => {
+      console.log(error);
+    });
+  }, []);
+
+  // const locationOptions = ["New York", "Atlanta", "Tacoma", 
+  //   "Piscataway", "Salinas", "Watsonville"];
 
   
 
