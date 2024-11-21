@@ -209,7 +209,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     formData.append('warehouseLocation', location);
 
     try {
-      axios.post('http://localhost:5005/api/search', formData, {
+      axios.post('https://localhost:7298/api/search', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -267,7 +267,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     _.debounce(async (query) => {
 
       try {
-        const response = await fetch(`http://localhost:5005/api/images/search/${query}`, {
+        const response = await fetch(`https://localhost:7298/api/images/search/${query}`, {
           method: 'GET',
         });
 
