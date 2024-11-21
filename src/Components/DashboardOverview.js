@@ -1,26 +1,30 @@
 import  React, { useState } from 'react';
-import { Box, Grid, Typography, Paper } from '@mui/material';
+import { Box, Grid, Typography, Paper, TextField, Autocomplete } from '@mui/material';
 import { BarChart } from '@mui/x-charts/BarChart';
 import axios from 'axios';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const DashboardOverview = () => {
+const DashboardOverview = ({location}) => {
 
   // const [chartData, setChartData] = React.useState({});
-  // const [chartDataLocations, setChartDataLocations] = React.useState([]);
+  const [chartDataLocations, setChartDataLocations] = React.useState([]);
   const [chartItemsData, setChartItemsData] = React.useState([]);
   const [dataCount, setDataCount] = React.useState({});
   const [categoryData, setCategoryData] = React.useState([]);
+  
 
   React.useEffect(() => {
-    axios.get('https://localhost:7237/api/LostItemRequest/DashboardData')
+    //console.log(location);
+    axios.get(`https://localhost:7237/api/LostItemRequest/DashboardData/${location}`)
     .then(response => {
-      // console.log(response);
+      //console.log(response);
       const chartdata = response.data.data;
-      // setChartData(chartdata);
-      const location = Object.keys(response.data.data);
-      // setChartDataLocations(location);
-      setChartItemsData(location.map(loc => Object.assign({}, { data: chartdata[loc], label: loc })));
+      const loca = Object.keys(response.data.data);
+      // setLocations(location);
+      //console.log(loca);
+      //console.log(location);
+      setChartDataLocations(loca);
+      setChartItemsData(loca.map(loc => Object.assign({}, { data: chartdata[loc], label: loc })));
       setDataCount(response.data.lostItemRequestClaimCount);
       
       const temp = response.data.category;
@@ -33,7 +37,7 @@ const DashboardOverview = () => {
     }).catch(error => {
       console.log(error);
     });
-  },[]);
+  }, [location]);
 
 const CATEGORY_COLORS = {
   "Bag": "#B1E6F3",
@@ -135,9 +139,11 @@ const CATEGORY_COLORS = {
         {/* PieChart */}
         <Grid item xs={12} sm={12} md={6} lg={6} order={{ xs: 1, md: 2 }}>
         <Paper elevation={5} sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>Category Distribution</Typography>
+        <Typography variant="h6" sx={{ mb: 2 }}>Item Category Distribution</Typography>
         <ResponsiveContainer width="100%" height={250}>
-          <PieChart onClick={handlePieClick}>
+        {categoryData.length > 0 ? 
+          (
+            <PieChart onClick={handlePieClick}>
             <Pie
               data={categoryData}
               dataKey="value"
@@ -152,6 +158,11 @@ const CATEGORY_COLORS = {
             </Pie>
             <Tooltip />
           </PieChart>
+          ):
+          (<Typography variant= 'h6' sx={{display:'flex', alignItems:'center', justifyContent:'center', color:'#a04000 '}}>
+            No data found
+          </Typography>)
+        }
         </ResponsiveContainer>
       </Paper>  
 
@@ -162,12 +173,24 @@ const CATEGORY_COLORS = {
       <Paper elevation={5} sx={{ p: 3, mb: 3, flex: 1, height: '90%', mt:3, width:'100%' }}>
           <Typography variant="h6" sx={{ mb: 2 }}>Request Trends</Typography>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              xAxis={[{ scaleType: 'band', data: ['Week', 'Month', '6 Months', '1 Year', 'Above 1 Year'] }]}
-              series={chartItemsData}
-              width={400}
-              height={400}
-            />
+            {location === "All" ?
+              (<Typography variant= 'h6' sx={{display:'flex', alignItems:'center', justifyContent:'center', color:'#a04000 '}}>
+                Please select specific location
+              </Typography>):
+              ((chartDataLocations.includes(location)?
+              (
+                <BarChart
+                xAxis={[{ scaleType: 'band', data: ['Week', 'Month', '6 Months', '1 Year', 'Above 1 Year'] }]}
+                series={chartItemsData}
+                width={400}
+                height={400}
+              />
+              ):
+              (<Typography variant= 'h6' sx={{display:'flex', alignItems:'center', justifyContent:'center', color:'#a04000 '}}>
+                No data found
+              </Typography>)
+              ))
+            }
           </ResponsiveContainer>
         </Paper>
     </Grid> 
@@ -175,6 +198,5 @@ const CATEGORY_COLORS = {
     </Box>
   );
 };
-
 
 export default DashboardOverview;
