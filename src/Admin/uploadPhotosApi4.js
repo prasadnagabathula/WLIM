@@ -161,6 +161,10 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
 
   const handleClear = () => {
     setSelectedImage(null); // Clear the uploaded image
+    setCategory('');
+    setComments('');
+    setTags('');
+    setLocation('');
     setMessage('');
   };
 
