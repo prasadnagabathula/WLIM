@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, Autocomplete, TextField } from '@mui/material';
 import DashboardOverview from './DashboardOverview';
 import Statistics from './Statistics';
+import axios from 'axios';
+
 
 function Default({ isDrawerOpen }) {
+  const [locations, setLocations] = React.useState([]);
+  const [loc, setLoc] = React.useState("All");
     const [marginLeft, setMarginLeft] = useState(100); // Default margin
     const [marginRight, setMarginRight] = useState(100); // Default margin
   
@@ -13,6 +17,16 @@ function Default({ isDrawerOpen }) {
       setMarginRight(isDrawerOpen ? 0 : 100);
     }, [isDrawerOpen]);
 
+    React.useEffect(() => {
+
+      axios.get('https://localhost:7237/api/LostItemRequest/Locations')
+      .then(response => {
+        setLocations(response.data.map(data => data.locations));
+      }).catch(error => {
+        console.log(error);
+      });
+  
+    },[]);
   
     return (
       <div>
@@ -27,6 +41,20 @@ function Default({ isDrawerOpen }) {
             transition: 'margin-left 0.3s', // Smooth transition
           }}
         >
+          <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
+            <Autocomplete
+              disablePortal
+              options={["All", ...locations]}
+              value={loc}
+              onChange={(event, value) => {
+                if(value !== null){
+                  setLoc(value)
+                }
+              }}
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField {...params} label="Location" />}
+            />
+          </Box>
           <Typography variant="h5" sx={{ 
             mb: 4,
             pt: 2,
@@ -52,7 +80,7 @@ function Default({ isDrawerOpen }) {
             }}
           >
             {/* <DashboardOverview /> */}
-            {localStorage.getItem('userRole') === 'Admin' ? <DashboardOverview/> : <Statistics/>}
+            {localStorage.getItem('userRole') === 'Admin' ? <DashboardOverview location = {loc} /> : <Statistics/>}
           </Box>
   
           <Typography variant="h5" sx={{ 
