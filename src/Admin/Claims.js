@@ -231,7 +231,7 @@ const Claims = ({ isDrawerOpen }) => {
                 </Typography>
                 <hr />
 
-                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, gap: 2, pt: 4 }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, gap: 2, pt: 4, fontFamily:'Lato' }}>
                   <Box
                     sx={{
                       display: 'flex',
@@ -254,11 +254,11 @@ const Claims = ({ isDrawerOpen }) => {
                     />
                   </Box>
 
-                  <CardContent sx={{ flex: 2 }}>
+                  <CardContent sx={{ flex: 2, fontFamily:'Lato' }}>
                     <Typography variant="h5" gutterBottom>{selectedItem.itemDescription}</Typography>
 
                     {/* Using Grid for aligned labels and content */}
-                    <Box sx={{ display: 'grid', gridTemplateColumns: '150px 1fr', rowGap: 1.5, columnGap: 1 }}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: '150px 1fr', rowGap: 1.5, columnGap: 1, fontFamily:'Lato' }}>
                       <Typography><b>Description:</b></Typography>
                       <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.description}
