@@ -22,7 +22,7 @@ const CustomBreadcrumbs = ({ paths, isDrawerOpen, currentPath }) => {
                     style={{
                         color: '#666', 
                         fontFamily: 'Lato',
-                        fontSize: 'inherit',
+                        fontSize: '20px',
                     }}
                     >
                     {path.label}
@@ -35,7 +35,7 @@ const CustomBreadcrumbs = ({ paths, isDrawerOpen, currentPath }) => {
                         textDecoration: 'none',
                         color: path.link === currentPath ? '#00aae7' : 'inherit',
                         fontFamily: 'Lato',
-                        fontSize: 'inherit',
+                        fontSize: '20px',
                     }}
                     >
                     {path.label}

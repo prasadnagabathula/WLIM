@@ -156,6 +156,7 @@ const CATEGORY_COLORS = {
                 <Cell key={`cell-${index}`} fill={CATEGORY_COLORS[entry.name]} />
               ))}
             </Pie>
+            {/* <Legend /> */}
             <Tooltip />
           </PieChart>
           ):

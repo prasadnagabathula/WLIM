@@ -664,56 +664,6 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         </Button>
       </DialogActions>
     </Dialog>
-      {/* <Dialog open={dialogOpen} onClose={handleDialogClose}
-        PaperProps={{
-          style: {
-            width: '600px', 
-            maxWidth: '800px', 
-          },
-        }}
-      >
-        <DialogTitle>More Information About Item</DialogTitle>
-        <DialogContent>
-          {[
-            { label: 'Description', name: 'description', maxLength: 50 },
-            { label: 'Color', name: 'color', maxLength: 50 },
-            // { label: 'Size', name: 'size', maxLength: 20 },
-            { label: 'Brand', name: 'brand', maxLength: 50 },
-            // { label: 'Model', name: 'model', maxLength: 50 },
-            { label: 'Distinguishing Features', name: 'distinguishingFeatures', maxLength: 100 },
-            // { label: 'Item Category', name: 'itemCategory', maxLength: 50 },
-            // { label: 'Serial Number', name: 'serialNumber', maxLength: 50 },
-            { label: 'Date and Time of Loss', name: 'dateTimeWhenLost', type: 'datetime-local' },
-            { label: 'Location / Area', name: 'location', maxLength: 100 },
-            // { label: 'Item Value', name: 'itemValue', type: 'number', inputProps: { min: 0 } },
-            // { label: 'Proof of Ownership', name: 'proofOfOwnership', maxLength: 100 },
-            // { label: 'How the Item Was Lost', name: 'howTheItemLost', maxLength: 100 },
-            // { label: 'Reference Number', name: 'referenceNumber', maxLength: 50 },
-            { label: 'Other Details For Communication', name: 'otherRelevantDetails', maxLength: 200 },
-          ].map(({ label, name, maxLength, type = 'text', inputProps = {} }) => (
-            <React.Fragment key={name}>
-              <InputLabel>{label}</InputLabel>
-              <TextField
-                margin="dense"
-                name={name}
-                value={currentItemLostRequest[name]}
-                onChange={handleChange}
-                fullWidth
-                inputProps={{ maxLength, ...inputProps }}
-                type={type}
-              />
-            </React.Fragment>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="secondary">
-            Cancel
-          </Button>
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog> */}
     </Box>
   );
 }
