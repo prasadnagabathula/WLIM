@@ -46,6 +46,7 @@ function App() {
         <Route path="/search" element={<SearchPhotos />} />
         <Route path="/items" element={<SearchItems />} />
         <Route path="/profile" element={<Profile />} />    
+
       </Routes>
     </Router>
   </ThemeProvider>

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './uploadPhotos.css'; // Add any custom styles here
-import { Button, Grid, Alert, Snackbar, Typography, Box, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Button, Grid, Alert, Snackbar, Typography, Box,Autocomplete, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { fontFamily, styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { CATEGORY_OPTIONS } from '../Components/Constants';
 import CategoryDropdown from './CategoryDropdown';
+import BackspaceIcon from '@mui/icons-material/Backspace';
+import UploadIcon from '@mui/icons-material/Upload';
 
 
 const UploadPhotosApi4 = ({ isDrawerOpen }) => {
@@ -102,11 +104,9 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
         setIsDisabled(false);         
 }
 
-
-
   useEffect(() => {
-    setMarginLeft(isDrawerOpen ? 300 : 100);
-    setMarginRight(isDrawerOpen ? 50 : 0);
+    setMarginLeft(isDrawerOpen ? 190 : 0);
+    setMarginRight(isDrawerOpen ? 0 : 20);
 
   }, [isDrawerOpen]);
 
@@ -119,11 +119,6 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
       console.log(error);
     });
   }, []);
-
-  // const locationOptions = ["New York", "Atlanta", "Tacoma", 
-  //   "Piscataway", "Salinas", "Watsonville"];
-
-  
 
   const navigate = useNavigate();
 
@@ -148,8 +143,8 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     border: '2px dashed #888',
     borderRadius: '10px',
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     backgroundColor: '#fff',
     cursor: 'pointer',
     marginBottom: '20px',
@@ -161,6 +156,10 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
 
   const handleClear = () => {
     setSelectedImage(null); // Clear the uploaded image
+    setCategory('');
+    setComments('');
+    setTags('');
+    setLocation('');
     setMessage('');
   };
 
@@ -301,140 +300,248 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
         sx={{
           display: 'flex',
           textAlign: 'center',
-          mt: 2,
+          mt: 6,
           ml: { sm: 0, md: `${marginLeft}px` },
           mr: `${marginRight}px`,
           transition: 'margin-left 0.3s',
+          flexDirection: { xs: 'column', md: 'row' }, 
+          justifyContent: 'space-between', 
         }}
       >
-        <Grid container justifyContent="center" alignItems="center" spacing={2}>
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="h5" sx={{ fontFamily: 'Lato', mb: 4, fontSize: { md: '30px' } }}>
-              Unleashing the Power of Visual Recognition
-            </Typography>            
-            <Box sx={{
+        <Grid container spacing={2}>
+          <Box
+            sx={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-            }}>
-              <Box component='form' onSubmit={handleSubmit} sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center'
+              justifyContent: 'center',
+              textAlign: 'center',
+              flex: 1, 
+              order: { xs: 2, md: 1 }, 
+            }}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                fontFamily: 'Lato',
+                mb: 4,
+                fontSize: { md: '30px' },
+                backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}
+            >
+              Unleashing the Power of Visual Recognition
+            </Typography>
+            <label htmlFor="upload-image">
+                <UploadBox
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '2px dashed #888',
+                    borderRadius: '8px',
+                    padding: '20px',
+                    cursor: 'pointer',
+                    width: '300px',
+                    height: '300px',
+                    marginBottom: '20px', 
+                  }}
+                >
+                  {selectedImage ? (
+                    <img
+                      src={selectedImage}
+                      alt="Uploaded"
+                      style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'contain' }}
+                    />
+                  ) : (
+                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                      <CloudUploadIcon />
+                      <span style={{ marginLeft: 8 }}>Upload Identified Item Photo</span>
+                    </span>
+                  )}
+                </UploadBox>
+              </label>
+              <input
+                id="upload-image"
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handleFileChange}
+              />
+          </Box>
+
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-end',
+              justifyContent: 'flex-start',
+              flex: 1,
+              order: { xs: 1, md: 2 }, 
+            }}
+          >
+            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <CategoryDropdown
+                categoryOptions={categoryOptions}
+                initialCategory={category}
+                onCategoryChange={onCategoryChange}
+              />
+
+              <TextField
+                label="Comments"
+                variant="outlined"
+                value={comments}
+                multiline
+                minRows={1} 
+                maxRows={6} 
+                sx={{ 
+                  width: { xs: '100%', sm: '400px', md: '450px' }, 
+                  marginBottom: '25px', 
+                  marginTop:2,
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#770737',
+                    },
+                    '&:hover fieldset': {
+                      borderImage: 'linear-gradient(to left, #2368a0, #770737, #00aae7) 1',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderImage: 'linear-gradient(to left, #00aae7, #770737, #2368a0) 1',
+                      borderWidth: '2px',
+                    },
+                  }, 
+                }}
+                onChange={(e) => setComments(e.target.value)}
+              />
+
+              <TextField
+                label="Tags"
+                variant="outlined"
+                value={tags}
+                multiline
+                minRows={1} 
+                maxRows={6} 
+                sx={{ 
+                  width: { xs: '100%', sm: '400px', md: '450px' }, 
+                  marginBottom: '25px', 
+                  marginTop:2,
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#770737',
+                    },
+                    '&:hover fieldset': {
+                      borderImage: 'linear-gradient(to left, #2368a0, #770737, #00aae7) 1',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderImage: 'linear-gradient(to left, #00aae7, #770737, #2368a0) 1',
+                      borderWidth: '2px',
+                    },
+                  }, 
+                }}
+                onChange={(e) => setTags(e.target.value)}
+              />
+
+              <FormControl sx={{ 
+                width: { xs: '100%', sm: '400px', md: '450px' }, 
+                mt: 2,
+                '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#770737',
+                    },
+                    '&:hover fieldset': {
+                      borderImage: 'linear-gradient(to left, #2368a0, #770737, #00aae7) 1',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderImage: 'linear-gradient(to left, #00aae7, #770737, #2368a0) 1',
+                      borderWidth: '2px',
+                    },
+                }, 
               }}>
-                <label htmlFor="upload-image">
-                  <UploadBox
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: '2px dashed #888',
-                      borderRadius: '8px',
-                      padding: '20px',
-                      cursor: 'pointer',
-                      width: '300px',
-                      height: '300px',
-                      // margin:'20px 60px',
-                    }}
-                  >
-                    {selectedImage ? (
-                      <img
-                        src={selectedImage}
-                        alt="Uploaded"
-                        style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'contain' }}
-                      />
-                    ) : (
-                      <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <CloudUploadIcon />
-                        <span style={{ marginLeft: 8 }}>Upload Identified Item Photo</span>
-                      </span>
-                    )}
-                  </UploadBox>
-                  
-                </label>                
-                <input
-                  id="upload-image"
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  onChange={handleFileChange}
-                />      
-
-                <CategoryDropdown
-                    categoryOptions={categoryOptions}
-                    initialCategory={category}
-                    onCategoryChange={onCategoryChange}
-                    />          
-
-                <TextField
-                    label="Comments"
-                    variant="outlined"
-                    value={comments}
-                    multiline
-                    minRows={1} // Minimum height of the textbox
-                    maxRows={6} // Optional: Maximum height before scrolling
-                    sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, marginBottom:'20px' }}
-                    onChange={(e) => setComments(e.target.value)}
-                    />
-
-                    <TextField
-                    label="Tags"
-                    variant="outlined"
-                    value={tags}
-                    multiline
-                    minRows={1} // Minimum height of the textbox
-                    maxRows={6} // Optional: Maximum height before scrolling
-                    sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, marginBottom:'5px'  }}
-                    onChange={(e) => setTags(e.target.value)}
-                    />
-
-                <FormControl sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, mt: 2}}>                
-
-                  <InputLabel id="location-label">Location</InputLabel>
-                  <Select
-                    labelId="location-label"
-                    id="location"
+                {/* <InputLabel id="location-label">Location</InputLabel>
+                <Select
+                  labelId="location-label"
+                  freeSolo
+                  id="location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  label="Location"
+                >
+                  {locationOptions.map((loc, index) => (
+                    <MenuItem key={index} value={loc}>
+                      {loc}
+                    </MenuItem>
+                  ))}
+                </Select> */}
+                <Autocomplete
+                    disablePortal
+                    options={locationOptions}
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    label="Location"
-                  >
-                    {locationOptions.map((loc, index) => (
-                      <MenuItem key={index} value={loc}>
-                        {loc}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                    sx={{ width: { xs: '100%', sm: '400px', md: '450px' } }}
+                    renderInput={(params) => <TextField {...params} label="Location" />}
+                  />
+              </FormControl>
 
-                <Box display="flex" gap={3} justifyContent="center" alignItems="center" marginTop={3}>
-                  <Button type="submit" variant="outlined" color="primary" disabled={isDisabled}>
-                    {isDisabled ? "Getting image properties, wait..." : "Upload"}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={handleClear}
-                  >
-                    Clear
-                  </Button>
-                </Box>
-              </Box>              
-            </Box>            
-            <Snackbar
-              open={snackbarOpen}
-              autoHideDuration={6000}
-              onClose={handleCloseSnackbar}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              sx={{ mb: 2 }}
-            >
-              <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
-                {message}
-              </Alert>
-            </Snackbar>
+              <Box display="flex" gap={4} justifyContent="center" alignItems="center" marginTop={5}>
+                <Button
+                  type="submit"
+                  variant="outlined"
+                  color="primary"
+                  disabled={isDisabled}
+                  startIcon={<UploadIcon />}
+                  sx={{
+                    background: 'linear-gradient(to left, #00aae7, #770737)',
+                    color: '#fff',
+                    border: 'none',
+                    '&:hover': {
+                      background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
+                    },
+                    '&.Mui-disabled': {
+                      background: 'linear-gradient(to left, #d3d3d3, #a9a9a9)',
+                      color: '#fff',
+                    },
+                  }}
+                >
+                  {isDisabled ? 'Getting image properties, wait...' : 'Upload'}
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={handleClear}
+                  startIcon={<BackspaceIcon />}
+                  sx={{
+                    background: 'linear-gradient(to left, #00aae7, #770737)',
+                    color: '#fff',
+                    border: 'none',
+                    '&:hover': {
+                      background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
+                    },
+                  }}
+                >
+                  Clear
+                </Button>
+              </Box>
+            </Box>
           </Box>
+
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            sx={{ mb: 2 }}
+          >
+            <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
+              {message}
+            </Alert>
+          </Snackbar>
         </Grid>
       </Box>
+
     </div>
   );
 

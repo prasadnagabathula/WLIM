@@ -28,7 +28,19 @@ function CategoryDropdown({ categoryOptions, initialCategory, onCategoryChange }
           variant="outlined"
           sx={{
             width: { xs: "100%", sm: "400px", md: "450px" },
-            marginBottom: "20px",
+            marginBottom: '25px',
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                  borderColor: '#770737',
+              },
+              '&:hover fieldset': {
+                  borderImage: 'linear-gradient(to left, #2368a0, #770737, #00aae7) 1',
+              },
+              '&.Mui-focused fieldset': {
+                  borderImage: 'linear-gradient(to left, #00aae7, #770737, #2368a0) 1',
+                  borderWidth: '2px',
+              },
+            }, 
           }}
         />
       )}

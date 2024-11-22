@@ -398,6 +398,7 @@ const userClaims = [
                     height: 56,
                     fontSize: 24, 
                     mr: 2, 
+                    ml: 2
                   }}
                 >
                   {!userData.photo ? userData.name?.[0] : null} 
@@ -406,7 +407,7 @@ const userClaims = [
 
               {/* Name and Role Section */}
               <Box>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#00aae7' }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#00aae7' }}>
                   {userData.name || 'User'}
                 </Typography>
 

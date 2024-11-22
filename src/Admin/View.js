@@ -159,8 +159,14 @@ function View({ isDrawerOpen }) {
       transition: 'margin-left 0.3s',
     }}>
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <Typography variant="h4" gutterBottom>
-          Identified Item List
+        <Typography variant="h4" gutterBottom sx={{
+          backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+          color: 'transparent',
+          fontWeight: 'bold',
+        }}>
+          Identified Items List
         </Typography>
         <div style={{ display: 'flex', marginBottom: '20px', width: '100%' }}>
           <TextField
