@@ -268,7 +268,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     formData.append('warehouseLocation', location);
 
     try {
-      const response = await axios.post('http://localhost:5005/api/upload', formData, {
+      const response = await axios.post('https://localhost:7298/api/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

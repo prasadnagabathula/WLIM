@@ -528,8 +528,10 @@ const Claims = ({ isDrawerOpen }) => {
                         {selectedItem.otherRelevantDetails}
                       </Typography>
 
+
                       <Typography variant="h6"><b>Requested By:</b></Typography>
                       <Typography sx={{fontSize:'20px'}}>
+
                         {selectedItem.createdBy}
                       </Typography>
 
