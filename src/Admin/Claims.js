@@ -54,6 +54,7 @@ const Claims = ({ isDrawerOpen }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedItemId, setSelectedItemId] = useState('');
   const [selectedItemDesc, setSelectedItemDesc] = useState('');
+  const [address, setAddress] = useState('');
   const [uploadedItems, setUploadedItems] = useState([]);
   const [userName, setUserName] = useState('');
   const [status, setStatus] = useState('');
@@ -113,9 +114,9 @@ const Claims = ({ isDrawerOpen }) => {
         console.log("Fetched claims:", response.data);
         const userClaims = response.data;
         console.log("User claims:", userClaims);
-        console.log("Claimed data", response.data.filter(item => item.status === "Claim"));
+        console.log("Claimed data", response.data.filter(item => item.status === "Claimed"));
         setUploadedItems(userClaims);
-        setClaim(userClaims.filter(data => data.status === "Claim"));
+        setClaim(userClaims.filter(data => data.status === "Claimed"));
         setApproved(userClaims.filter(data => data.status === "Approve"));
         //setResolved(userClaims.filter(data => data.status === "Resolved"));
         setReject(userClaims.filter(data => data.status === "Reject"));
@@ -193,6 +194,7 @@ const Claims = ({ isDrawerOpen }) => {
    //console.log(item.id);
     setSelectedItemDesc(item.description);
     setStatus(item.status);
+    setAddress(item.address);
     setOpenModal(true);
   };
 
@@ -260,127 +262,125 @@ const Claims = ({ isDrawerOpen }) => {
               }
               {...a11yProps(2)}
             /> */}
-            <Tab
+           <Tab
               label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <CancelIcon sx={{ color: tabs === 3 ? 'red' : '#888' }} />
-                  Rejected
-                </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CancelIcon sx={{ color: tabs === 2 ? '#D2042D' : '#888' }} />
+              Rejected
+              </Box>
               }
-              {...a11yProps(3)}
-            />
+              {...a11yProps(2)}
+              />
           </Tabs>
         </Box>
 
-      <CustomTabPanel value={tabs} index={0}>
-      {claim.length === 0 ? (
+        <CustomTabPanel value={tabs} index={0}>
+          {claim.length === 0 ? (
           <Typography>No Claims Submitted Yet.</Typography>
-        ) : (
+          ) : (
           <Grid container spacing={3} justifyContent="flex-start">
-            {claim.map((item, index) => {
+          {claim.map((item, index) => {
+          // Determine the background color based on the status
+          const cardBackgroundColor = item.isActive ? '#F2D2BD' : '#C8E6C9'; // Light orange for Disclaimed, light green for Claimed
+
+          return (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+          <Card sx={{
+          cursor: 'pointer',
+          boxShadow: 3,
+          backgroundColor: cardBackgroundColor, // Apply the background color here
+          '&:hover': {
+          backgroundColor: item.isActive ? '#FBCEB1' : '#A5D6A7' // Change color on hover for visual feedback
+          }
+          }} onClick={() => handleCardClick(item)}>
+          <CardMedia>
+          <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
+          </CardMedia>
+          <CardContent>
+          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>          
+          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}</Typography>
+          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
+          </CardContent>
+          </Card>
+          </Grid>
+          );
+          })}
+          </Grid>
+
+          )}
+          </CustomTabPanel>
+          <CustomTabPanel value={tabs} index={1}>
+              {approved.length === 0 ? (
+              <Typography>No Claims Approved Yet.</Typography>
+              ) : (
+              <Grid container spacing={3} justifyContent="flex-start">
+              {approved.map((item, index) => {
               // Determine the background color based on the status
               const cardBackgroundColor = item.isActive ? '#E5E4E2' : '#C8E6C9'; // Light orange for Disclaimed, light green for Claimed
 
               return (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card sx={{
+              <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card sx={{
+              cursor: 'pointer',
+              boxShadow: 3,
+              backgroundColor: cardBackgroundColor, // Apply the background color here
+              '&:hover': {
+              backgroundColor: item.isActive ? ' #FFFDD0' : '#A5D6A7' // Change color on hover for visual feedback
+              }
+              }} onClick={() => handleCardClick(item)}>
+              <CardMedia>
+              <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
+              </CardMedia>
+              <CardContent>
+              <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
+              <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}</Typography>
+              <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
+              </CardContent>
+              </Card>
+              </Grid>
+              );
+              })}
+              </Grid>
+
+              )}
+              </CustomTabPanel>
+
+              <CustomTabPanel value={tabs} index={2}>
+                    {reject.length === 0 ? (
+                    <Typography>No Claims Resolved Yet.</Typography>
+                    ) : (
+                    <Grid container spacing={3} justifyContent="flex-start">
+                    {reject.map((item, index) => {
+                    // Determine the background color based on the status
+                    const cardBackgroundColor = item.isActive ? '#E5E4E2' : '#E97451'; // Light orange for Disclaimed, light green for Claimed
+
+                    return (
+                    <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Card sx={{
                     cursor: 'pointer',
                     boxShadow: 3,
                     backgroundColor: cardBackgroundColor, // Apply the background color here
                     '&:hover': {
-                      backgroundColor: item.isActive ? '	#FFFDD0' : '#A5D6A7' // Change color on hover for visual feedback
+                    backgroundColor: item.isActive ? ' #FFFDD0' : ' #D22B2B' // Change color on hover for visual feedback
                     }
-                  }} onClick={() => handleCardClick(item)}>
+                    }} onClick={() => handleCardClick(item)}>
                     <CardMedia>
-                      <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
+                    <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
                     </CardMedia>
                     <CardContent>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
-                      {/* <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Claimed' : 'Approved'}</Typography> */}
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}</Typography>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
+                    <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
+
+                    <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}</Typography>
+                    <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
                     </CardContent>
-                  </Card>
-                </Grid>
-              );
-            })}
-          </Grid>
+                    </Card>
+                    </Grid>
+                    );
+                    })}
+                    </Grid>
 
-        )}
-      </CustomTabPanel>
-      <CustomTabPanel value={tabs} index={1}>
-      {approved.length === 0 ? (
-          <Typography>No Claims Approved Yet.</Typography>
-        ) : (
-          <Grid container spacing={3} justifyContent="flex-start">
-            {approved.map((item, index) => {
-              // Determine the background color based on the status
-              const cardBackgroundColor = item.isActive ? '#E5E4E2' : '#C8E6C9'; // Light orange for Disclaimed, light green for Claimed
-
-              return (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card sx={{
-                    cursor: 'pointer',
-                    boxShadow: 3,
-                    backgroundColor: cardBackgroundColor, // Apply the background color here
-                    '&:hover': {
-                      backgroundColor: item.isActive ? '	#FFFDD0' : '#A5D6A7' // Change color on hover for visual feedback
-                    }
-                  }} onClick={() => handleCardClick(item)}>
-                    <CardMedia>
-                      <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
-                    </CardMedia>
-                    <CardContent>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
-                      {/* <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Claimed' : 'Approved'}</Typography> */}
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}</Typography>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              );
-            })}
-          </Grid>
-
-        )}
-      </CustomTabPanel>
-
-      <CustomTabPanel value={tabs} index={2}>
-      {reject.length === 0 ? (
-          <Typography>No Claims Resolved Yet.</Typography>
-        ) : (
-          <Grid container spacing={3} justifyContent="flex-start">
-            {reject.map((item, index) => {
-              // Determine the background color based on the status
-              const cardBackgroundColor = item.isActive ? '#E5E4E2' : '#C8E6C9'; // Light orange for Disclaimed, light green for Claimed
-
-              return (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card sx={{
-                    cursor: 'pointer',
-                    boxShadow: 3,
-                    backgroundColor: cardBackgroundColor, // Apply the background color here
-                    '&:hover': {
-                      backgroundColor: item.isActive ? '	#FFFDD0' : '#A5D6A7' // Change color on hover for visual feedback
-                    }
-                  }} onClick={() => handleCardClick(item)}>
-                    <CardMedia>
-                      <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
-                    </CardMedia>
-                    <CardContent>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
-                      {/* <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.isActive ? 'Claimed' : 'Approved'}</Typography> */}
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}</Typography>
-                      <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              );
-            })}
-          </Grid>
-
-        )}
-      </CustomTabPanel>
+                    )}
+                    </CustomTabPanel>
 
       {/* <CustomTabPanel value={tabs} index={3}>
       {resolved.length === 0 ? (
@@ -528,10 +528,13 @@ const Claims = ({ isDrawerOpen }) => {
                         {selectedItem.otherRelevantDetails}
                       </Typography>
 
+                      <Typography variant="h6"><b>Address:</b></Typography>
+                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap',fontSize:'20px' }}>
+                        {selectedItem.address}
+                      </Typography>                     
 
                       <Typography variant="h6"><b>Requested By:</b></Typography>
                       <Typography sx={{fontSize:'20px'}}>
-
                         {selectedItem.createdBy}
                       </Typography>
 
@@ -539,11 +542,35 @@ const Claims = ({ isDrawerOpen }) => {
                       <Typography sx={{fontSize:'20px'}}>
                         <DateFormat date={selectedItem.createdDate} />
                       </Typography>
-{/* 
-                      <Typography variant="h6"><b>Status:</b></Typography>
-                      <Typography sx={{fontSize:'20px'}}>{selectedItem.status}</Typography> */}
+
+                      {/* {selectedItem.status == 'Approve' && (
+                        <Box>
+                            <Typography variant="h6"><b>Approved By:</b></Typography>
+                            <Typography sx={{fontSize:'20px'}}>
+                              {selectedItem.updatedBy}
+                            </Typography>
+
+                            <Typography variant="h6"><b>Approved On:</b></Typography>
+                            <Typography sx={{fontSize:'20px'}}>
+                              <DateFormat date={selectedItem.updatedDate} />
+                            </Typography>
+                          </Box>
+                      )}
+                      {selectedItem.status == 'Reject' && (
+                        <Box>
+                            <Typography variant="h6"><b>Rejected By:</b></Typography>
+                            <Typography sx={{fontSize:'20px'}}>
+                              {selectedItem.updatedBy}
+                            </Typography>
+
+                            <Typography variant="h6"><b>Rejected On:</b></Typography>
+                            <Typography sx={{fontSize:'20px'}}>
+                              <DateFormat date={selectedItem.updatedDate} />
+                            </Typography>
+                          </Box>
+                      )} */}                   
                     </Box>
-                    {selectedItem.status == "Claim" && (<Box>
+                    {selectedItem.status == "Claimed" && (<Box>
                       <TextField
                       select
                       label="Status"
@@ -565,39 +592,39 @@ const Claims = ({ isDrawerOpen }) => {
                       onChange={(e) => setComments(e.target.value)}
                       sx={{ mt: 3, minWidth: '450px' }}
                     />
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4, mt: 5 }}>
-                      <Button variant="contained" color="primary" onClick={handleSubmit} 
-                        startIcon={<PublishIcon />}
-                        sx={{
-                          background: 'linear-gradient(to left, #00aae7, #770737)',
-                          color: '#fff',
-                          border: 'none',
-                          '&:hover': {
-                            background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
-                          },
-                          '&.Mui-disabled': {
-                            background: 'linear-gradient(to left, #d3d3d3, #a9a9a9)',
-                            color: '#fff',
-                          },
-                      }}>
-                        Submit
-                      </Button>
-                      <Button variant="outlined" color="secondary" onClick={handleClose}
-                      startIcon={<CancelIcon />}
-                      sx={{
-                        background: 'linear-gradient(to left, #00aae7, #770737)',
-                        color: '#fff',
-                        border: 'none',
-                        '&:hover': {
-                          background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
-                        },
-                        '&.Mui-disabled': {
-                          background: 'linear-gradient(to left, #d3d3d3, #a9a9a9)',
-                          color: '#fff',
-                        },
-                      }}>
-                        Cancel
-                      </Button>
+                   <Box sx={{ display: 'flex', justifyContent: 'flex-start',ml:10, gap: 4, mt: 5 }}>
+                    <Button variant="contained" color="primary" onClick={handleSubmit}
+                    startIcon={<PublishIcon />}
+                    sx={{
+                    background: 'linear-gradient(to left, #00aae7, #770737)',
+                    color: '#fff',
+                    border: 'none',
+                    '&:hover': {
+                    background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
+                    },
+                    '&.Mui-disabled': {
+                    background: 'linear-gradient(to left, #d3d3d3, #a9a9a9)',
+                    color: '#fff',
+                    },
+                    }}>
+                    Submit
+                    </Button>
+                    <Button variant="outlined" color="secondary" onClick={handleClose}
+                    startIcon={<CancelIcon />}
+                    sx={{
+                    background: 'linear-gradient(to left, #00aae7, #770737)',
+                    color: '#fff',
+                    border: 'none',
+                    '&:hover': {
+                    background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
+                    },
+                    '&.Mui-disabled': {
+                    background: 'linear-gradient(to left, #d3d3d3, #a9a9a9)',
+                    color: '#fff',
+                    },
+                    }}>
+                    Cancel
+                    </Button>
                     </Box>
 
                     </Box>)}                                        

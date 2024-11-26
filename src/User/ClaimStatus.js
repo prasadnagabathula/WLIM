@@ -284,7 +284,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                       <DateFormat date={selectedItem.dateTimeWhenLost} />
                       </Typography>
 
-                      <Typography variant="body2"><b>Location / Area:</b></Typography>
+                      <Typography variant="body2"><b>Location / Area of Loss:</b></Typography>
                       <Typography variant="body2" sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.location}
                       </Typography>
@@ -292,6 +292,11 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                       <Typography variant="body2"><b>Other Details For Communication:</b></Typography>
                       <Typography variant="body2" sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.otherRelevantDetails}
+                      </Typography>
+
+                      <Typography variant="body2"><b>Address:</b></Typography>
+                      <Typography variant="body2" sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                        {selectedItem.address}
                       </Typography>
 
                       <Typography variant="body2"><b>Requested Date:</b></Typography>

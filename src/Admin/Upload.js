@@ -12,9 +12,9 @@ function Upload({isDrawerOpen, setUploadedData}) {
   const [marginRight, setMarginRight] = useState(100);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  useEffect(() => {
-    setMarginLeft(isDrawerOpen ? 400 : 100);
-    setMarginRight(isDrawerOpen ? 50 : 0);
+    useEffect(() => {
+      setMarginLeft(isDrawerOpen ? 220 : 0);
+      setMarginRight(isDrawerOpen ? 0 : 20);
 
   }, [isDrawerOpen]);
 

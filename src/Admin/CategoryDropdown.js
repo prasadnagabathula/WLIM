@@ -28,7 +28,8 @@ function CategoryDropdown({ categoryOptions, initialCategory, onCategoryChange }
           variant="outlined"
           sx={{
             width: { xs: "100%", sm: "400px", md: "450px" },
-            marginBottom: '25px',
+            //marginBottom: '25px',
+            marginTop:4,
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
                   borderColor: '#770737',

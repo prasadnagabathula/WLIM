@@ -27,7 +27,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const [itemDescription, setItemDescription] = useState(null);
   const [itemobject, setItemobject] = useState([]);
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
-  const [selectedItemDetails, setSelectedItemDetails] = useState({ id: null, itemDescription: '' });
+  const [selectedItemDetails, setSelectedItemDetails] = useState({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
   const [itemSelected, setItemSelected] = useState(false);
   const [severity, setSeverity] = useState('success');
   const [location, setLocation] = useState('');
@@ -58,6 +58,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     howTheItemLost: '',
     referenceNumber: '',
     additionalInformation: '',
+    address: '',
     otherRelevantDetails: '',
     requestedBy: userName,
     claimId:'',
@@ -175,7 +176,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     console.log(item.id)
 
     setSelectedThumbnail(item.filePath); // Set the selected image
-    setSelectedItemDetails({ id: item.id, itemDescription: item.itemDescription }); // Capture id and description
+    setSelectedItemDetails({ id: item.id, itemDescription: item.itemDescription, comments: item.comments, warehouseLocation: item.warehouseLocation }); // Capture id and description
     setItemSelected(true);
     //setSelectedImageId(item.id);
 
@@ -191,7 +192,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const handleImageChange = (e) => {
     setResults([]);
     setItemSelected(false);
-    setSelectedItemDetails({ id: null, itemDescription: '' });
+    setSelectedItemDetails({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
     console.log(e);
     const file = e.target.files[0];
     //console.log(file);
@@ -232,6 +233,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
             const filePaths = response.data.filesMatched.map(item => ({
               id: item.id,
               itemDescription: item.itemDescription,
+              comments: item.comments,
+              warehouseLocation: item.warehouseLocation,
               filePath: item.filePath
             }));
             setResults(filePaths);
@@ -288,6 +291,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
           const filePaths = result.map(item => ({
             id: item.id,
             itemDescription: item.itemDescription,
+            comments: item.comments,
+            warehouseLocation: item.warehouseLocation,
             filePath: item.filePath
           }));
 
@@ -332,6 +337,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
           howTheItemLost: '',
           referenceNumber: '',
           additionalInformation: '',
+          address: '',
           otherRelevantDetails: '',
           requestedBy: 'userName',
           claimId: '',
@@ -577,14 +583,47 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
                 width: '100%',
                 mt: 2
               }}  >
-                <Box sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  fontFamily: 'Lato',
-                  color: '#229954',
+                <Box 
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column', // Stacks the items in rows
+                    alignItems: 'flex-start', // Aligns items to the start of the box
+                    fontFamily: 'Lato',                    
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#229954', }}>
+                    <DoneAllIcon />
+                    <Typography variant="body1" component="div" fontWeight="bold">
+                      Selected Item:
+                    </Typography>                    
+                  </Box>
 
-                }}>
-                  <DoneAllIcon /> <p><b>Selected Item :</b> {selectedItemDetails.itemDescription}</p>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body1" component="div" fontWeight="bold">
+                      Description:
+                    </Typography>
+                    <Typography variant="body1" component="span">
+                      {selectedItemDetails.itemDescription}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body1" component="div" fontWeight="bold">
+                      Comments:
+                    </Typography>
+                    <Typography variant="body1" component="span">
+                      {selectedItemDetails.comments}
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body1" component="div" fontWeight="bold">
+                      Warehouse Location:
+                    </Typography>
+                    <Typography variant="body1" component="span">
+                      {selectedItemDetails.warehouseLocation}
+                    </Typography>
+                  </Box>
                 </Box>
                 <Box height="40px" sx={{
                   display: 'flex',
@@ -624,7 +663,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         </DialogActions>
       </Dialog>
       <Dialog open={dialogOpen} onClose={handleDialogClose} PaperProps={{ sx: dialogPaperStyles }}>
-      <DialogTitle sx={dialogTitleStyles}>More Information About Item</DialogTitle>
+      <DialogTitle sx={dialogTitleStyles}>Fill in the Details Below</DialogTitle>
       <DialogContent sx={dialogContentStyles}>
         {[ 
           { label: 'Description', name: 'description', maxLength: 50 },
@@ -632,8 +671,9 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
           { label: 'Brand', name: 'brand', maxLength: 50 },
           { label: 'Distinguishing Features', name: 'distinguishingFeatures', maxLength: 100 },
           { label: 'Date and Time of Loss', name: 'dateTimeWhenLost', type: 'datetime-local' },
-          { label: 'Location / Area', name: 'location', maxLength: 100 },
-          { label: 'Other Details For Communication', name: 'otherRelevantDetails', maxLength: 200 },
+          { label: 'Location / Area of Loss', name: 'location', maxLength: 100 },
+          { label: 'Other Details for Communication', name: 'otherRelevantDetails', maxLength: 200 },          
+          { label: 'Address', name: 'address', maxLength: 500 },          
         ].map(({ label, name, maxLength, type = 'text', inputProps = {} }) => (
           <React.Fragment key={name}>
             <InputLabel>{label}</InputLabel>

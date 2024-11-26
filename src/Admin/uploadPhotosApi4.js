@@ -29,7 +29,11 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   const [location, setLocation] = useState('');
   const [results, setResults] = useState([]);
   const [denseCaptions, setDenseCaptions] = useState('');
-  const [locationOptions, setLocationOptions] = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);  
+  const [identifiedLocation, setIdentifiedLocation] = useState('');
+  const [identifiedDate, setIdentifiedDate] = useState('');  
+
+
 
   const createClient = require('@azure-rest/ai-vision-image-analysis').default;
   const { AzureKeyCredential } = require('@azure/core-auth');
@@ -104,9 +108,9 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
         setIsDisabled(false);         
 }
 
-  useEffect(() => {
-    setMarginLeft(isDrawerOpen ? 190 : 0);
-    setMarginRight(isDrawerOpen ? 0 : 20);
+useEffect(() => {
+  setMarginLeft(isDrawerOpen ? 220 : 0);
+  setMarginRight(isDrawerOpen ? 0 : 20);
 
   }, [isDrawerOpen]);
 
@@ -121,6 +125,10 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   }, []);
 
   const navigate = useNavigate();
+
+  const handleIdentifiedDateChange = (value) => {
+    setIdentifiedDate(value);
+  };
 
   const handleHome = () => {
     navigate('/'); // Navigates to the Upload page
@@ -161,13 +169,15 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     setTags('');
     setLocation('');
     setMessage('');
+    setIdentifiedLocation('');
+    setIdentifiedDate('');
   };
 
   const toInitialCapitalCase = (str) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
-  const analyzeImage = async (imageData) => {
+  //const analyzeImage = async (imageData) => {
     //analyzeImageFromUrl(imageData);
     // const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
 
@@ -204,7 +214,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     // } catch (error) {
     //   console.error('Error analyzing image:', error);
     // }
-  };
+ // };
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
@@ -266,9 +276,12 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     formData.append('itemDescription', itemDescription);
     formData.append('comments', comments);
     formData.append('warehouseLocation', location);
+    formData.append('identifiedLocation', identifiedLocation);
+    formData.append('identifiedDate', identifiedDate);
 
     try {
       const response = await axios.post('https://localhost:7298/api/upload', formData, {
+      //  const response = await axios.post('http://172.17.31.61:5280/api/upload', formData, {        
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -282,6 +295,8 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
         setTags([]);
         setComments('');
         setLocation('');
+        setIdentifiedLocation('');
+        setIdentifiedDate('');
       } else {
         setMessage('Failed to upload image');
         setSeverity('error');
@@ -295,7 +310,22 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   };
 
   return (
-    <div>
+    <Box>
+       <Typography
+        variant="h4"
+        sx={{
+          fontFamily: 'Lato',
+          textAlign: 'center',
+          mt: 4,
+          mb: 2,
+          fontWeight: 'bold',
+          backgroundImage: 'linear-gradient(to left, #00aae7, #770737, #2368a0)',
+          WebkitBackgroundClip: 'text',
+          color: 'transparent',
+        }}
+      >
+        Upload Identified Item
+      </Typography>
       <Box
         sx={{
           display: 'flex',
@@ -308,7 +338,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
           justifyContent: 'space-between', 
         }}
       >
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
           <Box
             sx={{
               display: 'flex',
@@ -325,6 +355,8 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
               sx={{
                 fontFamily: 'Lato',
                 mb: 4,
+                ml:5,
+                mt:-12,                
                 fontSize: { md: '30px' },
                 backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
                 WebkitBackgroundClip: 'text',
@@ -378,7 +410,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'flex-end',
+              alignItems: 'flex-center',
               justifyContent: 'flex-start',
               flex: 1,
               order: { xs: 1, md: 2 }, 
@@ -400,7 +432,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                 maxRows={6} 
                 sx={{ 
                   width: { xs: '100%', sm: '400px', md: '450px' }, 
-                  marginBottom: '25px', 
+                  // marginBottom: '25px', 
                   marginTop:2,
                   '& .MuiOutlinedInput-root': {
                     '& fieldset': {
@@ -427,7 +459,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                 maxRows={6} 
                 sx={{ 
                   width: { xs: '100%', sm: '400px', md: '450px' }, 
-                  marginBottom: '25px', 
+                  // marginBottom: '25px', 
                   marginTop:2,
                   '& .MuiOutlinedInput-root': {
                     '& fieldset': {
@@ -461,7 +493,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                     },
                 }, 
               }}>
-                {/* <InputLabel id="location-label">Location</InputLabel>
+                <InputLabel id="location-label">Location</InputLabel>
                 <Select
                   labelId="location-label"
                   freeSolo
@@ -475,15 +507,29 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                       {loc}
                     </MenuItem>
                   ))}
-                </Select> */}
-                <Autocomplete
-                    disablePortal
-                    options={locationOptions}
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    sx={{ width: { xs: '100%', sm: '400px', md: '450px' } }}
-                    renderInput={(params) => <TextField {...params} label="Location" />}
-                  />
+                </Select>             
+                <TextField
+                  label="Identified Location"
+                  variant="outlined"
+                  value={identifiedLocation}
+                  sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, mt: 2 }}                                  
+                  onChange={(e) => setIdentifiedLocation(e.target.value)}
+                />            
+
+                
+                <TextField
+                  variant="outlined"
+                  value={identifiedDate}
+                  sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, mt: 2 }}                  
+                  onChange={(e) => handleIdentifiedDateChange(e.target.value)}
+                  type="datetime-local"                  
+                  label="Identified Date"
+                  //helperText="Format: dd-mm-yyyy"
+                  InputLabelProps={{
+                  shrink: true,
+                  }}
+                />             
+
               </FormControl>
 
               <Box display="flex" gap={4} justifyContent="center" alignItems="center" marginTop={5}>
@@ -542,7 +588,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
         </Grid>
       </Box>
 
-    </div>
+    </Box>
   );
 
 };

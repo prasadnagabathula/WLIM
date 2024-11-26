@@ -30,83 +30,91 @@ function Default({ isDrawerOpen }) {
   
     return (
       <div>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            textAlign: 'center',
-            mt: 2,
-            ml: { sm: 0, md: `${marginLeft}px` }, 
-            mr: { sm: 0, md: `${marginRight}px` },
-            transition: 'margin-left 0.3s', 
-          }}
-        >
-          <Box sx={{display:'flex', alignItems:'flex-end', justifyContent:'space-between'}}>
-            <Typography variant="h5" sx={{ 
-              mb: 4,
-              pt: 2,
-              backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',  
-              WebkitBackgroundClip: 'text',  
-              backgroundClip: 'text', 
-              color: 'transparent', 
-              fontWeight: 'bold',            
-            }}>
-              Tracking Every Item: Every Asset Counts
-            </Typography>
-
-            {localStorage.getItem('userRole') === 'Admin' ? 
-              (
-                <Box sx={{display: 'flex', justifyContent: 'flex-end', mb: 4,pt: 2,mr:3}}>
-                  <Autocomplete
-                    disablePortal
-                    options={["All", ...locations]}
-                    value={loc}
-                    onChange={(event, value) => {
-                      if(value !== null){
-                        setLoc(value)
-                      }
-                    }}
-                    sx={{ width: 300 }}
-                    renderInput={(params) => <TextField {...params} label="Location" />}
-                  />
-                </Box>
-              ): null
-            } 
-          </Box>
-
-          {/* {localStorage.getItem('userRole') === 'Admin' 
-          ? "Leading with Responsibility: Ensuring Lost Items Find Their Way Home!" 
-          : "Lost Items? Let’s Bring Them Back Home!"} */} 
-  
-          {/* Container for DashboardOverview with Side-by-Side Layout */}
-          <Box
-            sx={{
-              display: 'flex',
-              width: '100%', 
-              justifyContent: 'space-between', 
-              gap: 2, 
-            }}
-          >
-            {/* <DashboardOverview /> */}
-            {localStorage.getItem('userRole') === 'Admin' ? <DashboardOverview location = {loc} /> : <Statistics/>}
-          </Box>
-  
-          <Typography variant="h5" sx={{ 
-            mt: 2,
-            pt: 2,
-            backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',  
-            WebkitBackgroundClip: 'text',  // For webkit browsers like Chrome and Safari
-            backgroundClip: 'text',  // Standard background clip (for other browsers)
-            color: 'transparent', 
-            fontWeight: 'bold',
-          }}>
-            {localStorage.getItem('userRole') === 'Admin'
-          ? "Turning Lost Into Found with Admin Expertise."
-          : "Finding Solutions for Lost Items: Our Commitment to Accountability"}
-          </Typography>
-        </Box>
+      <Box
+      sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      textAlign: 'center',
+      mt: 2,
+      ml: { sm: 0, md: `${marginLeft}px` }, 
+      mr: { sm: 0, md: `${marginRight}px` },
+      transition: 'margin-left 0.3s',
+      }}
+      >
+      {localStorage.getItem('userRole') === 'Admin' ?
+      (
+      <Box sx={{display:'flex', alignItems:'flex-end', justifyContent:'space-between'}}>
+      
+      <Typography variant="h5" sx={{
+      mb: 4,
+      pt: 2,
+      backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
+      WebkitBackgroundClip: 'text',
+      backgroundClip: 'text',
+      color: 'transparent',
+      fontWeight: 'bold',
+      }}>
+      Tracking Every Item: Every Asset Counts
+      </Typography>
+      <Box sx={{display: 'flex', justifyContent: 'flex-end', mb: 4,pt: 2,mr:3}}>
+      <Autocomplete
+      disablePortal
+      options={["All", ...locations]}
+      value={loc}
+      onChange={(event, value) => {
+      if(value !== null){
+      setLoc(value)
+      }
+      }}
+      sx={{width: 300 }}
+      renderInput={(params) => <TextField {...params}label="Location" />}
+      />
+      </Box>
+      </Box>
+      ) : (
+      <Typography variant="h5" sx={{
+      mb: 4,
+      pt: 2,
+      backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
+      WebkitBackgroundClip: 'text',
+      backgroundClip: 'text',
+      color: 'transparent',
+      fontWeight: 'bold',
+      }}>
+      Tracking Every Item: Every Asset Counts
+      </Typography>
+      ) }
+      
+     
+      
+      <Box
+      sx={{
+      display: 'flex',
+      width: '100%',
+      justifyContent: 'space-between',
+      gap: 2,
+      }}
+      >
+      
+      {localStorage.getItem('userRole') === 'Admin' ? <DashboardOverview location = {loc}/> : <Statistics/>}
+      </Box>
+      
+      <Typography variant="h5" sx={{
+      mt: 2,
+      pt: 2,
+      backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
+      WebkitBackgroundClip: 'text', // For webkit browsers like Chrome and Safari
+      backgroundClip: 'text', // Standard background clip (for other browsers)
+      color: 'transparent',
+      fontWeight: 'bold',
+      }}>
+      {localStorage.getItem('userRole') === 'Admin'
+      ? "Turning Lost Into Found with Admin Expertise."
+      : "Finding Solutions for Lost Items: Our Commitment to Accountability"}
+      </Typography>
+      </Box>
       </div>
-    );
+      );
 }
 
 export default Default
