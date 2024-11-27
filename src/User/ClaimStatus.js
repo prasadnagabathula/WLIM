@@ -37,7 +37,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
   useEffect(() => {
     const fetchClaims = async () => {
       try {
-        const response = await axios.get('https://localhost:7237/api/LostItemRequest');
+        const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
         console.log("Fetched claims:", response.data); 
         const userClaims = response.data.filter(item => item.createdBy === userName);
         console.log("Filtered claims for user:", userClaims); 
@@ -71,7 +71,13 @@ const ClaimStatus = ({ isDrawerOpen }) => {
   return (
     <Box sx={{ textAlign: 'center', mt: 2, ml: { sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
       <Container>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom sx={{
+          backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+          color: 'transparent',
+          fontWeight: 'bold',
+        }}>
           Claim Status
         </Typography>
 
@@ -231,25 +237,43 @@ const ClaimStatus = ({ isDrawerOpen }) => {
               <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width: '100%', position: 'relative' }}>
                 <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
                   <CloseIcon />
-                </Button>                
-                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, gap: 2, pt: 4 }}>
+                </Button>     
+                <Typography
+                  variant="h4"
+                  align="center"
+                  gutterBottom
+                  sx={{
+                    fontWeight: 'bold', mb: 2, marginBottom: 0, marginLeft: 0,
+                    backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    color: 'transparent',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Claim Status
+                </Typography>
+                <hr />
+           
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, gap: 6, pt: 3, fontFamily: 'Lato', background: '#d3eaf5', }}>
                  <Box sx={{ 
-                        display: 'flex', 
-                        justifyContent: 'center', 
-                        alignItems: 'center', 
-                        flex: 1 
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'space-between',
+                        flex: 1,
                       }}>
                         <ImageDisplay 
                           imageId={selectedItem.itemPhoto} 
-                          style={{ 
-                            width: '150px', 
-                            height: '150px', 
-                            objectFit: 'cover', 
-                            borderRadius: '8px', 
-                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', 
-                            border: '2px solid #e0e0e0', 
-                            marginTop: '20px' 
-                          }} 
+                          style={{
+                            width: '300px',
+                            height: '300px',
+                            objectFit: 'cover',
+                            borderRadius: '8px',
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                            border: '2px solid #e0e0e0',
+                            marginTop: '30px',
+                            marginLeft: '60px'
+                          }}
                         />
                       </Box>
 

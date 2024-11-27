@@ -228,7 +228,7 @@ function Upload({isDrawerOpen, setUploadedData}) {
     console.log("newItem values",newItem)
     try {
       // console.log(formData);
-        const response = await axios.post('https://localhost:7215/api/IdentifiedItem', formData, {
+        const response = await axios.post('http://172.17.31.61:7215/api/IdentifiedItem', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

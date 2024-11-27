@@ -37,7 +37,7 @@ const ItemLostRequest = (isDrawerOpen, userName) => {
     useEffect(() => {
         const fetchItemLostRequests = async () => {
             try {
-                const response = await axios.get('https://localhost:7237/api/LostItemRequest');
+                const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
                 setItemLostRequests(response.data);
             } catch (error) {
                 console.error('Error fetching item lost requests:', error);
@@ -72,7 +72,7 @@ const ItemLostRequest = (isDrawerOpen, userName) => {
                 const formData = new FormData();
                 formData.append('itemPhoto', selectedFile);
 
-                const uploadResponse = await axios.post('http://localhost:5291/api/LostItemRequest/itemPhoto', formData, {
+                const uploadResponse = await axios.post('http://172.17.31.61:5291/api/LostItemRequest/itemPhoto', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -88,7 +88,7 @@ const ItemLostRequest = (isDrawerOpen, userName) => {
                 itemPhoto: photoPath, // Ensure itemPhoto path is updated
             };
             //requestData.itemPhoto = photoPath;
-            await axios.post('http://localhost:5291/api/LostItemRequest', requestData);
+            await axios.post('http://172.17.31.61:5291/api/LostItemRequest', requestData);
             setSnackbarOpen(true);
             setItemLostRequests((prevRequests) => [...prevRequests, requestData]);
 

@@ -277,7 +277,7 @@ const userClaims = [
             <ListItemIcon  sx={{color:'#fff'}}>
               <LibraryAddOutlinedIcon />
             </ListItemIcon>
-            <ListItemText primary="Lost Item Request" />
+            <ListItemText primary="Search Lost Item" />
         </ListItemButton>
       </ListItem> 
 

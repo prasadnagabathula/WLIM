@@ -15,9 +15,9 @@ const DashboardOverview = ({location}) => {
 
   React.useEffect(() => {
     //console.log(location);
-    axios.get(`https://localhost:7237/api/LostItemRequest/DashboardData/${location}`)
+    axios.get(`http://172.17.31.61:5291/api/LostItemRequest/DashboardData/${location}`)
     .then(response => {
-      //console.log(response);
+      console.log(response);
       const chartdata = response.data.data;
       const loca = Object.keys(response.data.data);
       // setLocations(location);

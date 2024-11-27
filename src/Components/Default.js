@@ -19,7 +19,7 @@ function Default({ isDrawerOpen }) {
 
     React.useEffect(() => {
 
-      axios.get('https://localhost:7237/api/LostItemRequest/Locations')
+      axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
       .then(response => {
         setLocations(response.data.map(data => data.locations));
       }).catch(error => {

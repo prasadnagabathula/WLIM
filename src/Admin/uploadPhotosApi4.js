@@ -115,7 +115,7 @@ useEffect(() => {
   }, [isDrawerOpen]);
 
   useEffect(() => {
-    axios.get('https://localhost:7237/api/LostItemRequest/Locations')
+    axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
     .then(response => {
       console.log(response);
       setLocationOptions(response.data.map(data => data.locations));
@@ -280,7 +280,7 @@ useEffect(() => {
     formData.append('identifiedDate', identifiedDate);
 
     try {
-      const response = await axios.post('https://localhost:7298/api/upload', formData, {
+      const response = await axios.post('http://172.17.31.61:5280/api/upload', formData, {
       //  const response = await axios.post('http://172.17.31.61:5280/api/upload', formData, {        
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -535,36 +535,38 @@ useEffect(() => {
               <Box display="flex" gap={4} justifyContent="center" alignItems="center" marginTop={5}>
                 <Button
                   type="submit"
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
                   disabled={isDisabled}
                   startIcon={<UploadIcon />}
-                  sx={{
-                    background: 'linear-gradient(to left, #00aae7, #770737)',
-                    color: '#fff',
-                    border: 'none',
-                    '&:hover': {
-                      background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
-                    },
-                    '&.Mui-disabled': {
-                      background: 'linear-gradient(to left, #d3d3d3, #a9a9a9)',
-                      color: '#fff',
-                    },
-                  }}
+                  // sx={{
+                  //   background: 'linear-gradient(to left, #00aae7, #770737)',
+                  //   color: '#fff',
+                  //   border: 'none',
+                  //   '&:hover': {
+                  //     background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
+                  //   },
+                  //   '&.Mui-disabled': {
+                  //     background: 'linear-gradient(to left, #d3d3d3, #a9a9a9)',
+                  //     color: '#fff',
+                  //   },
+                  // }}
                 >
                   {isDisabled ? 'Getting image properties, wait...' : 'Upload'}
                 </Button>
                 <Button
-                  variant="outlined"
-                  color="secondary"
+                  variant="contained"
+                  // color="#F28C28"
                   onClick={handleClear}
                   startIcon={<BackspaceIcon />}
                   sx={{
-                    background: 'linear-gradient(to left, #00aae7, #770737)',
+                    backgroundColor: '#CD7F32',
+                    // background: 'linear-gradient(to left, #00aae7, #770737)',
                     color: '#fff',
                     border: 'none',
                     '&:hover': {
-                      background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
+                      // background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
+                      backgroundColor: '#B87333'
                     },
                   }}
                 >

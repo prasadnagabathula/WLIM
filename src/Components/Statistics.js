@@ -8,7 +8,7 @@ const Statistics = () => {
   const [dataCount, setDataCount] = React.useState({});
 
   React.useEffect(() => {
-    axios.get(`https://localhost:7237/api/LostItemRequest/UserDashboardData${localStorage.getItem('userName')}`)
+    axios.get(`http://172.17.31.61:5291/api/LostItemRequest/UserDashboardData${localStorage.getItem('userName')}`)
     .then(response => {
       console.log(response);
       setDataCount(response.data);
@@ -57,7 +57,7 @@ const Statistics = () => {
           <Grid item  xs={12} sm={4} md={4}> 
             <Box sx={{ textAlign: 'center', p: 4, bgcolor:"#AFDBF5" }}>
               <Typography variant="body1" color="textSecondary">
-                Claim Requests
+                Claimed Requests
               </Typography>
               <Typography variant="h5" fontWeight="bold">
                 {dataCount.claimRequestCount || 0}

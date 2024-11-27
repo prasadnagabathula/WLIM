@@ -75,7 +75,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   useEffect(() => {
     const fetchItemLostRequests = async () => {
       try {
-        const response = await axios.get('https://localhost:7237/api/LostItemRequest');
+        const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
         setItemLostRequests(response.data);
       } catch (error) {
         console.error('Error fetching item lost requests:', error);
@@ -85,7 +85,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   }, []);
 
   useEffect(() => {
-    axios.get('https://localhost:7237/api/LostItemRequest/Locations')
+    axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
     .then(response => {
       console.log(response);
       setLocationOptions(response.data.map(data => data.locations));
@@ -219,7 +219,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     formData.append('warehouseLocation', location);
 
     try {
-      axios.post('https://localhost:7298/api/search', formData, {
+      axios.post('http://172.17.31.61:5280/api/search', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -279,7 +279,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     _.debounce(async (query) => {
 
       try {
-        const response = await fetch(`https://localhost:7298/api/images/search/${query}`, {
+        const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
           method: 'GET',
         });
 
@@ -313,7 +313,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const handleSubmit = async () => {
     try {
       console.log(currentItemLostRequest);
-      const response = await axios.post('https://localhost:7237/api/LostItemRequest/Claim', currentItemLostRequest);
+      const response = await axios.post('http://172.17.31.61:5291/api/LostItemRequest/Claim', currentItemLostRequest);
       if (response.status === 200) {
         setSeverity('success');
         setResults([]);
@@ -429,6 +429,15 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       alignItems: 'center',
       textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s'
     }}>
+      <Typography variant="h4" gutterBottom sx={{
+        backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
+        WebkitBackgroundClip: 'text',
+        backgroundClip: 'text',
+        color: 'transparent',
+        fontWeight: 'bold',
+      }}>
+      Search Lost Item
+      </Typography>
       <Box sx={{
         display: 'flex',
         flexDirection: { xs: 'column', sm: 'column', md: 'row' },
