@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { InputLabel, Box, Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, Typography, TextField, Button, Grid, Snackbar, Alert, FormControl, Select, MenuItem } from '@mui/material';
+import { InputLabel, Box, Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, Typography, TextField, Button, Grid, Snackbar, Alert, FormControl, Select, MenuItem, Paper, Divider } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { height, styled } from '@mui/system';
 import ImageDisplay from '../imageDisplay';
@@ -75,7 +75,9 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   useEffect(() => {
     const fetchItemLostRequests = async () => {
       try {
-        const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
+        //const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
+        const response = await axios.get('http://localhost:7237/api/LostItemRequest');
+        
         setItemLostRequests(response.data);
       } catch (error) {
         console.error('Error fetching item lost requests:', error);
@@ -85,7 +87,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   }, []);
 
   useEffect(() => {
-    axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
+    //axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
+    axios.get('http://localhost:7237/api/LostItemRequest/Locations')
     .then(response => {
       console.log(response);
       setLocationOptions(response.data.map(data => data.locations));
@@ -219,7 +222,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     formData.append('warehouseLocation', location);
 
     try {
-      axios.post('http://172.17.31.61:5280/api/search', formData, {
+      //axios.post('http://172.17.31.61:5280/api/search', formData, {
+        axios.post('http://localhost:7298/api/search', formData, {        
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -279,7 +283,9 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     _.debounce(async (query) => {
 
       try {
-        const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
+        //const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
+          const response = await fetch(`http://localhost:7298/api/images/search/${query}`, {
+          
           method: 'GET',
         });
 
@@ -313,7 +319,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const handleSubmit = async () => {
     try {
       console.log(currentItemLostRequest);
-      const response = await axios.post('http://172.17.31.61:5291/api/LostItemRequest/Claim', currentItemLostRequest);
+      //const response = await axios.post('http://172.17.31.61:5291/api/LostItemRequest/Claim', currentItemLostRequest);
+      const response = await axios.post('http://localhost:7237/api/LostItemRequest/Claim', currentItemLostRequest);
       if (response.status === 200) {
         setSeverity('success');
         setResults([]);
@@ -429,16 +436,25 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       alignItems: 'center',
       textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s'
     }}>
+    
+    <Paper  elevation={5} sx={{width:'100%', height:'100vh'}}>
       <Typography variant="h4" gutterBottom sx={{
         backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
         WebkitBackgroundClip: 'text',
         backgroundClip: 'text',
         color: 'transparent',
         fontWeight: 'bold',
+        mt:2
       }}>
       Search Lost Item
       </Typography>
+      <Divider sx={{ 
+        width: '90%', 
+        margin: 'auto', 
+        mb: 2,
+      }} />
       <Box sx={{
+        mt:2,
         display: 'flex',
         flexDirection: { xs: 'column', sm: 'column', md: 'row' },
         justifyContent: 'center',
@@ -657,6 +673,9 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
           </Box>
         </Box>
       </Box>
+
+      </Paper>
+      
       <Dialog
         open={snackbarOpen}
         onClose={handleCloseSnackbar}

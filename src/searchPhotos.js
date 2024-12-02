@@ -72,7 +72,7 @@ const SearchPhotos = () => {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch('https://localhost:7298/api/search', {
+      const response = await fetch('http://localhost:7298/api/search', {
         method: 'POST',
         body: formData,
       });

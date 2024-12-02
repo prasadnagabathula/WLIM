@@ -95,7 +95,7 @@ const Claims = ({ isDrawerOpen }) => {
 
   // Adjust margins based on drawer state
   useEffect(() => {
-    setMarginLeft(isDrawerOpen ? 400 : 100);
+    setMarginLeft(isDrawerOpen ? 300 : 100);
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
 
@@ -152,12 +152,7 @@ const Claims = ({ isDrawerOpen }) => {
   //     }
   //   }
   // };
-  const handleSubmit = async () => {
-    console.log('Submit button clicked');
-    console.log('Current Claim ID:', selectedItemId);
-    console.log('Status:', status);
-    console.log('Comments:', comments);
-    console.log('Description:', selectedItemDesc);
+  const handleSubmit = async () => {   
     const selectedClaim = {
       id: selectedItemId,
       status: status,
@@ -172,7 +167,7 @@ const Claims = ({ isDrawerOpen }) => {
         // alert('Form submitted successfully!');
         setDialog(true);
         if (response.status === 200) {
-          setMessage('Image uploaded successfully!');
+          setMessage('Updated successfully!');
           setSeverity('success');
         }
         // console.log('Updated claim:', response.data);
@@ -200,7 +195,7 @@ const Claims = ({ isDrawerOpen }) => {
   };
 
   const handleCardClick = (item) => {
-    setDialogName(item.status === "Claimed" ? 'Claim Approval' : (item.status === "Approve" ? 'Claim Status': 'Rejected Claims'));
+    setDialogName(item.status === "Claimed" ? 'Claim Approval' : 'Claim Status');
     setSelectedItem(item);
     setSelectedItemId(item.id);
     //console.log(item.id);
@@ -294,7 +289,7 @@ const Claims = ({ isDrawerOpen }) => {
               <Grid container spacing={3} justifyContent="flex-start">
                 {claim.map((item, index) => {
                   // Determine the background color based on the status
-                  const cardBackgroundColor = item.isActive ? '#F2D2BD' : '#C8E6C9'; // Light orange for Disclaimed, light green for Claimed
+                  const cardBackgroundColor = item.isActive ? '#D6ECF5' : '#D6ECF5'; // Light orange for Disclaimed, light green for Claimed
 
                   return (
                     <Grid item xs={12} sm={6} md={4} key={index}>
@@ -303,14 +298,22 @@ const Claims = ({ isDrawerOpen }) => {
                         boxShadow: 3,
                         backgroundColor: cardBackgroundColor, // Apply the background color here
                         '&:hover': {
-                          backgroundColor: item.isActive ? '#FBCEB1' : '#A5D6A7' // Change color on hover for visual feedback
+                          backgroundColor: item.isActive ? '#C5E1F2' : '#C5E1F2' // Change color on hover for visual feedback
                         }
                       }} onClick={() => handleCardClick(item)}>
                         <CardMedia>
                           <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
                         </CardMedia>
                         <CardContent>
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
+                          <Typography sx={{
+                                            textAlign: 'left',
+                                            margin: '0px 10px',
+                                            display: '-webkit-box',
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            WebkitLineClamp: 2,
+                                            textOverflow: 'ellipsis',
+                                            }}><b>Description:</b> {item.description}</Typography>
                           <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}</Typography>
                           <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
                         </CardContent>
@@ -329,7 +332,7 @@ const Claims = ({ isDrawerOpen }) => {
               <Grid container spacing={3} justifyContent="flex-start">
                 {approved.map((item, index) => {
                   // Determine the background color based on the status
-                  const cardBackgroundColor = item.isActive ? '#E5E4E2' : '#C8E6C9'; // Light orange for Disclaimed, light green for Claimed
+                  const cardBackgroundColor = item.isActive ? '#C1E1C1' : '#C1E1C1'; // Light orange for Disclaimed, light green for Claimed
 
                   return (
                     <Grid item xs={12} sm={6} md={4} key={index}>
@@ -338,15 +341,23 @@ const Claims = ({ isDrawerOpen }) => {
                         boxShadow: 3,
                         backgroundColor: cardBackgroundColor, // Apply the background color here
                         '&:hover': {
-                          backgroundColor: item.isActive ? ' #FFFDD0' : '#A5D6A7' // Change color on hover for visual feedback
+                          backgroundColor: item.isActive ? ' #A5D6A7' : '#A5D6A7' // Change color on hover for visual feedback
                         }
                       }} onClick={() => handleCardClick(item)}>
                         <CardMedia>
                           <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
                         </CardMedia>
                         <CardContent>
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}</Typography>
+                          <Typography sx={{
+                                            textAlign: 'left',
+                                            margin: '0px 10px',
+                                            display: '-webkit-box',
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            WebkitLineClamp: 2,
+                                            textOverflow: 'ellipsis',
+                                            }}><b>Description:</b> {item.description}</Typography>
+                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}d</Typography>
                           <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
                         </CardContent>
                       </Card>
@@ -365,7 +376,7 @@ const Claims = ({ isDrawerOpen }) => {
               <Grid container spacing={3} justifyContent="flex-start">
                 {reject.map((item, index) => {
                   // Determine the background color based on the status
-                  const cardBackgroundColor = item.isActive ? '#E5E4E2' : '#E97451'; // Light orange for Disclaimed, light green for Claimed
+                  const cardBackgroundColor = item.isActive ? '#F2D2BD' : '#F2D2BD'; // Light orange for Disclaimed, light green for Claimed
 
                   return (
                     <Grid item xs={12} sm={6} md={4} key={index}>
@@ -374,16 +385,23 @@ const Claims = ({ isDrawerOpen }) => {
                         boxShadow: 3,
                         backgroundColor: cardBackgroundColor, // Apply the background color here
                         '&:hover': {
-                          backgroundColor: item.isActive ? ' #FFFDD0' : ' #D22B2B' // Change color on hover for visual feedback
+                          backgroundColor: item.isActive ? '#FBCEB1' : '#F3C39A' // Change color on hover for visual feedback
                         }
                       }} onClick={() => handleCardClick(item)}>
                         <CardMedia>
                           <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
                         </CardMedia>
                         <CardContent>
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Description:</b> {item.description}</Typography>
-
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}</Typography>
+                          <Typography sx={{
+                                            textAlign: 'left',
+                                            margin: '0px 10px',
+                                            display: '-webkit-box',
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            WebkitLineClamp: 2,
+                                            textOverflow: 'ellipsis',
+                                            }}><b>Description:</b> {item.description}</Typography>
+                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}ed</Typography>
                           <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
                         </CardContent>
                       </Card>
@@ -557,32 +575,62 @@ const Claims = ({ isDrawerOpen }) => {
                         <DateFormat date={selectedItem.createdDate} />
                       </Typography>
 
-                      {/* {selectedItem.status == 'Approve' && (
-                        <Box>
-                            <Typography variant="h6"><b>Approved By:</b></Typography>
-                            <Typography sx={{fontSize:'20px'}}>
-                              {selectedItem.updatedBy}
-                            </Typography>
+                      {selectedItem.status === "Approve"  && (
+                          <>
+                          <Typography variant="h6"><b>Status:</b></Typography>
+                          <Typography sx={{ fontSize: '20px' }}>
+                          {selectedItem.status}d
+                          </Typography>
+                         </>
+                          )}  
 
-                            <Typography variant="h6"><b>Approved On:</b></Typography>
-                            <Typography sx={{fontSize:'20px'}}>
-                              <DateFormat date={selectedItem.updatedDate} />
-                            </Typography>
-                          </Box>
-                      )}
-                      {selectedItem.status == 'Reject' && (
-                        <Box>
-                            <Typography variant="h6"><b>Rejected By:</b></Typography>
-                            <Typography sx={{fontSize:'20px'}}>
-                              {selectedItem.updatedBy}
-                            </Typography>
+                      { selectedItem.status === "Reject" && (
+                          <>
+                          <Typography variant="h6"><b>Status:</b></Typography>
+                          <Typography sx={{ fontSize: '20px' }}>
+                          {selectedItem.status}ed
+                          </Typography>
+                         </>
+                          )}   
 
-                            <Typography variant="h6"><b>Rejected On:</b></Typography>
-                            <Typography sx={{fontSize:'20px'}}>
-                              <DateFormat date={selectedItem.updatedDate} />
-                            </Typography>
-                          </Box>
-                      )} */}
+                      {selectedItem.status === "Approve" && (
+                          <>
+                          <Typography variant="h6"><b>Approved By:</b></Typography>
+                          <Typography sx={{ fontSize: '20px' }}>
+                          {selectedItem.updatedBy}
+                          </Typography>
+
+                          <Typography variant="h6"><b>Approved Date:</b></Typography>
+                          <Typography sx={{ fontSize: '20px' }}>
+                          <DateFormat date={selectedItem.updatedDate} />
+                          </Typography>
+                          </>
+                          )}
+
+                      {selectedItem.status === "Reject" && (
+                          <>
+                          <Typography variant="h6"><b>Rejected By:</b></Typography>
+                          <Typography sx={{ fontSize: '20px' }}>
+                          {selectedItem.updatedBy}
+                          </Typography>
+
+                          <Typography variant="h6"><b>Rejected Date:</b></Typography>
+                          <Typography sx={{ fontSize: '20px' }}>
+                          <DateFormat date={selectedItem.updatedDate} />
+                          </Typography>
+                          </>
+                          )}                      
+                      
+
+                      {(selectedItem.status === "Approve" || selectedItem.status === "Reject") && (
+                          <>
+                          <Typography variant="h6"><b>Comments:</b></Typography>
+                          <Typography sx={{ fontSize: '20px' }}>
+                          {selectedItem.additionalInformation}
+                          </Typography>
+                         </>
+                          )}                      
+
                     </Box>
                     {selectedItem.status == "Claimed" && (<Box>
                       <TextField
@@ -683,8 +731,10 @@ const Claims = ({ isDrawerOpen }) => {
               Claim Approval
             </DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                <Alert severity="success">Form Submitted Successfully!</Alert>
+              <DialogContentText id="alert-dialog-description">                
+                {status === 'Approve' ?
+                  (<Alert severity="success">Claim is Approved!</Alert>):
+                  (<Alert severity="error">Claim is Rejected!</Alert>)}
               </DialogContentText>
             </DialogContent>
             <DialogActions>

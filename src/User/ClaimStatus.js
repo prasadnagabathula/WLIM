@@ -29,7 +29,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
 
 
   useEffect(() => {
-    setMarginLeft(isDrawerOpen ? 250 : 0);
+    setMarginLeft(isDrawerOpen ? 300 : 100);
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
 
@@ -37,7 +37,8 @@ const ClaimStatus = ({ isDrawerOpen }) => {
   useEffect(() => {
     const fetchClaims = async () => {
       try {
-        const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
+        //const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
+        const response = await axios.get('http://localhost:7237/api/LostItemRequest');
         console.log("Fetched claims:", response.data); 
         const userClaims = response.data.filter(item => item.createdBy === userName);
         console.log("Filtered claims for user:", userClaims); 
@@ -139,14 +140,15 @@ const ClaimStatus = ({ isDrawerOpen }) => {
               <Typography>No pending claims.</Typography>
             ) : (
               pendingClaims.map((item, index) => {
-                const cardBackgroundColor = item.isActive ? '#F2D2BD' : '#C1E1C1';
-                const cardHoverColor = item.isActive ? '#FBCEB1' : '#93C572';
+                const cardBackgroundColor = item.isActive ? '#F2D2BD' : '#F2D2BD';
+                const cardHoverColor = item.isActive ? '#FBCEB1' : '#FBCEB1';
                 return (
                   <Grid item xs={12} sm={6} md={4} key={index}>
                     <Card
                       sx={{
                         cursor: 'pointer',
                         boxShadow: 3,
+                        height: '230px',
                         backgroundColor: cardBackgroundColor,
                         '&:hover': {
                           backgroundColor: cardHoverColor,
@@ -166,7 +168,15 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                         />
                       </CardMedia>
                       <CardContent>
-                        <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
+                        <Typography sx={{ 
+                            textAlign: 'left', 
+                            margin: '0px 10px',
+                            display: '-webkit-box', 
+                            WebkitBoxOrient: 'vertical', 
+                            overflow: 'hidden', 
+                            WebkitLineClamp: 2, 
+                            textOverflow: 'ellipsis',
+                          }}>
                           <b>Description:</b> {item.description}
                         </Typography>
                         <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
@@ -188,14 +198,15 @@ const ClaimStatus = ({ isDrawerOpen }) => {
               <Typography>No resolved claims.</Typography>
             ) : (
               resolvedClaims.map((item, index) => {
-                const cardBackgroundColor = item.isActive ? '#F2D2BD' : '#C1E1C1';
-                const cardHoverColor = item.isActive ? '#FBCEB1' : '#93C572';
+                const cardBackgroundColor = item.isActive ? '#C1E1C1' : '#C1E1C1';
+                const cardHoverColor = item.isActive ? '#A5D6A7' : '#A5D6A7';
                 return (
                   <Grid item xs={12} sm={6} md={4} key={index}>
                     <Card
                       sx={{
                         cursor: 'pointer',
                         boxShadow: 3,
+                        height: '230px',
                         backgroundColor: cardBackgroundColor,
                         '&:hover': {
                           backgroundColor: cardHoverColor,
@@ -215,7 +226,15 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                         />
                       </CardMedia>
                       <CardContent>
-                        <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
+                        <Typography sx={{ 
+                            textAlign: 'left', 
+                            margin: '0px 10px',
+                            display: '-webkit-box', 
+                            WebkitBoxOrient: 'vertical', 
+                            overflow: 'hidden', 
+                            WebkitLineClamp: 2, 
+                            textOverflow: 'ellipsis', 
+                          }}>
                           <b>Description:</b> {item.description}
                         </Typography>
                         <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
@@ -232,9 +251,25 @@ const ClaimStatus = ({ isDrawerOpen }) => {
 
         {/* Modal for item details */}
         <Modal open={openModal} onClose={handleClose}>
-           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+           <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              height: '100vh',
+              overflowY: 'auto',
+              p: 2,
+            }}>
              {selectedItem && (
-              <Box sx={{ bgcolor: 'white', borderRadius: '8px', padding: '20px', maxWidth: '800px', width: '100%', position: 'relative' }}>
+              <Box sx={{ 
+                bgcolor: 'white', 
+                borderRadius: '8px', 
+                padding: '20px', 
+                maxWidth: '990px', 
+                width: '100%', 
+                position: 'relative',
+                maxHeight: '90vh',
+                overflowY: 'auto',
+              }}>
                 <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
                   <CloseIcon />
                 </Button>     
@@ -282,54 +317,55 @@ const ClaimStatus = ({ isDrawerOpen }) => {
 
                     {/* Using Grid for aligned labels and content */}
                     <Box sx={{ display: 'grid', gridTemplateColumns: '150px 1fr', rowGap: 1.5, columnGap: 1 }}>
-                      <Typography variant="body2"><b>Description:</b></Typography>
-                      <Typography variant="body2" sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                      <Typography variant="h6"><b>Description:</b></Typography>
+                      <Typography  sx={{ fontSize: '20px',wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.description}
                       </Typography>
 
-                      <Typography variant="body2"><b>Item Category:</b></Typography>
-                      <Typography variant="body2" sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                      <Typography variant="h6"><b>Item Category:</b></Typography>
+                      <Typography  sx={{ fontSize: '20px',wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.itemCategory}
                       </Typography>
 
-                      <Typography variant="body2"><b>Color:</b></Typography>
-                      <Typography variant="body2">{selectedItem.color}</Typography>
+                      <Typography variant="h6"><b>Color:</b></Typography>
+                      <Typography sx={{ fontSize: '20px' }} >{selectedItem.color}</Typography>
 
-                      <Typography variant="body2"><b>Brand:</b></Typography>
-                      <Typography variant="body2">{selectedItem.brand}</Typography>
+                      <Typography variant="h6"><b>Brand:</b></Typography>
+                      <Typography sx={{ fontSize: '20px' }}>{selectedItem.brand}</Typography>
 
-                      <Typography variant="body2"><b>Distinguishing Features:</b></Typography>
-                      <Typography variant="body2" sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                      <Typography variant="h6"><b>Distinguishing Features:</b></Typography>
+                      <Typography  sx={{ fontSize: '20px',wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.distinguishingFeatures}
                       </Typography>
 
-                      <Typography variant="body2"><b>Date and Time of Loss:</b></Typography>
-                      <Typography variant="body2">
+                      <Typography variant="h6"><b>Date and Time of Loss:</b></Typography>
+                      <Typography sx={{ fontSize: '20px' }}>
                       <DateFormat date={selectedItem.dateTimeWhenLost} />
                       </Typography>
 
-                      <Typography variant="body2"><b>Location / Area of Loss:</b></Typography>
-                      <Typography variant="body2" sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                      <Typography variant="h6"><b>Location / Area of Loss:</b></Typography>
+                      <Typography  sx={{ fontSize: '20px',wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.location}
                       </Typography>
 
-                      <Typography variant="body2"><b>Other Details For Communication:</b></Typography>
-                      <Typography variant="body2" sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                      <Typography variant="h6"><b>Other Details For Communication:</b></Typography>
+                      <Typography  sx={{ fontSize: '20px',wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.otherRelevantDetails}
                       </Typography>
 
-                      <Typography variant="body2"><b>Address:</b></Typography>
-                      <Typography variant="body2" sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                      <Typography variant="h6"><b>Address:</b></Typography>
+                      <Typography  sx={{ fontSize: '20px',wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.address}
                       </Typography>
-
-                      <Typography variant="body2"><b>Requested Date:</b></Typography>
-                      <Typography variant="body2">
+                      <Typography variant="h6"><b>
+                        {selectedItem.isActive ? 'Requested Date:' : 'Resolved Date:'}</b>
+                      </Typography>
+                      <Typography sx={{ fontSize: '20px' }}>
                         <DateFormat date={selectedItem.createdDate} />
                       </Typography>
 
-                      <Typography variant="body2"><b>Status:</b></Typography>
-                      <Typography variant="body2">{selectedItem.isActive ? 'Pending' : 'Resolved'}</Typography>
+                      <Typography variant="h6"><b>Status:</b></Typography>
+                      <Typography sx={{ fontSize: '20px' }}>{selectedItem.isActive ? 'Pending' : 'Resolved'}</Typography>
                     </Box>
                   </CardContent>
                 </Box>

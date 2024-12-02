@@ -270,7 +270,7 @@ const userClaims = [
     <>
     <ListItem disablePadding
         sx={{color:'#fff'}}
-        component={Link} to="Lost Item Request"
+        component={Link} to="Search Lost Item"
         onClick={(event) => handleClick(event, 'claimHistory')}
       >
         <ListItemButton >
@@ -444,7 +444,7 @@ const userClaims = [
             <Route path='/' element={<Default isDrawerOpen={isDrawerOpen} /> } />
             <Route path='Identified Items' element={<UploadPhotos isDrawerOpen={isDrawerOpen} />} />
             <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
-            <Route path='Lost Item Request' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
+            <Route path='Search Lost Item' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
             <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
             <Route path='Identified Items/View' element={<View isDrawerOpen={isDrawerOpen} />} />
             <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />

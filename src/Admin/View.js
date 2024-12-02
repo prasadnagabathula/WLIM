@@ -49,7 +49,8 @@ function View({ isDrawerOpen }) {
     const fetchUploadedItems = async () => {
       try {
         setLoading(true); // Set loading to true before the API call
-        const response = await fetch('http://172.17.31.61:5280/api/getAll', {
+        //const response = await fetch('http://172.17.31.61:5280/api/getAll', {
+          const response = await fetch('http://localhost:7298/api/getAll', {
           method: 'GET'
         });
         if (!response.ok) {
@@ -166,7 +167,7 @@ function View({ isDrawerOpen }) {
           color: 'transparent',
           fontWeight: 'bold',
         }}>
-          Identified Items List
+          Identified Item List
         </Typography>
         <div style={{ display: 'flex', marginBottom: '20px', width: '100%' }}>
           <TextField

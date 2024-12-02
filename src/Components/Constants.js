@@ -2,6 +2,7 @@
 export const CATEGORY_OPTIONS = [  
     "Bag",  
     "Watch",
+    "Wallet",
     "Tool",        
     "Headphone",
     "Earphone",

@@ -180,7 +180,7 @@ const handleUpload = async (e) => {
   formData.append('tags', tags); 
 
   try {
-    const response = await axios.post('https://localhost:7298/api/upload', formData,{
+    const response = await axios.post('http://localhost:7298/api/upload', formData,{
       headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -205,7 +205,7 @@ const handleUpload = async (e) => {
     const debouncedSearch = useCallback(
     _.debounce(async (query) => {
       try {
-        const response = await fetch(`https://localhost:7298/api/images/search/${query}`, {
+        const response = await fetch(`https://localhost:/api/images/search/${query}`, {
           method: 'GET',
         });
 
@@ -250,7 +250,7 @@ const handleUpload = async (e) => {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch('https://localhost:7298/api/search', {
+      const response = await fetch('http://localhost:7298/api/search', {
         method: 'POST',
         body: formData,
       });
@@ -273,7 +273,7 @@ const handleUpload = async (e) => {
 
   const loadThumbNails = async (e) => {
     try {
-      const response = await fetch('https://localhost:7298/api/images', {
+      const response = await fetch('http://localhost:7298/api/images', {
         method: 'GET'
       });
 

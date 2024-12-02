@@ -115,7 +115,8 @@ useEffect(() => {
   }, [isDrawerOpen]);
 
   useEffect(() => {
-    axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
+    //axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
+    axios.get('http://localhost:7237/api/LostItemRequest/Locations')
     .then(response => {
       console.log(response);
       setLocationOptions(response.data.map(data => data.locations));
@@ -280,8 +281,8 @@ useEffect(() => {
     formData.append('identifiedDate', identifiedDate);
 
     try {
-      const response = await axios.post('http://172.17.31.61:5280/api/upload', formData, {
-      //  const response = await axios.post('http://172.17.31.61:5280/api/upload', formData, {        
+      //const response = await axios.post('http://172.17.31.61:5280/api/upload', formData, {
+        const response = await axios.post('http://localhost:7298/api/upload', formData, {   
         headers: {
           'Content-Type': 'multipart/form-data'
         }
