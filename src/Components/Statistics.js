@@ -8,7 +8,8 @@ const Statistics = () => {
   const [dataCount, setDataCount] = React.useState({});
 
   React.useEffect(() => {
-    axios.get(`http://172.17.31.61:5291/api/LostItemRequest/UserDashboardData${localStorage.getItem('userName')}`)
+    //axios.get(`http://172.17.31.61:5291/api/LostItemRequest/UserDashboardData${localStorage.getItem('userName')}`)
+    axios.get(`http://localhost:7237/api/LostItemRequest/UserDashboardData${localStorage.getItem('userName')}`)
     .then(response => {
       console.log(response);
       setDataCount(response.data);
