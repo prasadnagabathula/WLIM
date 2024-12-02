@@ -39,6 +39,7 @@ const DashboardOverview = ({ location }) => {
       });
   }, [location]);
 
+  
   const CATEGORY_COLORS = {
     "Bag": "#B1E6F3",
     "Watch": "#72DDF7",
