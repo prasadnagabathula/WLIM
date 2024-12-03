@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { TextField, MenuItem, Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container, Alert, Snackbar } from '@mui/material';
+import { TextField, MenuItem, Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container, Alert, Snackbar, Paper } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from '../Components/AuthService'; // Assuming your auth service file is named AuthService.js
 import ImageDisplay from '../imageDisplay';
@@ -214,7 +214,15 @@ const Claims = ({ isDrawerOpen }) => {
   const [tabs, setTabs] = React.useState(0);
 
   return (
-    <Box sx={{ textAlign: 'center', mt: 2, ml: { sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s'
+    }}>
+      
+      <Paper  elevation={5} sx={{width:'100%', height:'100%', p: 2}}>
+    {/* <Box sx={{ textAlign: 'center', mt: 2, ml: { sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}> */}
       <Container>
         <Typography variant="h4" gutterBottom sx={{
           backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
@@ -224,8 +232,7 @@ const Claims = ({ isDrawerOpen }) => {
           fontWeight: 'bold',
         }}>
           Claim Requests
-        </Typography>
-
+        </Typography>      
 
         <Box sx={{ width: '100%' }}>
           <Box sx={{
@@ -308,14 +315,41 @@ const Claims = ({ isDrawerOpen }) => {
                           <Typography sx={{
                                             textAlign: 'left',
                                             margin: '0px 10px',
-                                            display: '-webkit-box',
-                                            WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden',
-                                            WebkitLineClamp: 2,
-                                            textOverflow: 'ellipsis',
-                                            }}><b>Description:</b> {item.description}</Typography>
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}</Typography>
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
+                                            // display: '-webkit-box',
+                                            // WebkitBoxOrient: 'vertical',
+                                            // overflow: 'hidden',
+                                            // WebkitLineClamp: 2,
+                                            // textOverflow: 'ellipsis',
+                                            display: 'grid',
+                                            gridTemplateColumns: '80px auto',
+                                            rowGap: 1.5,
+                                            columnGap: 2,
+                                            }}><b>Description:</b> <span style={{
+                                              display: '-webkit-box',
+                                              WebkitBoxOrient: 'vertical',
+                                              overflow: 'hidden',
+                                              WebkitLineClamp: 2,
+                                              textOverflow: 'ellipsis',
+                                            }}>
+                                              {item.description}
+                                            </span>
+                                            </Typography>
+                          <Typography sx={{ 
+                            textAlign: 'left', 
+                            margin: '0px 10px',
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2,
+                          }}><b>Status:</b> {item.status}</Typography>
+                          <Typography sx={{ 
+                            textAlign: 'left', 
+                            margin: '0px 10px',
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2, 
+                          }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
                         </CardContent>
                       </Card>
                     </Grid>
@@ -356,9 +390,35 @@ const Claims = ({ isDrawerOpen }) => {
                                             overflow: 'hidden',
                                             WebkitLineClamp: 2,
                                             textOverflow: 'ellipsis',
-                                            }}><b>Description:</b> {item.description}</Typography>
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}d</Typography>
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
+                                            display: 'grid',
+                                            gridTemplateColumns: '80px auto',
+                                            rowGap: 1.5,
+                                            columnGap: 2,
+                                          }}><b>Description:</b> <span style={{
+                                            display: '-webkit-box',
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            WebkitLineClamp: 2,
+                                            textOverflow: 'ellipsis',
+                                          }}>
+                                            {item.description}
+                                          </span></Typography>
+                          <Typography sx={{ 
+                            textAlign: 'left', 
+                            margin: '0px 10px',
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2, 
+                          }}><b>Status:</b> {item.status}d</Typography>
+                          <Typography sx={{ 
+                            textAlign: 'left', 
+                            margin: '0px 10px',
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2,
+                          }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
                         </CardContent>
                       </Card>
                     </Grid>
@@ -400,9 +460,35 @@ const Claims = ({ isDrawerOpen }) => {
                                             overflow: 'hidden',
                                             WebkitLineClamp: 2,
                                             textOverflow: 'ellipsis',
-                                            }}><b>Description:</b> {item.description}</Typography>
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Status:</b> {item.status}ed</Typography>
-                          <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
+                                            display: 'grid',
+                                            gridTemplateColumns: '80px auto',
+                                            rowGap: 1.5,
+                                            columnGap: 2,
+                                          }}><b>Description:</b> <span style={{
+                                            display: '-webkit-box',
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            WebkitLineClamp: 2,
+                                            textOverflow: 'ellipsis',
+                                          }}>
+                                            {item.description}
+                                          </span></Typography>
+                          <Typography sx={{ 
+                            textAlign: 'left', 
+                            margin: '0px 10px',
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2, 
+                          }}><b>Status:</b> {item.status}ed</Typography>
+                          <Typography sx={{ 
+                            textAlign: 'left', 
+                            margin: '0px 10px',
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2, 
+                          }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
                         </CardContent>
                       </Card>
                     </Grid>
@@ -429,7 +515,7 @@ const Claims = ({ isDrawerOpen }) => {
                     boxShadow: 3,
                     backgroundColor: cardBackgroundColor, // Apply the background color here
                     '&:hover': {
-                      backgroundColor: item.isActive ? '	#FFFDD0' : '#A5D6A7' // Change color on hover for visual feedback
+                      backgroundColor: item.isActive ? '  #FFFDD0' : '#A5D6A7' // Change color on hover for visual feedback
                     }
                   }} onClick={() => handleCardClick(item)}>
                     <CardMedia>
@@ -473,29 +559,63 @@ const Claims = ({ isDrawerOpen }) => {
                   position: 'relative',
                   maxHeight: '90vh',
                   overflowY: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
-                <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
-                  <CloseIcon />
-                </Button>
-                <Typography
-                  variant="h4"
-                  align="center"
-                  gutterBottom
+                {/* Fixed Header */}
+                <Box
                   sx={{
-                    fontWeight: 'bold', mb: 2, marginBottom: 0, marginLeft: 0,
-                    backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
-                    WebkitBackgroundClip: 'text',
-                    backgroundClip: 'text',
-                    color: 'transparent',
-                    fontWeight: 'bold',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 10,
+                    backgroundColor: 'white',
+                    borderBottom: '1px solid #e0e0e0',
+                    paddingBottom: 1,
+                    mb: 2,
                   }}
                 >
-                  {dialogName}
-                </Typography>
-                <hr />
+                  <Button
+                    onClick={handleClose}
+                    sx={{
+                      position: 'absolute',
+                      top: 10,
+                      right: 10,
+                      zIndex: 20, 
+                    }}
+                  >
+                    <CloseIcon />
+                  </Button>
+                  <Typography
+                    variant="h4"
+                    align="center"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 'bold',
+                      backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0)',
+                      WebkitBackgroundClip: 'text',
+                      backgroundClip: 'text',
+                      color: 'transparent',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {dialogName}
+                  </Typography>
+                </Box>
 
-                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, gap: 6, pt: 3, fontFamily: 'Lato', background: '#d3eaf5', }}>
+                {/* Scrollable Content */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'column', md: 'row' },
+                    gap: 6,
+                    pt: 3,
+                    fontFamily: 'Lato',
+                    background: '#d3eaf5',
+                    height:'100vh',
+                    overflowY:'scroll'
+                  }}
+                >
                   <Box
                     sx={{
                       display: 'flex',
@@ -514,194 +634,186 @@ const Claims = ({ isDrawerOpen }) => {
                         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                         border: '2px solid #e0e0e0',
                         marginTop: '30px',
-                        marginLeft: '60px'
+                        marginLeft: '60px',
                       }}
                     />
                   </Box>
 
                   <CardContent sx={{ flex: 2, fontFamily: 'Lato' }}>
-                    <Typography variant="h5" gutterBottom>{selectedItem.itemDescription}</Typography>
+                    <Typography variant="h5" gutterBottom>
+                      {selectedItem.itemDescription}
+                    </Typography>
 
                     {/* Using Grid for aligned labels and content */}
                     <Box sx={{ display: 'grid', gridTemplateColumns: '250px 1fr', rowGap: 1.5, columnGap: 1, fontFamily: 'Lato' }}>
-                      <Typography variant="h6"><b>Description:</b></Typography>
-                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
-                        {selectedItem.description}
-                      </Typography>
+                              <Typography variant="h6"><b>Description:</b></Typography>
+                              <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
+                                {selectedItem.description}
+                              </Typography>
 
-                      <Typography variant="h6"><b>Item Category:</b></Typography>
-                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
-                        {selectedItem.itemCategory}
-                      </Typography>
+                              <Typography variant="h6"><b>Item Category:</b></Typography>
+                              <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
+                                {selectedItem.itemCategory}
+                              </Typography>
 
-                      <Typography variant="h6"><b>Color:</b></Typography>
-                      <Typography sx={{ fontSize: '20px' }}>{selectedItem.color}</Typography>
+                              <Typography variant="h6"><b>Color:</b></Typography>
+                              <Typography sx={{ fontSize: '20px' }}>{selectedItem.color}</Typography>
 
-                      <Typography variant="h6"><b>Brand:</b></Typography>
-                      <Typography sx={{ fontSize: '20px' }}>{selectedItem.brand}</Typography>
+                              <Typography variant="h6"><b>Brand:</b></Typography>
+                              <Typography sx={{ fontSize: '20px' }}>{selectedItem.brand}</Typography>
 
-                      <Typography variant="h6"><b>Distinguishing Features:</b></Typography>
-                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
-                        {selectedItem.distinguishingFeatures}
-                      </Typography>
+                              <Typography variant="h6"><b>Distinguishing Features:</b></Typography>
+                              <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
+                                {selectedItem.distinguishingFeatures}
+                              </Typography>
 
-                      <Typography variant="h6"><b>Date and Time of Loss:</b></Typography>
-                      <Typography sx={{ fontSize: '20px' }}>
-                        <DateFormat date={selectedItem.dateTimeWhenLost} />
-                      </Typography>
+                              <Typography variant="h6"><b>Date and Time of Loss:</b></Typography>
+                              <Typography sx={{ fontSize: '20px' }}>
+                                <DateFormat date={selectedItem.dateTimeWhenLost} />
+                              </Typography>
 
-                      <Typography variant="h6"><b>Location / Area:</b></Typography>
-                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
-                        {selectedItem.location}
-                      </Typography>
+                              <Typography variant="h6"><b>Location / Area:</b></Typography>
+                              <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
+                                {selectedItem.location}
+                              </Typography>
 
-                      <Typography variant="h6"><b>Other Details For Communication:</b></Typography>
-                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
-                        {selectedItem.otherRelevantDetails}
-                      </Typography>
+                              <Typography variant="h6"><b>Other Details For Communication:</b></Typography>
+                              <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
+                                {selectedItem.otherRelevantDetails}
+                              </Typography>
 
-                      <Typography variant="h6"><b>Address:</b></Typography>
-                      <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
-                        {selectedItem.address}
-                      </Typography>
+                              <Typography variant="h6"><b>Address:</b></Typography>
+                              <Typography sx={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap', fontSize: '20px' }}>
+                                {selectedItem.address}
+                              </Typography>
 
-                      <Typography variant="h6"><b>Requested By:</b></Typography>
-                      <Typography sx={{ fontSize: '20px' }}>
-                        {selectedItem.createdBy}
-                      </Typography>
+                              <Typography variant="h6"><b>Requested By:</b></Typography>
+                              <Typography sx={{ fontSize: '20px' }}>
+                                {selectedItem.createdBy}
+                              </Typography>
 
-                      <Typography variant="h6"><b>Requested Date:</b></Typography>
-                      <Typography sx={{ fontSize: '20px' }}>
-                        <DateFormat date={selectedItem.createdDate} />
-                      </Typography>
+                              <Typography variant="h6"><b>Requested Date:</b></Typography>
+                              <Typography sx={{ fontSize: '20px' }}>
+                                <DateFormat date={selectedItem.createdDate} />
+                              </Typography>
 
-                      {selectedItem.status === "Approve"  && (
-                          <>
-                          <Typography variant="h6"><b>Status:</b></Typography>
-                          <Typography sx={{ fontSize: '20px' }}>
-                          {selectedItem.status}d
-                          </Typography>
-                         </>
-                          )}  
+                              {selectedItem.status === "Approve"  && (
+                                  <>
+                                  <Typography variant="h6"><b>Status:</b></Typography>
+                                  <Typography sx={{ fontSize: '20px' }}>
+                                  {selectedItem.status}d
+                                  </Typography>
+                                </>
+                                  )}  
 
-                      { selectedItem.status === "Reject" && (
-                          <>
-                          <Typography variant="h6"><b>Status:</b></Typography>
-                          <Typography sx={{ fontSize: '20px' }}>
-                          {selectedItem.status}ed
-                          </Typography>
-                         </>
-                          )}   
+                              { selectedItem.status === "Reject" && (
+                                  <>
+                                  <Typography variant="h6"><b>Status:</b></Typography>
+                                  <Typography sx={{ fontSize: '20px' }}>
+                                  {selectedItem.status}ed
+                                  </Typography>
+                                </>
+                                  )}   
 
-                      {selectedItem.status === "Approve" && (
-                          <>
-                          <Typography variant="h6"><b>Approved By:</b></Typography>
-                          <Typography sx={{ fontSize: '20px' }}>
-                          {selectedItem.updatedBy}
-                          </Typography>
+                              {selectedItem.status === "Approve" && (
+                                  <>
+                                  <Typography variant="h6"><b>Approved By:</b></Typography>
+                                  <Typography sx={{ fontSize: '20px' }}>
+                                  {selectedItem.updatedBy}
+                                  </Typography>
 
-                          <Typography variant="h6"><b>Approved Date:</b></Typography>
-                          <Typography sx={{ fontSize: '20px' }}>
-                          <DateFormat date={selectedItem.updatedDate} />
-                          </Typography>
-                          </>
-                          )}
+                                  <Typography variant="h6"><b>Approved Date:</b></Typography>
+                                  <Typography sx={{ fontSize: '20px' }}>
+                                  <DateFormat date={selectedItem.updatedDate} />
+                                  </Typography>
+                                  </>
+                                  )}
 
-                      {selectedItem.status === "Reject" && (
-                          <>
-                          <Typography variant="h6"><b>Rejected By:</b></Typography>
-                          <Typography sx={{ fontSize: '20px' }}>
-                          {selectedItem.updatedBy}
-                          </Typography>
+                              {selectedItem.status === "Reject" && (
+                                  <>
+                                  <Typography variant="h6"><b>Rejected By:</b></Typography>
+                                  <Typography sx={{ fontSize: '20px' }}>
+                                  {selectedItem.updatedBy}
+                                  </Typography>
 
-                          <Typography variant="h6"><b>Rejected Date:</b></Typography>
-                          <Typography sx={{ fontSize: '20px' }}>
-                          <DateFormat date={selectedItem.updatedDate} />
-                          </Typography>
-                          </>
-                          )}                      
-                      
+                                  <Typography variant="h6"><b>Rejected Date:</b></Typography>
+                                  <Typography sx={{ fontSize: '20px' }}>
+                                  <DateFormat date={selectedItem.updatedDate} />
+                                  </Typography>
+                                  </>
+                                  )}                      
+                              
 
-                      {(selectedItem.status === "Approve" || selectedItem.status === "Reject") && (
-                          <>
-                          <Typography variant="h6"><b>Comments:</b></Typography>
-                          <Typography sx={{ fontSize: '20px' }}>
-                          {selectedItem.additionalInformation}
-                          </Typography>
-                         </>
-                          )}                      
+                              {(selectedItem.status === "Approve" || selectedItem.status === "Reject") && (
+                                  <>
+                                  <Typography variant="h6"><b>Comments:</b></Typography>
+                                  <Typography sx={{ fontSize: '20px' }}>
+                                  {selectedItem.additionalInformation}
+                                  </Typography>
+                                </>
+                                  )}                      
 
-                    </Box>
-                    {selectedItem.status == "Claimed" && (<Box>
-                      <TextField
-                        select
-                        label="Status"
-                        value={status}
-                        onChange={handleStatusChange}
-                        sx={{ mt: 4, minWidth: '450px' }}
-                      >
-                        {['Approve', 'Reject'].map((option) => (
-                          <MenuItem key={option} value={option}>
-                            {option}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                      <TextField
-                        label="Comments"
-                        multiline
-                        rows={2}
-                        value={comments}
-                        onChange={(e) => setComments(e.target.value)}
-                        sx={{ mt: 3, minWidth: '450px' }}
-                      />
-                      <Box sx={{ display: 'flex', justifyContent: 'flex-start', ml: 10, gap: 4, mt: 5 }}>
-                        <Button variant="contained" color="primary" onClick={handleSubmit}
-                          startIcon={<PublishIcon />}
-                          // sx={{
-                          //   background: 'linear-gradient(to left, #00aae7, #770737)',
-                          //   color: '#fff',
-                          //   border: 'none',
-                          //   '&:hover': {
-                          //     background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
-                          //   },
-                          //   '&.Mui-disabled': {
-                          //     background: 'linear-gradient(to left, #d3d3d3, #a9a9a9)',
-                          //     color: '#fff',
-                          //   },
-                          // }}
-                          >
-                          Submit
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={handleClose}
-                          startIcon={<CancelIcon />}
+                            </Box>
+
+                    {selectedItem.status === 'Claimed' && (
+                      <Box>
+                        <TextField
+                          select
+                          label="Status"
+                          value={status}
+                          onChange={handleStatusChange}
+                          sx={{ mt: 4, minWidth: '450px' }}
+                        >
+                          {['Approve', 'Reject'].map((option) => (
+                            <MenuItem key={option} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                        <TextField
+                          label="Comments"
+                          multiline
+                          rows={2}
+                          value={comments}
+                          onChange={(e) => setComments(e.target.value)}
+                          sx={{ mt: 3, minWidth: '450px' }}
+                        />
+                        <Box
                           sx={{
-                            backgroundColor: '#CD7F32',
-                            // background: 'linear-gradient(to left, #00aae7, #770737)',
-                            color: '#fff',
-                            border: 'none',
-                            '&:hover': {
-                              // background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
-                              backgroundColor: '#B87333'
-                            },
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            ml: 10,
+                            gap: 4,
+                            mt: 5,
                           }}
-                          // sx={{
-                          //   background: 'linear-gradient(to left, #00aae7, #770737)',
-                          //   color: '#fff',
-                          //   border: 'none',
-                          //   '&:hover': {
-                          //     background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
-                          //   },
-                          //   '&.Mui-disabled': {
-                          //     background: 'linear-gradient(to left, #d3d3d3, #a9a9a9)',
-                          //     color: '#fff',
-                          //   },
-                          // }}
+                        >
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSubmit}
+                            startIcon={<PublishIcon />}
                           >
-                          Cancel
-                        </Button>
+                            Submit
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="secondary"
+                            onClick={handleClose}
+                            startIcon={<CancelIcon />}
+                            sx={{
+                              backgroundColor: '#CD7F32',
+                              color: '#fff',
+                              border: 'none',
+                              '&:hover': {
+                                backgroundColor: '#B87333',
+                              },
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </Box>
                       </Box>
-
-                    </Box>)}
+                    )}
                   </CardContent>
                 </Box>
               </Box>
@@ -713,7 +825,11 @@ const Claims = ({ isDrawerOpen }) => {
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
               sx={{ mb: 2 }}
             >
-              <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
+              <Alert
+                onClose={handleCloseSnackbar}
+                severity={severity}
+                sx={{ width: '100%' }}
+              >
                 {message}
               </Alert>
             </Snackbar>
@@ -745,6 +861,7 @@ const Claims = ({ isDrawerOpen }) => {
 
 
       </Container>
+      </Paper>
     </Box>
   );
 };

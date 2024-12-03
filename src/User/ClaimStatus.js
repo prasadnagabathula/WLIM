@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { Box, Typography, Card, CardMedia, CardContent,Tabs, Tab, Modal, Grid, Button, Container } from '@mui/material';
+import { Box, Typography, Card, CardMedia, CardContent,Tabs, Tab, Modal, Grid, Button, Container, Paper, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from '../Components/AuthService'; 
 import ImageDisplay from '../imageDisplay';
@@ -70,7 +70,14 @@ const ClaimStatus = ({ isDrawerOpen }) => {
   const resolvedClaims = uploadedItems.filter(item => !item.isActive);
 
   return (
-    <Box sx={{ textAlign: 'center', mt: 2, ml: { sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s' }}>
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s'
+    }}>
+      
+      <Paper  elevation={5} sx={{width:'100%', height:'100%', p: 2}}>
       <Container>
         <Typography variant="h4" gutterBottom sx={{
           backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
@@ -80,7 +87,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
           fontWeight: 'bold',
         }}>
           Claim Status
-        </Typography>
+        </Typography>        
 
         {/* Tabs for Pending and Resolved with Centering and Custom Styles */}
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -96,7 +103,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
               justifyContent: 'center', 
               borderBottom: 1,
               borderColor: 'divider',
-              marginBottom: 3, 
+              marginBottom: 0, 
               [`@media (max-width:600px)`]: {
                 variant: 'scrollable', 
               },
@@ -131,13 +138,22 @@ const ClaimStatus = ({ isDrawerOpen }) => {
               }}
             />
           </Tabs>
+          
         </Box>
+        <Divider sx={{ 
+            width: '90%', 
+            margin: 'auto',
+            mb:2
+          }} />
+        
 
         {/* Tab Panel for Pending Claims */}
         {value === 0 && (
           <Grid container spacing={3} justifyContent="flex-start" >
             {pendingClaims.length === 0 ? (
-              <Typography>No pending claims.</Typography>
+             <Typography sx={{ mt: 15, mb:15, textAlign:'center'}}>
+                No pending claims.
+              </Typography>
             ) : (
               pendingClaims.map((item, index) => {
                 const cardBackgroundColor = item.isActive ? '#F2D2BD' : '#F2D2BD';
@@ -176,11 +192,30 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                             overflow: 'hidden', 
                             WebkitLineClamp: 2, 
                             textOverflow: 'ellipsis',
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2,
                           }}>
-                          <b>Description:</b> {item.description}
+                          <b>Description:</b> <span style={{
+                                              display: '-webkit-box',
+                                              WebkitBoxOrient: 'vertical',
+                                              overflow: 'hidden',
+                                              WebkitLineClamp: 2,
+                                              textOverflow: 'ellipsis',
+                                            }}>
+                                              {item.description}
+                                            </span>
                         </Typography>
-                        <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
-                          <b>Status:</b> {item.isActive ? 'Pending' : 'Resolved'}
+                        <Typography sx={{ 
+                          textAlign: 'left', 
+                          margin: '0px 10px',
+                          display: 'grid',
+                          gridTemplateColumns: '80px auto',
+                          rowGap: 1.5,
+                          columnGap: 2, 
+                        }}>
+                          <b>Status:</b>{item.isActive ? 'Pending' : 'Resolved'}
                         </Typography>
                       </CardContent>
                     </Card>
@@ -234,10 +269,29 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                             overflow: 'hidden', 
                             WebkitLineClamp: 2, 
                             textOverflow: 'ellipsis', 
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2,
                           }}>
-                          <b>Description:</b> {item.description}
+                          <b>Description:</b> <span style={{
+                                              display: '-webkit-box',
+                                              WebkitBoxOrient: 'vertical',
+                                              overflow: 'hidden',
+                                              WebkitLineClamp: 2,
+                                              textOverflow: 'ellipsis',
+                                            }}>
+                                              {item.description}
+                                            </span>
                         </Typography>
-                        <Typography sx={{ textAlign: 'left', margin: '0px 10px' }}>
+                        <Typography sx={{ 
+                          textAlign: 'left', 
+                          margin: '0px 10px',
+                          display: 'grid',
+                          gridTemplateColumns: '80px auto',
+                          rowGap: 1.5,
+                          columnGap: 2,
+                        }}>
                           <b>Status:</b> {item.isActive ? 'Pending' : 'Resolved'}
                         </Typography>
                       </CardContent>
@@ -261,14 +315,14 @@ const ClaimStatus = ({ isDrawerOpen }) => {
             }}>
              {selectedItem && (
               <Box sx={{ 
-                bgcolor: 'white', 
-                borderRadius: '8px', 
-                padding: '20px', 
-                maxWidth: '990px', 
-                width: '100%', 
-                position: 'relative',
-                maxHeight: '90vh',
-                overflowY: 'auto',
+                bgcolor: 'white',
+                  borderRadius: '8px',
+                  padding: '20px',
+                  maxWidth: '80%',
+                  width: '100%',
+                  position: 'relative',
+                  maxHeight: '90vh',
+                  overflowY: 'auto',
               }}>
                 <Button onClick={handleClose} sx={{ position: 'absolute', top: 10, right: 10 }}>
                   <CloseIcon />
@@ -316,8 +370,8 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                     <Typography variant="h5" gutterBottom>{selectedItem.itemDescription}</Typography>
 
                     {/* Using Grid for aligned labels and content */}
-                    <Box sx={{ display: 'grid', gridTemplateColumns: '150px 1fr', rowGap: 1.5, columnGap: 1 }}>
-                      <Typography variant="h6"><b>Description:</b></Typography>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: '250px 1fr', rowGap: 1.5, columnGap: 1 }}>
+                    <Typography variant="h6" ><b>Description:</b></Typography>
                       <Typography  sx={{ fontSize: '20px',wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.description}
                       </Typography>
@@ -357,15 +411,29 @@ const ClaimStatus = ({ isDrawerOpen }) => {
                       <Typography  sx={{ fontSize: '20px',wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
                         {selectedItem.address}
                       </Typography>
-                      <Typography variant="h6"><b>
-                        {selectedItem.isActive ? 'Requested Date:' : 'Resolved Date:'}</b>
+
+                      <Typography variant="h6">
+                        <b>Requested Date:</b>
                       </Typography>
-                      <Typography sx={{ fontSize: '20px' }}>
+                      <Typography sx={{ fontSize: '20px', width: '100%',  }}>
                         <DateFormat date={selectedItem.createdDate} />
                       </Typography>
-
-                      <Typography variant="h6"><b>Status:</b></Typography>
-                      <Typography sx={{ fontSize: '20px' }}>{selectedItem.isActive ? 'Pending' : 'Resolved'}</Typography>
+                        {!selectedItem.isActive && (
+                          <>
+                            <Typography variant="h6">
+                              <b>Resolved Date:</b>
+                            </Typography>
+                            <Typography sx={{ fontSize: '20px' }}>
+                              <DateFormat date={selectedItem.updatedDate} />
+                            </Typography>
+                          </>
+                        )}
+                          <Typography variant="h6">
+                            <b>Status:</b>
+                          </Typography>
+                          <Typography sx={{ fontSize: '20px' }}>
+                            {selectedItem.isActive ? 'Pending' : 'Resolved'}
+                          </Typography>
                     </Box>
                   </CardContent>
                 </Box>
@@ -374,6 +442,7 @@ const ClaimStatus = ({ isDrawerOpen }) => {
           </Box>
         </Modal>
       </Container>
+      </Paper>
     </Box>
   );
 };

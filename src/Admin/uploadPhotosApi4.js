@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './uploadPhotos.css'; // Add any custom styles here
-import { Button, Grid, Alert, Snackbar, Typography, Box,Autocomplete, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Button, Grid, Alert, Snackbar, Typography, Box,Autocomplete, TextField, FormControl, InputLabel, Select, MenuItem, Paper, Divider } from '@mui/material';
 import { fontFamily, styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -108,11 +108,11 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
         setIsDisabled(false);         
 }
 
-useEffect(() => {
-  setMarginLeft(isDrawerOpen ? 220 : 0);
-  setMarginRight(isDrawerOpen ? 0 : 20);
-
-  }, [isDrawerOpen]);
+  useEffect(() => {
+    setMarginLeft(isDrawerOpen ? 260 : 0);
+    setMarginRight(isDrawerOpen ? 0 : 0);
+    
+    }, [isDrawerOpen]);
 
   useEffect(() => {
     //axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
@@ -311,13 +311,20 @@ useEffect(() => {
   };
 
   return (
-    <Box>
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s'
+    }}>
+      
+      <Paper  elevation={5} sx={{width:'100%', height:'100%', p: 2}}>
        <Typography
         variant="h4"
         sx={{
           fontFamily: 'Lato',
           textAlign: 'center',
-          mt: 4,
+          mt: 1,
           mb: 2,
           fontWeight: 'bold',
           backgroundImage: 'linear-gradient(to left, #00aae7, #770737, #2368a0)',
@@ -327,16 +334,20 @@ useEffect(() => {
       >
         Upload Identified Item
       </Typography>
+      <Divider sx={{ 
+        width: '90%', 
+        margin: 'auto'
+      }} />
       <Box
         sx={{
           display: 'flex',
           textAlign: 'center',
           mt: 6,
-          ml: { sm: 0, md: `${marginLeft}px` },
-          mr: `${marginRight}px`,
-          transition: 'margin-left 0.3s',
-          flexDirection: { xs: 'column', md: 'row' }, 
-          justifyContent: 'space-between', 
+          // ml: { sm: 0, md: `${marginLeft}px` },
+          // mr: `${marginRight}px`,
+          // transition: 'margin-left 0.3s',
+          // flexDirection: { xs: 'column', md: 'row' }, 
+          // justifyContent: 'space-between', 
         }}
       >
         <Grid container spacing={1}>
@@ -417,7 +428,7 @@ useEffect(() => {
               order: { xs: 1, md: 2 }, 
             }}
           >
-            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt:-4 }}>
               <CategoryDropdown
                 categoryOptions={categoryOptions}
                 initialCategory={category}
@@ -533,25 +544,13 @@ useEffect(() => {
 
               </FormControl>
 
-              <Box display="flex" gap={4} justifyContent="center" alignItems="center" marginTop={5}>
+              <Box display="flex" gap={4} justifyContent="center" alignItems="center" marginTop={3} marginBottom={1}>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
                   disabled={isDisabled}
-                  startIcon={<UploadIcon />}
-                  // sx={{
-                  //   background: 'linear-gradient(to left, #00aae7, #770737)',
-                  //   color: '#fff',
-                  //   border: 'none',
-                  //   '&:hover': {
-                  //     background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
-                  //   },
-                  //   '&.Mui-disabled': {
-                  //     background: 'linear-gradient(to left, #d3d3d3, #a9a9a9)',
-                  //     color: '#fff',
-                  //   },
-                  // }}
+                  startIcon={<UploadIcon />}               
                 >
                   {isDisabled ? 'Getting image properties, wait...' : 'Upload'}
                 </Button>
@@ -590,7 +589,7 @@ useEffect(() => {
           </Snackbar>
         </Grid>
       </Box>
-
+      </Paper>
     </Box>
   );
 

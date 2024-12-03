@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, InputAdornment, IconButton, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, CircularProgress, TableSortLabel } from '@mui/material';
+import { Box, Button, TextField, InputAdornment, IconButton, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, CircularProgress, TableSortLabel, Divider } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import DateFormat from '../Components/DateFormat';
 import { styled } from '@mui/system';
@@ -153,12 +153,14 @@ function View({ isDrawerOpen }) {
 
   return (
     <Box sx={{
-      textAlign: 'center',
-      mt: 2,
-      ml: `${marginLeft}px`,
-      mr: `${marginRight}px`,
-      transition: 'margin-left 0.3s',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s'
     }}>
+      
+      <Paper  elevation={5} sx={{width:'100%', height:'100%', p: 2}}>
+    
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <Typography variant="h4" gutterBottom sx={{
           backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
@@ -169,6 +171,11 @@ function View({ isDrawerOpen }) {
         }}>
           Identified Item List
         </Typography>
+        <Divider sx={{ 
+            width: '90%', 
+            margin: 'auto',
+            mb:2
+          }} />
         <div style={{ display: 'flex', marginBottom: '20px', width: '100%' }}>
           <TextField
             label="Search"
@@ -307,6 +314,7 @@ function View({ isDrawerOpen }) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </div>
+      </Paper>
     </Box>
   );
 }

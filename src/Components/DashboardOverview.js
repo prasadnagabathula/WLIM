@@ -17,14 +17,20 @@ const DashboardOverview = ({ location }) => {
     //console.log(location);
     axios.get(`http://172.17.31.61:5291/api/LostItemRequest/DashboardData/${location}`)
       .then(response => {
-        //console.log(response);
         const chartdata = response.data.data;
         const loca = Object.keys(response.data.data);
-        // setLocations(location);
-        //console.log(loca);
-        //console.log(location);
-        setChartDataLocations(loca);
-        setChartItemsData(loca.map(loc => Object.assign({}, { data: chartdata[loc], label: loc })));
+        if(location === "All"){
+          const t = Object.values(chartdata);
+          setChartDataLocations(["All", ...loca]);
+          setChartItemsData([Object.assign({}, { data: t[0].map((_, index) => 
+            t.reduce((sum, arr) => sum + arr[index], 0)
+          ), label: "All Locations" })]);
+        }
+        else{
+          setChartDataLocations(loca);
+          setChartItemsData(loca.map(loc => Object.assign({}, { data: chartdata[loc], label: loc })));
+        }
+      
         setDataCount(response.data.lostItemRequestClaimCount);
 
         const temp = response.data.category;
@@ -38,7 +44,7 @@ const DashboardOverview = ({ location }) => {
         console.log(error);
       });
   }, [location]);
-
+ 
   
   const CATEGORY_COLORS = {
     "Bag": "#B1E6F3",
@@ -213,16 +219,11 @@ const DashboardOverview = ({ location }) => {
 
         </Grid>
 
-        {/* Second Row: Graph Container */}
         <Grid item xs={12} sm={12} md={12} lg={12} order={{ xs: 3, md: 3 }}>
           <Paper elevation={5} sx={{ p: 3, mb: 3, flex: 1, height: '90%', mt: 3, width: '100%' }}>
             <Typography variant="h6" sx={{ mb: 2 }}>Request Trends</Typography>
             <ResponsiveContainer width="100%" height={300}>
-              {location === "All" ?
-                (<Typography variant='h6' sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a04000 ' }}>
-                  Please select specific location
-                </Typography>) :
-                ((chartDataLocations.includes(location) ?
+              {(chartDataLocations.includes(location) ?
                   (
                     <BarChart
                       xAxis={[{ scaleType: 'band', data: ['Week', 'Month', '6 Months', '1 Year', 'Above 1 Year'] }]}
@@ -234,9 +235,9 @@ const DashboardOverview = ({ location }) => {
                   (<Typography variant='h6' sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a04000 ' }}>
                     No data found
                   </Typography>)
-                ))
+                )
               }
-            </ResponsiveContainer>
+            </ResponsiveContainer>            
           </Paper>
         </Grid>
       </Grid>
