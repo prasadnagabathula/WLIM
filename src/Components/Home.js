@@ -246,7 +246,7 @@ const userClaims = [
                       <ListItemText primary="Upload"  sx={{color:'#fff'}}  />
                   </ListItem>
                   <ListItem component={Link} to="Identified Items/View" onClick={handleClose}>
-                      <ListItemText primary="View"  sx={{color:'#fff'}} />
+                      <ListItemText primary="View All"  sx={{color:'#fff'}} />
                   </ListItem>
               </List> 
       </Collapse>

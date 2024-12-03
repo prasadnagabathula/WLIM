@@ -9,11 +9,7 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 
 function ItemLostRequest({ isDrawerOpen, userName }) {
   const [marginLeft, setMarginLeft] = useState(100);
-  const [itemLostRequests, setItemLostRequests] = useState([]);
-
-  //   useEffect(() => {
-  //   setMarginLeft(isDrawerOpen ? 400 : 100);
-  // }, [isDrawerOpen]);
+  const [itemLostRequests, setItemLostRequests] = useState([]); 
 
   const [results, setResults] = useState([]);
   const [imageTags, setImageTags] = useState([]);
@@ -33,9 +29,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const [location, setLocation] = useState('');
   const [locationOptions, setLocationOptions] = useState([]);
 
-  // const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
-  //const [selectedImageId, setSelectedImageId] = useState('');
 
   // Azure Computer Vision API endpoint and key
   const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
