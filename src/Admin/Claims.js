@@ -232,7 +232,8 @@ const Claims = ({ isDrawerOpen }) => {
           fontWeight: 'bold',
         }}>
           Claim Requests
-        </Typography>      
+        </Typography>
+
 
         <Box sx={{ width: '100%' }}>
           <Box sx={{
@@ -309,17 +310,12 @@ const Claims = ({ isDrawerOpen }) => {
                         }
                       }} onClick={() => handleCardClick(item)}>
                         <CardMedia>
-                          <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
+                            <ImageDisplay imageId={item.itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
                         </CardMedia>
                         <CardContent>
                           <Typography sx={{
                                             textAlign: 'left',
                                             margin: '0px 10px',
-                                            // display: '-webkit-box',
-                                            // WebkitBoxOrient: 'vertical',
-                                            // overflow: 'hidden',
-                                            // WebkitLineClamp: 2,
-                                            // textOverflow: 'ellipsis',
                                             display: 'grid',
                                             gridTemplateColumns: '80px auto',
                                             rowGap: 1.5,
@@ -385,32 +381,20 @@ const Claims = ({ isDrawerOpen }) => {
                           <Typography sx={{
                                             textAlign: 'left',
                                             margin: '0px 10px',
-                                            display: '-webkit-box',
-                                            WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden',
-                                            WebkitLineClamp: 2,
-                                            textOverflow: 'ellipsis',
                                             display: 'grid',
                                             gridTemplateColumns: '80px auto',
                                             rowGap: 1.5,
                                             columnGap: 2,
-                                          }}><b>Description:</b> <span style={{
-                                            display: '-webkit-box',
-                                            WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden',
-                                            WebkitLineClamp: 2,
-                                            textOverflow: 'ellipsis',
-                                          }}>
-                                            {item.description}
-                                          </span></Typography>
-                          <Typography sx={{ 
-                            textAlign: 'left', 
-                            margin: '0px 10px',
-                            display: 'grid',
-                            gridTemplateColumns: '80px auto',
-                            rowGap: 1.5,
-                            columnGap: 2, 
-                          }}><b>Status:</b> {item.status}d</Typography>
+                                            }}><b>Description:</b> <span style={{
+                                              display: '-webkit-box',
+                                              WebkitBoxOrient: 'vertical',
+                                              overflow: 'hidden',
+                                              WebkitLineClamp: 2,
+                                              textOverflow: 'ellipsis',
+                                            }}>
+                                              {item.description}
+                                            </span>
+                                            </Typography>
                           <Typography sx={{ 
                             textAlign: 'left', 
                             margin: '0px 10px',
@@ -418,6 +402,14 @@ const Claims = ({ isDrawerOpen }) => {
                             gridTemplateColumns: '80px auto',
                             rowGap: 1.5,
                             columnGap: 2,
+                          }}><b>Status:</b> {item.status}</Typography>
+                          <Typography sx={{ 
+                            textAlign: 'left', 
+                            margin: '0px 10px',
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2, 
                           }}><b>Age:</b> {calculateDaysAgo(item.createdDate, item.updatedDate)}</Typography>
                         </CardContent>
                       </Card>
@@ -431,7 +423,7 @@ const Claims = ({ isDrawerOpen }) => {
 
           <CustomTabPanel value={tabs} index={2}>
             {reject.length === 0 ? (
-              <Typography>No Claims Resolved Yet.</Typography>
+              <Typography>No Claims Rejected Yet.</Typography>
             ) : (
               <Grid container spacing={3} justifyContent="flex-start">
                 {reject.map((item, index) => {
@@ -455,32 +447,28 @@ const Claims = ({ isDrawerOpen }) => {
                           <Typography sx={{
                                             textAlign: 'left',
                                             margin: '0px 10px',
-                                            display: '-webkit-box',
-                                            WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden',
-                                            WebkitLineClamp: 2,
-                                            textOverflow: 'ellipsis',
                                             display: 'grid',
                                             gridTemplateColumns: '80px auto',
                                             rowGap: 1.5,
                                             columnGap: 2,
-                                          }}><b>Description:</b> <span style={{
-                                            display: '-webkit-box',
-                                            WebkitBoxOrient: 'vertical',
-                                            overflow: 'hidden',
-                                            WebkitLineClamp: 2,
-                                            textOverflow: 'ellipsis',
-                                          }}>
-                                            {item.description}
-                                          </span></Typography>
+                                            }}><b>Description:</b> <span style={{
+                                              display: '-webkit-box',
+                                              WebkitBoxOrient: 'vertical',
+                                              overflow: 'hidden',
+                                              WebkitLineClamp: 2,
+                                              textOverflow: 'ellipsis',
+                                            }}>
+                                              {item.description}
+                                            </span>
+                                            </Typography>
                           <Typography sx={{ 
                             textAlign: 'left', 
                             margin: '0px 10px',
                             display: 'grid',
                             gridTemplateColumns: '80px auto',
                             rowGap: 1.5,
-                            columnGap: 2, 
-                          }}><b>Status:</b> {item.status}ed</Typography>
+                            columnGap: 2,
+                          }}><b>Status:</b> {item.status}</Typography>
                           <Typography sx={{ 
                             textAlign: 'left', 
                             margin: '0px 10px',
@@ -537,7 +525,7 @@ const Claims = ({ isDrawerOpen }) => {
         </Box>
 
         {/* Modal for item details */}
-        <Modal open={openModal} onClose={handleClose}>
+         <Modal open={openModal} onClose={handleClose}>
           <Box
             sx={{
               display: 'flex',
@@ -613,7 +601,17 @@ const Claims = ({ isDrawerOpen }) => {
                     fontFamily: 'Lato',
                     background: '#d3eaf5',
                     height:'100vh',
-                    overflowY:'scroll'
+                    overflowY:'scroll',
+                    '&::-webkit-scrollbar': {
+                      width: '5px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      backgroundColor: '#0d416b',
+                      borderRadius: '4px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      backgroundColor: 'lightgrey',
+                    },
                   }}
                 >
                   <Box
@@ -834,7 +832,7 @@ const Claims = ({ isDrawerOpen }) => {
               </Alert>
             </Snackbar>
           </Box>
-        </Modal>
+        </Modal> 
 
 
         <Dialog

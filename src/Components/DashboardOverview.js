@@ -3,6 +3,7 @@ import { Box, Grid, Typography, Paper, TextField, Autocomplete } from '@mui/mate
 import { BarChart } from '@mui/x-charts/BarChart';
 import axios from 'axios';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Link } from 'react-router-dom'; 
 
 const DashboardOverview = ({ location }) => {
 
@@ -11,7 +12,7 @@ const DashboardOverview = ({ location }) => {
   const [chartItemsData, setChartItemsData] = React.useState([]);
   const [dataCount, setDataCount] = React.useState({});
   const [categoryData, setCategoryData] = React.useState([]);
-
+  const [hovered, setHovered] = useState(false);
 
   React.useEffect(() => {
     //console.log(location);
@@ -45,7 +46,6 @@ const DashboardOverview = ({ location }) => {
       });
   }, [location]);
  
-  
   const CATEGORY_COLORS = {
     "Bag": "#B1E6F3",
     "Watch": "#72DDF7",
@@ -113,11 +113,52 @@ const DashboardOverview = ({ location }) => {
 
               {/* Claim Requests */}
               <Grid item xs={12} sm={6}>
-                <Box sx={{ textAlign: 'center', p: { xs: 5, sm: 5, md: 3.6, lg: 5 }, bgcolor: "#AFDBF5" }}>
-                  <Typography variant="body1" color="textSecondary">Claim Requests</Typography>
-                  <Typography variant="h5" fontWeight="bold">
-                    {dataCount.claimRequestCount || 0}
-                  </Typography>
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    p: { xs: 5, sm: 5, md: 3.6, lg: 5 },
+                    bgcolor: "#AFDBF5",
+                    position: 'relative', 
+                  }}
+                  onMouseEnter={() => setHovered(true)}
+                  onMouseLeave={() => setHovered(false)}
+                >
+                
+                  {hovered && (
+                    <div
+                      className="popup"
+                      style={{
+                        position: 'absolute',
+                        top: '80%',
+                        left: '40%',
+                        transform: 'translate(-30%, -30%)',
+                        backgroundColor: '#DBCDF0',
+                        color: '#333',
+                        padding: '5px 10px',
+                        borderRadius: '5px',
+                        fontSize: '14px',
+                        zIndex: 1,
+                      }}
+                    >
+                      Click to view Claim Requests
+                    </div>
+                  )}
+
+                  {/* Link for Claim Requests */}
+                  <Link
+                    to="Claim Requests" 
+                    style={{
+                      textDecoration: 'none', 
+                      color: 'inherit',
+                      zIndex: 2, 
+                      position: 'relative',
+                    }}
+                  >
+                    <Typography variant="body1" color="textSecondary">Claim Requests</Typography>
+                    <Typography variant="h5" fontWeight="bold">
+                      {dataCount.claimRequestCount || 0}
+                    </Typography>
+                  </Link>
                 </Box>
               </Grid>
 
@@ -143,6 +184,8 @@ const DashboardOverview = ({ location }) => {
             </Grid>
           </Paper>
         </Grid>
+
+        {/* piechart */}
         <Grid item xs={12} sm={12} md={6} lg={6} order={{ xs: 1, md: 2 }}>
           <Paper elevation={5} sx={{ p: 2 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>Item Category Distribution</Typography>
@@ -198,13 +241,13 @@ const DashboardOverview = ({ location }) => {
                         <Box
                           sx={{
                             width: 16,
-                            height: 16,
+                            height: 16,  
                             backgroundColor: CATEGORY_COLORS[entry.name],
                             borderRadius: '50%',
                             marginRight: 1,
                           }}
                         />
-                        <Typography variant="body2">{entry.name}</Typography>
+                        <Typography variant="body2">{entry.name} ({entry.value})</Typography>
                       </Box>
                     ))
                   ) : (
@@ -219,6 +262,7 @@ const DashboardOverview = ({ location }) => {
 
         </Grid>
 
+        {/* Second Row: Graph Container */}
         <Grid item xs={12} sm={12} md={12} lg={12} order={{ xs: 3, md: 3 }}>
           <Paper elevation={5} sx={{ p: 3, mb: 3, flex: 1, height: '90%', mt: 3, width: '100%' }}>
             <Typography variant="h6" sx={{ mb: 2 }}>Request Trends</Typography>
@@ -237,7 +281,7 @@ const DashboardOverview = ({ location }) => {
                   </Typography>)
                 )
               }
-            </ResponsiveContainer>            
+            </ResponsiveContainer>
           </Paper>
         </Grid>
       </Grid>

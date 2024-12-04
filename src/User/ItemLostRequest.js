@@ -187,6 +187,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
 
   const handleImageChange = (e) => {
+    setSearchText('');
     setResults([]);
     setItemSelected(false);
     setSelectedItemDetails({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
@@ -256,6 +257,10 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchText(value);
+
+    setResults([]);
+    setItemSelected(false);
+    setSelectedItemDetails({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
 
     // Trigger the debounced search
     if (value) {

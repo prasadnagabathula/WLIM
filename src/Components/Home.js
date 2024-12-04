@@ -32,7 +32,7 @@ function Home() {
     const [selectedRequest, setSelectedRequest] = useState(null);
     const [relatedImages, setRelatedImages] = useState([]);
     const [username, setUsername] = useState('')
-
+    const [tab, setTab] = useState(0);
     const [uploadedItems, setUploadedItems] = useState([]);
 
   const handleRequestSubmit = (newRequest) => {
@@ -269,42 +269,42 @@ const userClaims = [
   const renderUserForms = () => (
     <>
     <ListItem disablePadding
-        sx={{color:'#fff'}}
-        component={Link} to="Search Lost Item"
-        onClick={(event) => handleClick(event, 'claimHistory')}
-      >
-        <ListItemButton >
-            <ListItemIcon  sx={{color:'#fff'}}>
-              <LibraryAddOutlinedIcon />
-            </ListItemIcon>
-            <ListItemText primary="Search Lost Item" />
-        </ListItemButton>
-      </ListItem> 
-
-      <ListItem disablePadding
-        sx={{color:'#fff'}}
-        component={Link} to=""
-        onClick={handleItemRequestMenu}
-      >
-        <ListItemButton >
-            <ListItemIcon  sx={{color:'#fff'}}>
-              <VisibilityOutlinedIcon />  
-            </ListItemIcon>
-            <ListItemText primary="View All Lost Item Requests" className="drawer-text" />
-        </ListItemButton>
-      </ListItem>
-      <Collapse in={openItemRequestMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
-              <List component="div" disablePadding sx={{color:'#fff'}}>
-                  <ListItem component={Link} to="View All Lost Item Requests" onClick={handleClose}>
-                      <ListItemText primary="Claim Status"  sx={{color:'#fff'}}  />
-                  </ListItem>
-                  {/* <ListItem component={Link} to="View All Requests/Claim History" onClick={handleClose}>
-                      <ListItemText primary="Claim History"  sx={{color:'#fff'}}  />
-                  </ListItem> */}
-              </List> 
-      </Collapse>  
+    sx={{color:'#fff'}}
+    component={Link} to="Search Lost Item"
+    onClick={(event) => handleClick(event, 'claimHistory')}
+    >
+    <ListItemButton >
+    <ListItemIcon sx={{color:'#fff'}}>
+    <LibraryAddOutlinedIcon />
+    </ListItemIcon>
+    <ListItemText primary="Search Lost Item" />
+    </ListItemButton>
+    </ListItem>
+    
+    <ListItem disablePadding
+    sx={{color:'#fff'}}
+    component={Link} to=""
+    onClick={handleItemRequestMenu}
+    >
+    <ListItemButton >
+    <ListItemIcon sx={{color:'#fff'}}>
+    <VisibilityOutlinedIcon />
+    </ListItemIcon>
+    <ListItemText primary="View All Lost Item Requests" className="drawer-text" />
+    </ListItemButton>
+    </ListItem>
+    <Collapse in={openItemRequestMenu} timeout="auto" unmountOnExit sx={{backgroundColor:'#2C3539', color:'#fff'}}>
+    <List component="div" disablePadding sx={{color:'#fff'}}>
+    <ListItem component={Link} to="View All Lost Item Requests" onClick={() => {handleClose(); setTab(0)}}>
+    <ListItemText primary="Claim Status" sx={{color:'#fff'}} />
+    </ListItem>
+    {/* <ListItem component={Link} to="View All Requests/Claim History" onClick={handleClose}>
+    <ListItemText primary="Claim History" sx={{color:'#fff'}} />
+    </ListItem> */}
+    </List>
+    </Collapse>
     </>
-  );
+    );
 
   const [userData, setUserData] = useState({});
 
@@ -439,16 +439,15 @@ const userClaims = [
         <Box component="main" sx={{ flexGrow: 1, bgcolor: '#f5f5f5', p: 3, height: '100vh', overflow: 'auto' }}>
           <Toolbar />
           <CustomBreadcrumbs paths={getBreadcrumbs()} currentPath={currentPath} isDrawerOpen={isDrawerOpen} />
-          <Routes>
-            {/* <Route path='/' element={localStorage.getItem('userRole') === 'Admin' ? <Default isDrawerOpen={isDrawerOpen} /> : <Statistics isDrawerOpen={isDrawerOpen}/>} /> */}
-            <Route path='/' element={<Default isDrawerOpen={isDrawerOpen} /> } />
-            <Route path='Identified Items' element={<UploadPhotos isDrawerOpen={isDrawerOpen} />} />
-            <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
-            <Route path='Search Lost Item' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
-            <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
-            <Route path='Identified Items/View' element={<View isDrawerOpen={isDrawerOpen} />} />
-            <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
-            <Route path='View All Lost Item Requests' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
+          <Routes>         
+          <Route path='/' element={<Default isDrawerOpen={isDrawerOpen} tabChange={setTab} /> } />
+          <Route path='Identified Items' element={<UploadPhotos isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Search Lost Item' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
+          <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Identified Items/View' element={<View isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
+          <Route path='View All Lost Item Requests' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} tabChange={tab} />} />
           </Routes>
         </Box>
     </div>

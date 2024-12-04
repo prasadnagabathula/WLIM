@@ -5,7 +5,7 @@ import Statistics from './Statistics';
 import axios from 'axios';
 
 
-function Default({ isDrawerOpen }) {
+function Default({ isDrawerOpen, tabChange }) {
   const [locations, setLocations] = React.useState([]);
   const [loc, setLoc] = React.useState("All");
     const [marginLeft, setMarginLeft] = useState(100); 
@@ -96,7 +96,7 @@ function Default({ isDrawerOpen }) {
       }}
       >
       
-      {localStorage.getItem('userRole') === 'Admin' ? <DashboardOverview location = {loc}/> : <Statistics/>}
+      {localStorage.getItem('userRole') === 'Admin' ? <DashboardOverview location = {loc}/> : <Statistics chooseTab={tabChange} />}
       </Box>
       
       <Typography variant="h5" sx={{
