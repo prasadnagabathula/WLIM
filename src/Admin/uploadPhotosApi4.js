@@ -404,7 +404,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                   ) : (
                     <span style={{ display: 'flex', alignItems: 'center' }}>
                       <CloudUploadIcon />
-                      <span style={{ marginLeft: 8 }}>Upload Identified Item Photo</span>
+                      <span style={{ marginLeft: 8, fontFamily:'Lato' }}>Upload Identified Item Photo</span>
                     </span>
                   )}
                 </UploadBox>
