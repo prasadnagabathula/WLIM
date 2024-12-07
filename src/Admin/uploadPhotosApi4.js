@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './uploadPhotos.css'; // Add any custom styles here
 import { Button, Grid, Alert, Snackbar, Typography, Box,Autocomplete, TextField, FormControl, InputLabel, Select, MenuItem, Paper, Divider } from '@mui/material';
@@ -9,7 +9,8 @@ import { CATEGORY_OPTIONS } from '../Components/Constants';
 import CategoryDropdown from './CategoryDropdown';
 import BackspaceIcon from '@mui/icons-material/Backspace';
 import UploadIcon from '@mui/icons-material/Upload';
-
+import QRDialogComponent from '../Components/QRDialogComponent';
+import { QRCodeCanvas } from 'qrcode.react';
 
 const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -21,7 +22,6 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [severity, setSeverity] = useState('success');
-
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
   const [comments, setComments] = useState('');
@@ -31,8 +31,15 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   const [denseCaptions, setDenseCaptions] = useState('');
   const [locationOptions, setLocationOptions] = useState([]);  
   const [identifiedLocation, setIdentifiedLocation] = useState('');
-  const [identifiedDate, setIdentifiedDate] = useState('');  
-
+  const [identifiedDate, setIdentifiedDate] = useState('');   
+  //QR code  
+  const [qrData, setQrData] = useState('');
+  const [binaryData, setBinaryData] = useState('');
+  const canvasRef = useRef(null);
+  const [itemId, setItemId] = useState('');
+  const [qrGeneratedAt, setQrGeneratedAt] = useState('');
+  const [qrSequenceNumber, setQrSequenceNumber] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
 
 
   const createClient = require('@azure-rest/ai-vision-image-analysis').default;
@@ -220,6 +227,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
     setIsDisabled(true);
+    //clearQrData();
     const file = e.target.files[0];
     if (file) {
       // Get the original file name and extension
@@ -262,6 +270,32 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     }
   };
 
+
+  const generateQRCode = () => {
+    if (!qrData) return;
+
+    // Access the canvas rendered by QRCodeCanvas
+    const canvas = canvasRef.current.querySelector('canvas');
+
+    if (canvas) {
+      canvas.toBlob((blob) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setBinaryData(reader.result); // Base64 encoded binary data
+        };
+        reader.readAsDataURL(blob);
+      });
+    }
+  };
+
+  const clearQrData = () => {
+    setQrData('');
+    setBinaryData('');
+    setItemId('');
+    setQrGeneratedAt('');
+    setQrSequenceNumber('');
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedFile) {
@@ -289,7 +323,15 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
       });
 
       if (response.status === 200) {
-        setMessage('Image uploaded successfully!');
+        //QR Code
+        setItemId(response.data.itemId)
+        setQrGeneratedAt(response.data.qrGeneratedAt)
+        setQrSequenceNumber(response.data.qrSequencNumber)
+        setQrData(itemId+qrGeneratedAt+qrSequenceNumber);
+        generateQRCode();       
+        setDialogOpen(true);
+
+        setMessage('Item details uploaded successfully!');
         setSeverity('success');
         setSelectedImage(null); // Clear the uploaded image
         setCategory('');
@@ -414,8 +456,9 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                 type="file"
                 accept="image/*"
                 hidden
-                onChange={handleFileChange}
-              />
+                onChange={handleFileChange}                
+              />   
+                
           </Box>
 
           <Box
@@ -576,17 +619,40 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
             </Box>
           </Box>
 
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={6000}
-            onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            sx={{ mb: 2 }}
-          >
-            <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>
-              {message}
-            </Alert>
-          </Snackbar>
+          {/* Preparing data and image for display and print in hidden mode */}
+          <Box display={'none'}>                 
+                  <div ref={canvasRef}>
+                    {qrData && <QRCodeCanvas value={qrData} />}
+                  </div>  
+                  {binaryData && (
+                    <div>
+                      <h3>QR Code Preview</h3>
+                      <img src={binaryData} alt="Generated QR Code" />
+                    </div>
+                  )}          
+          </Box> 
+
+          <QRDialogComponent
+            open={dialogOpen}
+            onClose={() => setDialogOpen(false)}
+            qrData={qrData}
+            binaryData={binaryData}
+            itemCategory={category}
+            itemDescription={comments}
+            identifiedDate={identifiedDate}
+          />               
+              {/*<Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                sx={{ mb: 2}}
+              >
+                <Alert onClose={handleCloseSnackbar} severity={severity} sx={{ width: '100%' }}>           
+                  {message}
+                </Alert>
+              </Snackbar>    */}            
+
         </Grid>
       </Box>
       </Paper>
