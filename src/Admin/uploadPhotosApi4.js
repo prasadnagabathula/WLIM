@@ -132,7 +132,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
         
         const combinedText = [...imageTags, itemDesc, denseCaptions].join(" ").toLowerCase();
 
-        console.log(combinedText);
+        // console.log(combinedText);
 
         let matchedCategory = CATEGORY_OPTIONS.find((category) =>
             combinedText.includes(category.toLowerCase())
@@ -154,7 +154,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     //axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
     axios.get('http://localhost:7237/api/LostItemRequest/Locations')
     .then(response => {
-      console.log(response);
+      // console.log(response);
       setLocationOptions(response.data.map(data => data.locations));
     }).catch(error => {
       console.log(error);
@@ -253,7 +253,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
-    setIsDisabled(true);
+    // setIsDisabled(true);
     //clearQrData();
     const file = e.target.files[0];
     if (file) {
@@ -270,7 +270,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     reader.onloadend = async () => {
       const arrayBuffer = reader.result; // Binary data of the file
       const uint8Array = new Uint8Array(arrayBuffer);
-      await analyzeImageFromBinary(uint8Array); // Call analysis function
+      // await analyzeImageFromBinary(uint8Array); // Call analysis function
     };
 
     reader.readAsArrayBuffer(file); // Read file as binary data
@@ -298,21 +298,37 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   };
 
 
-  const generateQRCode = () => {
-    if (!qrData) return;
+  const generateQRCode = (qData) => {
+    // console.log("canvas"+qData);
+    if (!qData) return;
 
-    // Access the canvas rendered by QRCodeCanvas
-    const canvas = canvasRef.current.querySelector('canvas');
+    // // Access the canvas rendered by QRCodeCanvas
+    // const canvas = canvasRef.current.querySelector('canvas');
+    
+    // if (canvas) {
+    //   canvas.toBlob((blob) => {
+    //     const reader = new FileReader();
+    //     reader.onloadend = () => {
+    //       setBinaryData(reader.result); // Base64 encoded binary data
+    //     };
+    //     reader.readAsDataURL(blob);
+    //   });
+     
+    // }
+    const timer = setTimeout(() => {
+      const canvas = canvasRef.current?.querySelector('canvas');
+      if (canvas) {
+        canvas.toBlob((blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setBinaryData(reader.result); // Base64 encoded binary data
+          };
+          reader.readAsDataURL(blob);
+        });
+      }
+    }, 100); // Small delay to ensure rendering completes
 
-    if (canvas) {
-      canvas.toBlob((blob) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setBinaryData(reader.result); // Base64 encoded binary data
-        };
-        reader.readAsDataURL(blob);
-      });
-    }
+    return () => clearTimeout(timer);
   };
 
   const clearQrData = () => {
@@ -350,12 +366,15 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
       });
 
       if (response.status === 200) {
+        console.log(response.data);
         //QR Code
         setItemId(response.data.itemId)
         setQrGeneratedAt(response.data.qrGeneratedAt)
-        setQrSequenceNumber(response.data.qrSequencNumber)
-        setQrData(itemId+qrGeneratedAt+qrSequenceNumber);
-        generateQRCode();       
+        setQrSequenceNumber(response.data.qrSequenceNumber)
+        // console.log(response.data.qrSequenceNumber);
+        setQrData(response.data.itemId+response.data.qrGeneratedAt+response.data.qrSequenceNumber); 
+        console.log(qrData);       
+        generateQRCode(response.data.itemId+response.data.qrGeneratedAt+response.data.qrSequenceNumber);       
         setDialogOpen(true);
 
         setMessage('Item details uploaded successfully!');
@@ -364,9 +383,9 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
         setCategory('');
         setTags([]);
         setComments('');
-        setLocation('');
+        setLocation(location);
         setIdentifiedLocation('');
-        setIdentifiedDate('');
+        setIdentifiedDate(identifiedDate);
       } else {
         setMessage('Failed to upload image');
         setSeverity('error');
@@ -583,7 +602,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
               )}
 
               {/* Hidden canvas for photo capture */}
-              <canvas ref={PictureRef} style={{ display: 'none' }} width={500} height={375}></canvas>
+              {/* <canvas ref={PictureRef} style={{ display: 'none' }} width={500} height={375}></canvas> */}
           </Box>
           <Box
             sx={{
@@ -770,9 +789,9 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
             onClose={() => setDialogOpen(false)}
             qrData={qrData}
             binaryData={binaryData}
-            itemCategory={category}
-            itemDescription={comments}
-            identifiedDate={identifiedDate}
+            // itemCategory={category}
+            // itemDescription={comments}
+            // identifiedDate={identifiedDate}
           />               
               {/*<Snackbar
                 open={snackbarOpen}

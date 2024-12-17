@@ -22,6 +22,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { QRCodeCanvas } from 'qrcode.react';
 
 // import Box from '@mui/material/Box';
 
@@ -54,7 +55,7 @@ function a11yProps(index) {
   };
 }
 
-const Claims = ({ isDrawerOpen }) => {
+const Claims = ({ isDrawerOpen, qrData }) => {
   const [marginLeft, setMarginLeft] = useState(100);
   const [marginRight, setMarginRight] = useState(100);
   const [openModal, setOpenModal] = useState(false);
@@ -658,27 +659,32 @@ const Claims = ({ isDrawerOpen }) => {
                     }}
                   >
                     <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'space-between',
-                        flex: 1,
-                      }}
-                    >
-                      <ImageDisplay
-                        imageId={selectedItem.itemPhoto}
-                        style={{
-                          width: '300px',
-                          height: '300px',
-                          objectFit: 'cover',
-                          borderRadius: '8px',
-                          boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                          border: '2px solid #e0e0e0',
-                          marginTop: '30px',
-                          marginLeft: '60px',
-                        }}
-                      />
-                    </Box>
+sx={{
+display: 'flex',
+flexDirection: 'column',
+justifyContent: 'space-between',
+alignItems: 'center',
+flex: 1,
+}}
+>
+<ImageDisplay
+imageId={selectedItem.itemPhoto}
+style={{
+width: '300px',
+height: '300px',
+objectFit: 'cover',
+borderRadius: '8px',
+boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+border: '2px solid #e0e0e0',
+marginTop: '30px',
+}}
+/>
+
+<QRCodeCanvas
+value={qrData}
+size={150}
+/>
+</Box>
 
                     <CardContent sx={{ flex: 2, fontFamily: 'Lato' }}>
                       {/* <Typography variant="h5" gutterBottom>

@@ -12,14 +12,14 @@ import {
 } from '@mui/material';
 import { QRCodeCanvas } from 'qrcode.react';
 
-const QRDialogComponent = ({ open, onClose, itemCategory, identifiedDate, itemDescription, qrData, binaryData }) => {
+const QRDialogComponent = ({ open, onClose, qrData, binaryData }) => {
   const canvasRef = useRef();
   // Split QR data into two lines
   const midpoint = Math.ceil(qrData.length / 2); // Divide the data roughly in half
   const firstLine = qrData.substring(0, midpoint);
   const secondLine = qrData.substring(midpoint);
 
-  console.log(itemDescription);
+  // console.log(itemDescription);
   const splitDescription = (text, chunkSize) => {
     const result = [];
     for (let i = 0; i < text.length; i += chunkSize) {
@@ -28,7 +28,7 @@ const QRDialogComponent = ({ open, onClose, itemCategory, identifiedDate, itemDe
     return result;
   };
 
-  const lines = splitDescription(itemDescription, 38);
+  // const lines = splitDescription(itemDescription, 38);
 
   const handlePrint = () => {
     const qrCanvas = canvasRef.current;
@@ -121,7 +121,7 @@ const QRDialogComponent = ({ open, onClose, itemCategory, identifiedDate, itemDe
                 {secondLine}
             </Typography>
             </Box>
-            <Box display="flex">
+            {/* <Box display="flex">
              <Typography variant="body1" sx={{ fontSize: 16, fontWeight: 'bold', marginTop: 2, marginLeft:2, width:115 }}>
               Item Category:                          
             </Typography>
@@ -150,7 +150,7 @@ const QRDialogComponent = ({ open, onClose, itemCategory, identifiedDate, itemDe
             <Typography variant="body1" sx={{ fontSize: 16, marginTop: 2 }}>              
                 {identifiedDate}             
             </Typography>
-            </Box>
+            </Box> */}
           </CardContent>
         </Card>
       </DialogContent>
