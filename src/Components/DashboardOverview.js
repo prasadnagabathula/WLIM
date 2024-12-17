@@ -3,7 +3,8 @@ import { Box, Grid, Typography, Paper, TextField, Autocomplete } from '@mui/mate
 import { BarChart } from '@mui/x-charts/BarChart';
 import axios from 'axios';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'; 
+import dayjs from 'dayjs';
 
 const DashboardOverview = ({ location }) => {
 
@@ -11,6 +12,8 @@ const DashboardOverview = ({ location }) => {
   const [chartDataLocations, setChartDataLocations] = React.useState([]);
   const [chartItemsData, setChartItemsData] = React.useState([]);
   const [dataCount, setDataCount] = React.useState({});
+  const [donatedCount, setDonatedCount] = React.useState();
+  const [expiredCount, setExpiredCount] = React.useState();
   const [categoryData, setCategoryData] = React.useState([]);
   const [hovered, setHovered] = useState(false);
 
@@ -30,11 +33,11 @@ const DashboardOverview = ({ location }) => {
             ), label: "All Locations"
           })]);
         }
-        else {
+        else{
           setChartDataLocations(loca);
           setChartItemsData(loca.map(loc => Object.assign({}, { data: chartdata[loc], label: loc })));
         }
-
+      
         setDataCount(response.data.lostItemRequestClaimCount);
 
         const temp = response.data.category;
@@ -44,6 +47,18 @@ const DashboardOverview = ({ location }) => {
             value: temp[category],
           }))
         );
+      }).catch(error => {
+        console.log(error);
+      });
+
+
+      axios.get('http://172.17.31.61:5280/api/getAll')
+      .then(response => {
+        console.log(response);
+        setDonatedCount(response.data.filter(d => d.donated === true).length)
+        setExpiredCount(response.data.filter(d => dayjs(new Date()).diff(d.createdDate, 'day') > 30).length)
+        console.log(response.data.filter(d => dayjs(new Date()).diff(d.createdDate, 'day') > 30).length)
+        // console.log(response.data.filter(d => d.donated === true))
       }).catch(error => {
         console.log(error);
       });
@@ -106,7 +121,7 @@ const DashboardOverview = ({ location }) => {
             <Grid container spacing={2}>
               {/* Identified Items */}
               <Grid item xs={12} sm={6}>
-                <Box sx={{ textAlign: 'center', p: 5, backgroundColor: "#BDB5D5" }}>
+                <Box sx={{ textAlign: 'center', p: 2, backgroundColor: "#BDB5D5" }}>
                   <Typography variant="body1" color="textSecondary">Items</Typography>
                   <Typography variant="h5" fontWeight="bold">
                     {dataCount.identifiedItemsCount || 0}
@@ -119,7 +134,7 @@ const DashboardOverview = ({ location }) => {
                 <Box
                   sx={{
                     textAlign: 'center',
-                    p: { xs: 5, sm: 5, md: 3.6, lg: 5 },
+                    p: { xs: 5, sm: 5, md: 3.6, lg: 2 },
                     bgcolor: "#AFDBF5",
                     position: 'relative',
                   }}
@@ -134,7 +149,7 @@ const DashboardOverview = ({ location }) => {
                         position: 'absolute',
                         top: '80%',
                         left: '40%',
-                        transform: 'translate(-30%, -30%)',
+                        transform: 'translate(-30%, -20%)',
                         backgroundColor: '#DBCDF0',
                         color: '#333',
                         padding: '5px 10px',
@@ -167,7 +182,7 @@ const DashboardOverview = ({ location }) => {
 
               {/* Pending Requests */}
               <Grid item xs={12} sm={6}>
-                <Box sx={{ textAlign: 'center', p: { xs: 5.5, sm: 5.5, md: 3.6, lg: 5.5 }, bgcolor: '#f8d7da', borderRadius: 1 }}>
+                <Box sx={{ textAlign: 'center', p: { xs: 5.5, sm: 5.5, md: 3.6, lg: 2.5 }, bgcolor: '#f8d7da', borderRadius: 1 }}>
                   <Typography variant="body1" color="textSecondary">Pending Requests</Typography>
                   <Typography variant="h5" fontWeight="bold">
                     {dataCount.pendingRequestCount || 0}
@@ -177,13 +192,34 @@ const DashboardOverview = ({ location }) => {
 
               {/* Successfully Claimed Requests */}
               <Grid item xs={12} sm={6}>
-                <Box sx={{ textAlign: 'center', p: 5.5, bgcolor: '#d4edda', borderRadius: 1 }}>
+                <Box sx={{ textAlign: 'center', p: 2.5, bgcolor: '#d4edda', borderRadius: 1 }}>
                   <Typography variant="body1" color="textSecondary">Returned</Typography>
                   <Typography variant="h5" fontWeight="bold">
                     {dataCount.successRequestCount || 0}
                   </Typography>
                 </Box>
               </Grid>
+
+              {/* Expired Items */}
+              <Grid item xs={12} sm={6}>
+                <Box sx={{ textAlign: 'center', p: { xs: 5.5, sm: 5.5, md: 3.6, lg: 2.5 }, bgcolor: '#DED6C6', borderRadius: 1 }}>
+                  <Typography variant="body1" color="textSecondary">Expired Items</Typography>
+                  <Typography variant="h5" fontWeight="bold">
+                    {expiredCount || 0}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              {/* Donated Items */}
+              <Grid item xs={12} sm={6}>
+                <Box sx={{ textAlign: 'center', p: { xs: 5.5, sm: 5.5, md: 3.6, lg: 2.5 }, bgcolor: '#FAEDCB', borderRadius: 1 }}>
+                  <Typography variant="body1" color="textSecondary">Donated Items</Typography>
+                  <Typography variant="h5" fontWeight="bold">
+                    {donatedCount || 0}
+                  </Typography>
+                </Box>
+              </Grid>
+
             </Grid>
           </Paper>
         </Grid>
@@ -194,7 +230,7 @@ const DashboardOverview = ({ location }) => {
             <Typography variant="h6" sx={{ mb: 2 }}>Item Category Distribution</Typography>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Box sx={{ width: '100%', height: 250 }}>
+                <Box sx={{ width: '100%', height: 270 }}>
                   <ResponsiveContainer>
                     {categoryData.length > 0 ? (
                       <PieChart onClick={handlePieClick}>

@@ -473,7 +473,12 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
               labelId="location-label"
               id="location"
               value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              onChange={(e) => {
+                setLocation(e.target.value); 
+                setResults([]); 
+                setSearchText(''); 
+                setSelectedThumbnail(null); 
+              }}
               label="Location"
             >
               {locationOptions.map((loc, index) => (

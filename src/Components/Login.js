@@ -75,6 +75,8 @@ function Login() {
         localStorage.setItem('userName', response.data.name);
         localStorage.setItem('userRole', response.data.role);
         localStorage.setItem('userEmail', email);
+        localStorage.setItem('location', response.data.location);
+        console.log(response.data.location);
         localStorage.setItem('userData', JSON.stringify({ name: response.data.name, role: response.data.role, email, photo: null }));
 
         // myRole(response.data.role);
@@ -149,7 +151,7 @@ function Login() {
               }
             }}>
               <Typography variant="h4" sx={{ color: 'white', mb: 2 }}>
-                Warehouse Lost Items <br />Management
+                Lost Items Management
               </Typography>
               <Typography variant="h6" sx={{ color: 'white' }}>
                 Tracking Every Item: Every Asset Counts

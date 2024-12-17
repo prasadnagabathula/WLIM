@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Box, Grid, Typography, Paper } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-const Statistics = ({ chooseTab }) => {
+import { Link } from 'react-router-dom'; 
+import ItemLostRequest from '../../src/User/ItemLostRequest'
+
+const Statistics = ({chooseTab}) => {
 
   const [dataCount, setDataCount] = React.useState({});
   const [hovered, setHovered] = useState('');
@@ -27,6 +29,8 @@ const Statistics = ({ chooseTab }) => {
         width: '100%',
         justifyContent: 'center',
         flex: 1,
+        flexDirection:'column',
+        gap:2
       }}
     >
       {/* Statistics Container */}
@@ -145,6 +149,7 @@ const Statistics = ({ chooseTab }) => {
                     borderRadius: '5px',
                     fontSize: '14px',
                     zIndex: 1,
+                    fontFamily:'Lato'  
                   }}
                 >
                   Click to view Returned Requests
@@ -159,7 +164,7 @@ const Statistics = ({ chooseTab }) => {
                   position: 'relative',
                   zIndex: 2,
                 }}
-                onClick={() => chooseTab(1)}
+                onClick={() => chooseTab(2)}
               >
                 <Typography variant="body1" color="textSecondary">Returned</Typography>
                 <Typography variant="h5" fontWeight="bold">
@@ -171,6 +176,7 @@ const Statistics = ({ chooseTab }) => {
 
         </Grid>
       </Paper>
+      <ItemLostRequest />
     </Box>
 
   );

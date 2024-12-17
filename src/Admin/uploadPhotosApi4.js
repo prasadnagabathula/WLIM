@@ -10,6 +10,8 @@ import CategoryDropdown from './CategoryDropdown';
 import BackspaceIcon from '@mui/icons-material/Backspace';
 import UploadIcon from '@mui/icons-material/Upload';
 import QRDialogComponent from '../Components/QRDialogComponent';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+
 import { QRCodeCanvas } from 'qrcode.react';
 
 const UploadPhotosApi4 = ({ isDrawerOpen }) => {
@@ -31,7 +33,11 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   const [denseCaptions, setDenseCaptions] = useState('');
   const [locationOptions, setLocationOptions] = useState([]);  
   const [identifiedLocation, setIdentifiedLocation] = useState('');
-  const [identifiedDate, setIdentifiedDate] = useState('');   
+  const [isCameraActive, setIsCameraActive] = useState(false); 
+  const [photoData, setPhotoData] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(''); 
+  const videoRef = useRef(null);
+  const PictureRef = useRef(null);
   //QR code  
   const [qrData, setQrData] = useState('');
   const [binaryData, setBinaryData] = useState('');
@@ -41,6 +47,29 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   const [qrSequenceNumber, setQrSequenceNumber] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
 
+
+  const fetchUserLocation = () => { 
+    const userLocation = localStorage.getItem('location') || 'Atlanta'; 
+    setLocation(userLocation);
+  };
+
+  useEffect(() => {
+    fetchUserLocation();
+  }, []);
+
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); 
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  const [identifiedDate, setIdentifiedDate] = useState(getCurrentDateTime());
+
+  const suggestions = ['Gate1', 'Cafeteria1', 'Reception', 'Road', 'Park'];
 
   const createClient = require('@azure-rest/ai-vision-image-analysis').default;
   const { AzureKeyCredential } = require('@azure/core-auth');
@@ -154,8 +183,6 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   };
 
   const UploadBox = styled(Box)({
-    // width: '300px',
-    // height: '300px',
     border: '2px dashed #888',
     borderRadius: '10px',
     display: 'flex',
@@ -352,21 +379,55 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     setSnackbarOpen(true);
   };
 
+  
+  const handleTakePicture = async () => {
+    try {
+      // Request camera access
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+      setIsCameraActive(true); // Camera is active
+      setErrorMessage('');
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+      setErrorMessage('No camera detected or permission denied.');
+      setIsCameraActive(false); // Ensure camera is not active if there’s an error
+    }
+  };
+
+  const handleCapturePhoto = () => {
+    if (PictureRef.current && videoRef.current) {
+      const context = PictureRef.current.getContext('2d');
+      context.drawImage(videoRef.current, 0, 0, PictureRef.current.width, PictureRef.current.height);
+      const photo = PictureRef.current.toDataURL('image/png'); // Get image as data URL
+      setPhotoData(photo); // Set photo data
+      setIsCameraActive(false); // Stop showing the video after capturing the photo
+
+      // Stop the video stream
+      const stream = videoRef.current.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop());
+    }
+  };
+  
   return (
     <Box sx={{
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      height:'100%',
+      boxSizing: 'border-box',
       textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s'
     }}>
       
-      <Paper  elevation={5} sx={{width:'100%', height:'100%', p: 2}}>
+      <Paper elevation={5} sx={{width:'100%',  p: 2, boxSizing: 'border-box'}}>
        <Typography
         variant="h4"
         sx={{
           fontFamily: 'Lato',
           textAlign: 'center',
-          mt: 1,
           mb: 2,
           fontWeight: 'bold',
           backgroundImage: 'linear-gradient(to left, #00aae7, #770737, #2368a0)',
@@ -384,12 +445,9 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
         sx={{
           display: 'flex',
           textAlign: 'center',
-          mt: 6,
-          // ml: { sm: 0, md: `${marginLeft}px` },
-          // mr: `${marginRight}px`,
-          // transition: 'margin-left 0.3s',
-          // flexDirection: { xs: 'column', md: 'row' }, 
-          // justifyContent: 'space-between', 
+          mt:2,
+          height:'100%',
+          boxSizing: 'border-box',
         }}
       >
         <Grid container spacing={1}>
@@ -402,6 +460,8 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
               textAlign: 'center',
               flex: 1, 
               order: { xs: 2, md: 1 }, 
+              boxSizing: 'border-box',
+              height: 'max-content'
             }}
           >
             <Typography
@@ -410,7 +470,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                 fontFamily: 'Lato',
                 mb: 4,
                 ml:5,
-                mt:-12,                
+                // mt: -10,
                 fontSize: { md: '30px' },
                 backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
                 WebkitBackgroundClip: 'text',
@@ -457,10 +517,74 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                 accept="image/*"
                 hidden
                 onChange={handleFileChange}                
-              />   
-                
-          </Box>
+              />  
 
+              <Typography variant='subtitle1' sx={{fontFamily:'Lato', mb:2}}><b>(OR)</b></Typography>
+
+              {/* Button to open camera */}
+              {!isCameraActive && !photoData && (
+                <Button
+                  variant="contained"
+                  startIcon={<CameraAltIcon />}
+                  onClick={handleTakePicture}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 1,
+                    padding: '10px 20px',
+                  }}
+                >
+                  Take a Picture
+                </Button>
+              )}
+
+              {/* Error message */}
+              {errorMessage && (
+                <Typography color="error" sx={{ marginTop: 2}}>
+                  {errorMessage}
+                </Typography>
+              )}
+
+              {/* Video feed to capture photo */}
+              {isCameraActive && !photoData && (
+                <Box>
+                  <video
+                    ref={videoRef}
+                    style={{
+                      width: '100%',
+                      maxWidth: '500px',
+                      border: '1px solid #ccc',
+                      borderRadius: '8px',
+                      display: 'block',
+                      marginBottom: 2,
+                    }}
+                    autoPlay
+                    onClick={handleCapturePhoto} 
+                  ></video>
+                </Box>
+              )}
+
+              {/* Display captured photo */}
+              {photoData && (
+                <Box sx={{ marginTop: 3, textAlign: 'center' }}>
+                  <img
+                    src={photoData}
+                    alt="Captured"
+                    style={{
+                      width: '100%',
+                      maxWidth: '500px',
+                      border: '1px solid #ccc',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Typography sx={{ marginTop: 2 }}>Photo captured successfully!</Typography>
+                </Box>
+              )}
+
+              {/* Hidden canvas for photo capture */}
+              <canvas ref={PictureRef} style={{ display: 'none' }} width={500} height={375}></canvas>
+          </Box>
           <Box
             sx={{
               display: 'flex',
@@ -468,6 +592,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
               alignItems: 'flex-center',
               justifyContent: 'flex-start',
               flex: 1,
+              mt:2,
               order: { xs: 1, md: 2 }, 
             }}
           >
@@ -562,16 +687,26 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                       {loc}
                     </MenuItem>
                   ))}
-                </Select>             
-                <TextField
+                </Select>  
+                <Autocomplete
+                  options={suggestions}
+                  value={identifiedLocation}
+                  onChange={(event, newValue) => setIdentifiedLocation(newValue)}
+                  noOptionsText=""
+                  renderInput={(params) => (
+                    <TextField {...params} label="Identified Location" variant="outlined" />
+                  )}
+                  sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, mt: 2 }}
+                  onInputChange={(event, newInputValue) => setIdentifiedLocation(newInputValue)}
+                />           
+                {/* <TextField
                   label="Identified Location"
                   variant="outlined"
                   value={identifiedLocation}
                   sx={{ width: { xs: '100%', sm: '400px', md: '450px' }, mt: 2 }}                                  
                   onChange={(e) => setIdentifiedLocation(e.target.value)}
-                />            
+                />             */}
 
-                
                 <TextField
                   variant="outlined"
                   value={identifiedDate}
@@ -604,11 +739,9 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                   startIcon={<BackspaceIcon />}
                   sx={{
                     backgroundColor: '#CD7F32',
-                    // background: 'linear-gradient(to left, #00aae7, #770737)',
                     color: '#fff',
                     border: 'none',
                     '&:hover': {
-                      // background: 'linear-gradient(to left, #2368a0, #770737, #00aae7)',
                       backgroundColor: '#B87333'
                     },
                   }}
