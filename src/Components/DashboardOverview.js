@@ -3,7 +3,7 @@ import { Box, Grid, Typography, Paper, TextField, Autocomplete } from '@mui/mate
 import { BarChart } from '@mui/x-charts/BarChart';
 import axios from 'axios';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 
 const DashboardOverview = ({ location }) => {
 
@@ -16,22 +16,25 @@ const DashboardOverview = ({ location }) => {
 
   React.useEffect(() => {
     //console.log(location);
+    // axios.get(`http://localhost:7237/api/LostItemRequest/DashboardData/${location}`)
     axios.get(`http://172.17.31.61:5291/api/LostItemRequest/DashboardData/${location}`)
       .then(response => {
         const chartdata = response.data.data;
         const loca = Object.keys(response.data.data);
-        if(location === "All"){
+        if (location === "All") {
           const t = Object.values(chartdata);
           setChartDataLocations(["All", ...loca]);
-          setChartItemsData([Object.assign({}, { data: t[0].map((_, index) => 
-            t.reduce((sum, arr) => sum + arr[index], 0)
-          ), label: "All Locations" })]);
+          setChartItemsData([Object.assign({}, {
+            data: t[0].map((_, index) =>
+              t.reduce((sum, arr) => sum + arr[index], 0)
+            ), label: "All Locations"
+          })]);
         }
-        else{
+        else {
           setChartDataLocations(loca);
           setChartItemsData(loca.map(loc => Object.assign({}, { data: chartdata[loc], label: loc })));
         }
-      
+
         setDataCount(response.data.lostItemRequestClaimCount);
 
         const temp = response.data.category;
@@ -45,7 +48,7 @@ const DashboardOverview = ({ location }) => {
         console.log(error);
       });
   }, [location]);
- 
+
   const CATEGORY_COLORS = {
     "Bag": "#B1E6F3",
     "Watch": "#72DDF7",
@@ -118,12 +121,12 @@ const DashboardOverview = ({ location }) => {
                     textAlign: 'center',
                     p: { xs: 5, sm: 5, md: 3.6, lg: 5 },
                     bgcolor: "#AFDBF5",
-                    position: 'relative', 
+                    position: 'relative',
                   }}
                   onMouseEnter={() => setHovered(true)}
                   onMouseLeave={() => setHovered(false)}
                 >
-                
+
                   {hovered && (
                     <div
                       className="popup"
@@ -146,11 +149,11 @@ const DashboardOverview = ({ location }) => {
 
                   {/* Link for Claim Requests */}
                   <Link
-                    to="Claim Requests" 
+                    to="Claim Requests"
                     style={{
-                      textDecoration: 'none', 
+                      textDecoration: 'none',
                       color: 'inherit',
-                      zIndex: 2, 
+                      zIndex: 2,
                       position: 'relative',
                     }}
                   >
@@ -241,7 +244,7 @@ const DashboardOverview = ({ location }) => {
                         <Box
                           sx={{
                             width: 16,
-                            height: 16,  
+                            height: 16,
                             backgroundColor: CATEGORY_COLORS[entry.name],
                             borderRadius: '50%',
                             marginRight: 1,
@@ -268,18 +271,18 @@ const DashboardOverview = ({ location }) => {
             <Typography variant="h6" sx={{ mb: 2 }}>Request Trends</Typography>
             <ResponsiveContainer width="100%" height={300}>
               {(chartDataLocations.includes(location) ?
-                  (
-                    <BarChart
-                      xAxis={[{ scaleType: 'band', data: ['Week', 'Month', '6 Months', '1 Year', 'Above 1 Year'] }]}
-                      series={chartItemsData}
-                      width={400}
-                      height={400}
-                    />
-                  ) :
-                  (<Typography variant='h6' sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a04000 ' }}>
-                    No data found
-                  </Typography>)
-                )
+                (
+                  <BarChart
+                    xAxis={[{ scaleType: 'band', data: ['Week', 'Month', '6 Months', '1 Year', 'Above 1 Year'] }]}
+                    series={chartItemsData}
+                    width={400}
+                    height={400}
+                  />
+                ) :
+                (<Typography variant='h6' sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a04000 ' }}>
+                  No data found
+                </Typography>)
+              )
               }
             </ResponsiveContainer>
           </Paper>

@@ -8,6 +8,7 @@ import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined';impo
 import Default from './Default';
 import CustomBreadcrumbs from './CustomBreadcrumbs';
 import Claims from '../Admin/Claims';
+import ExpiredItems from '../Admin/ExpiredItems';
 import Upload from '../Admin/Upload';
 import ClaimStatus from '../User/ClaimStatus';
 import ClaimHistory from '../User/ClaimHistory';
@@ -19,6 +20,7 @@ import UploadPhotos from '../Admin/uploadPhotosApi4';
 import { ListItemIcon } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccounts';
+import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore';
 
 function Home() {
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
@@ -197,21 +199,6 @@ const getRelatedImages = () => {
   );
 };
 
-const userClaims = [
-  {
-    itemDescription: 'Pink Floral Sling Bag',
-    identifiedDate: '2024-10-27',
-    status: 'Pending',
-    resolved: false,
-  },
-  {
-    itemDescription: 'Black Leather Wallet',
-    identifiedDate: '2024-10-10',
-    status: 'Completed',
-    resolved: false,
-  },
-];
-  
   const renderAdminForms = () => (
     <>
         <ListItem disablePadding sx={{color:'#fff'}} component={Link} to=""
@@ -262,7 +249,20 @@ const userClaims = [
             </ListItemIcon>
             <ListItemText primary="Claim Requests"  />
           </ListItemButton>
-      </ListItem>     
+      </ListItem> 
+      
+      <ListItem disablePadding
+        sx={{ color: '#fff' }}
+        component={Link} to="Expired Items"
+        onClick={(event) => handleClick(event, 'claims')}
+      >
+        <ListItemButton >
+          <ListItemIcon sx={{ color: '#fff' }}>
+            <SettingsBackupRestoreIcon />
+          </ListItemIcon>
+          <ListItemText primary="Expired Items" />
+        </ListItemButton>
+      </ListItem> 
     </>
   );
 
@@ -443,8 +443,9 @@ const userClaims = [
           <Route path='/' element={<Default isDrawerOpen={isDrawerOpen} tabChange={setTab} /> } />
           <Route path='Identified Items' element={<UploadPhotos isDrawerOpen={isDrawerOpen} />} />
           <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Expired Items' element={<ExpiredItems isDrawerOpen={isDrawerOpen} />} />
           <Route path='Search Lost Item' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
-          <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} />
+          {/* <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} /> */}
           <Route path='Identified Items/View' element={<View isDrawerOpen={isDrawerOpen} />} />
           <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
           <Route path='View All Lost Item Requests' element={<ClaimStatus uploadedItems={uploadedItems} userName={userData.name} isDrawerOpen={isDrawerOpen} tabChange={tab} />} />
