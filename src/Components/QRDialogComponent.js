@@ -36,7 +36,7 @@ const QRDialogComponent = ({ open, onClose, qrData, binaryData }) => {
         const printWindow = window.open('', '', 'width=600,height=600');
 
         // Construct the HTML content for printing only the barcode section
-        printWindow.document.write('<html><head><title>Print QR Code</title><style>');
+        printWindow.document.write('<html><head><title>Print Item Code</title><style>');
         printWindow.document.write(`
           body {
             font-family: Arial, sans-serif;
@@ -58,19 +58,19 @@ const QRDialogComponent = ({ open, onClose, qrData, binaryData }) => {
         `);
         printWindow.document.write('</style></head><body>');
         
-        printWindow.document.write('<h3>Item QR Code:</h3>');
+        printWindow.document.write('<h3>Item Code:</h3>');
         
         // QR Code Div
         if (binaryData) {
           const qrDiv = `
             <div class="qr-container">
-              <img src="${binaryData}" alt="QR Code" />
+              <img src="${binaryData}" alt="Item Code" />
             </div>
           `;
           printWindow.document.write(qrDiv);
         }      
                 
-        printWindow.document.write('<p><strong>QR Code Data:</strong></p>');
+        printWindow.document.write('<p><strong>Item Code Value:</strong></p>');
         printWindow.document.write(`<p>${firstLine}<br>${secondLine}</p>`);
         
         printWindow.document.write('</body></html>');
@@ -103,7 +103,7 @@ const QRDialogComponent = ({ open, onClose, qrData, binaryData }) => {
               You can now print the QR code for reference.
             </Typography>  
             <Typography variant="body1" sx={{ fontSize: 16, fontWeight: 'bold', marginTop: 1, textAlign:'center' }}>
-              QR Code:                          
+              Item Code:                          
             </Typography> 
 
             {/* QR Code Canvas */}
@@ -113,7 +113,7 @@ const QRDialogComponent = ({ open, onClose, qrData, binaryData }) => {
     
             <Box display="flex">
              <Typography variant="body1" sx={{ fontSize: 16, fontWeight: 'bold', marginTop: 2, marginLeft:2, width:115 }}>
-              QR Code Data:                          
+              Item Code Value:                          
             </Typography>
             <Typography variant="body1" sx={{ fontSize: 16, marginTop: 2 }}>              
                 {firstLine}
@@ -162,7 +162,7 @@ const QRDialogComponent = ({ open, onClose, qrData, binaryData }) => {
           variant="contained"
           sx={{ marginRight: 2 }}
         >
-          Print QR Code
+          Print Item Code
         </Button>
         <Button
           onClick={onClose}

@@ -101,8 +101,7 @@ const Claims = ({ isDrawerOpen, qrData }) => {
   }, [isDrawerOpen]);
 
   const calculateDaysAgo = (createdDate, updatedDate) => {
-    const startDate = dayjs(createdDate);
-    console.log("Testing dayjs", dayjs(createdDate), createdDate);
+    const startDate = dayjs(createdDate);    
     const endDate = updatedDate ? dayjs(updatedDate) : dayjs(); // Use updatedDate or current date if not provided
 
     const diffInMinutes = endDate.diff(startDate, 'minute');
@@ -168,7 +167,7 @@ const Claims = ({ isDrawerOpen, qrData }) => {
     if (selectedItemId) {
       try {
         const response = await axios.put(`http://172.17.31.61:5291/api/LostItemRequest/${selectedItemId}`, selectedClaim);
-        console.log('Updated claim:', response.data);
+        // console.log('Updated claim:', response.data);
         // alert('Form submitted successfully!');
         setDialog(true);
         if (response.status === 200) {
@@ -680,10 +679,13 @@ marginTop: '30px',
 }}
 />
 
-<QRCodeCanvas
-value={qrData}
-size={150}
-/>
+
+  
+  <QRCodeCanvas
+  value={selectedItem.qrCodeContent}
+  size={150}
+  />
+
 </Box>
 
                     <CardContent sx={{ flex: 2, fontFamily: 'Lato' }}>

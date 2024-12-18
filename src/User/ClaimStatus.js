@@ -8,6 +8,8 @@ import DateFormat from '../Components/DateFormat';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import { QRCodeCanvas } from 'qrcode.react';
+//import QrReader from 'react-qr-scanner';
 
 const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
   const [marginLeft, setMarginLeft] = useState(100);
@@ -485,11 +487,12 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                     }}
                   >
                     <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'space-between',
-                        flex: 1,
+                     sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flex: 1,
                       }}
                     >
                       <ImageDisplay
@@ -505,6 +508,11 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                           marginLeft: '60px',
                         }}
                       />
+
+                      <QRCodeCanvas
+                        value={selectedItem.qrCodeContent}
+                        size={150}
+                        />
                     </Box>
 
                     <CardContent sx={{ flex: 2 }}>

@@ -109,6 +109,13 @@ const ExpiredItems = ({ isDrawerOpen }) => {
                 );
 
                 if (response.status === 200) {
+                    setUserClaims((prevClaims) =>
+                        prevClaims.map((claim) =>
+                        claim.id === selectedItemId
+                        ? { ...claim, donated: true }
+                        : claim
+                        )
+                        );
                     setMessage('Donated status updated successfully!');
                     setSeverity('success');
                     setSnackbarOpen(true);
@@ -139,6 +146,13 @@ const ExpiredItems = ({ isDrawerOpen }) => {
                 );
 
                 if (response.status === 200) {
+                    setUserClaims((prevClaims) =>
+                        prevClaims.map((claim) =>
+                        claim.id === selectedItemId
+                        ? { ...claim, donated: false }
+                        : claim
+                        )
+                        );
                     setMessage('Donated status updated successfully!');
                     setSeverity('success');
                     setSnackbarOpen(true);

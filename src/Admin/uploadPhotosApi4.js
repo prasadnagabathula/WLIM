@@ -120,6 +120,8 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
             const itemDesc = iaResult.captionResult.text;
             setItemDescription(itemDesc);            
         }
+        //Remove after AI works
+        setItemDescription(comments);                      
 
         let denseCaption = [];
         if (iaResult.denseCaptionsResult) {         
@@ -347,11 +349,15 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
       return;
     }
 
+    
+    setItemDescription(comments);              
+    
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('category', category);
     formData.append('tags', tags);
-    formData.append('itemDescription', itemDescription);
+   
+    formData.append('itemDescription', comments);
     formData.append('comments', comments);
     formData.append('warehouseLocation', location);
     formData.append('identifiedLocation', identifiedLocation);
@@ -372,9 +378,9 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
         setQrGeneratedAt(response.data.qrGeneratedAt)
         setQrSequenceNumber(response.data.qrSequenceNumber)
         // console.log(response.data.qrSequenceNumber);
-        setQrData(response.data.itemId+response.data.qrGeneratedAt+response.data.qrSequenceNumber); 
-        console.log(qrData);       
-        generateQRCode(response.data.itemId+response.data.qrGeneratedAt+response.data.qrSequenceNumber);       
+        setQrData(response.data.qrCodeContent); 
+        //console.log(qrData);       
+        generateQRCode(response.data.qrCodeContent);       
         setDialogOpen(true);
 
         setMessage('Item details uploaded successfully!');
@@ -602,7 +608,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
               )}
 
               {/* Hidden canvas for photo capture */}
-              {/* <canvas ref={PictureRef} style={{ display: 'none' }} width={500} height={375}></canvas> */}
+               <canvas ref={PictureRef} style={{ display: 'none' }} width={500} height={375}></canvas>
           </Box>
           <Box
             sx={{
