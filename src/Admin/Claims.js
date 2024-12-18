@@ -139,7 +139,7 @@ const Claims = ({ isDrawerOpen, qrData }) => {
       }
     };
     if (userName) fetchClaims(); // Fetch claims only if `userName` is set
-  }, [userName]);
+  }, [userName, uploadedItems]);
 
   // const handleSubmit = async () => {
   //   if (currentClaimReq.id) {
@@ -169,6 +169,11 @@ const Claims = ({ isDrawerOpen, qrData }) => {
         const response = await axios.put(`http://172.17.31.61:5291/api/LostItemRequest/${selectedItemId}`, selectedClaim);
         // console.log('Updated claim:', response.data);
         // alert('Form submitted successfully!');
+        setUploadedItems(prevItems =>
+          prevItems.map(item =>
+          item.id === selectedItemId ? { ...item, ...selectedClaim } : item
+          )
+          );
         setDialog(true);
         if (response.status === 200) {
           setMessage('Updated successfully!');

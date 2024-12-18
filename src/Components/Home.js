@@ -5,6 +5,7 @@ import DriveFolderUploadOutlinedIcon from '@mui/icons-material/DriveFolderUpload
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import LibraryAddOutlinedIcon from '@mui/icons-material/LibraryAddOutlined';import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import Default from './Default';
 import CustomBreadcrumbs from './CustomBreadcrumbs';
 import Claims from '../Admin/Claims';
@@ -21,6 +22,7 @@ import { ListItemIcon } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccounts';
 import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore';
+import ConfirmReceipt from '../User/ConfirmReceipt';
 
 function Home() {
     const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
@@ -280,6 +282,18 @@ const getRelatedImages = () => {
     <ListItemText primary="Search Lost Item" />
     </ListItemButton>
     </ListItem>
+
+    <ListItem disablePadding
+    sx={{color:'#fff'}}
+    component={Link} to="Scan To Confirm"    
+    >
+    <ListItemButton >
+    <ListItemIcon sx={{color:'#fff'}}>
+    <QrCodeScannerIcon />
+    </ListItemIcon>
+    <ListItemText primary="Scan To Confirm" />
+    </ListItemButton>
+    </ListItem>
     
     <ListItem disablePadding
     sx={{color:'#fff'}}
@@ -445,6 +459,7 @@ const getRelatedImages = () => {
           <Route path='Claim Requests' element={<Claims isDrawerOpen={isDrawerOpen} />} />
           <Route path='Expired Items' element={<ExpiredItems isDrawerOpen={isDrawerOpen} />} />
           <Route path='Search Lost Item' element={<ItemLostRequest onRequestSubmit={handleRequestSubmit} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
+          <Route path='Scan To Confirm' element={<ConfirmReceipt onRequestSubmit={handleRequestSubmit} userName={userData.name} isDrawerOpen={isDrawerOpen} />} />
           {/* <Route path='View All Requests/Claim History' element={<ClaimHistory userClaims={userClaims} isDrawerOpen={isDrawerOpen} />} /> */}
           <Route path='Identified Items/View' element={<View isDrawerOpen={isDrawerOpen} />} />
           <Route path='Item Details' element={<ItemDetails isDrawerOpen={isDrawerOpen} />} />
