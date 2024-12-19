@@ -272,7 +272,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     reader.onloadend = async () => {
       const arrayBuffer = reader.result; // Binary data of the file
       const uint8Array = new Uint8Array(arrayBuffer);
-      // await analyzeImageFromBinary(uint8Array); // Call analysis function
+      await analyzeImageFromBinary(uint8Array); // Call analysis function
     };
 
     reader.readAsArrayBuffer(file); // Read file as binary data
