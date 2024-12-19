@@ -8,8 +8,6 @@ import DateFormat from '../Components/DateFormat';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
-import { QRCodeCanvas } from 'qrcode.react';
-//import QrReader from 'react-qr-scanner';
 
 const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
   const [marginLeft, setMarginLeft] = useState(100);
@@ -72,7 +70,8 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
   const pendingClaims = uploadedItems.filter(item => item.status === "Claimed");
   const resolvedClaims = uploadedItems.filter(item => !item.isActive);
   const approvedClaims = uploadedItems.filter(item => item.status === "Approve");
-  const receivedClaims = uploadedItems.filter(item => item.status === "Received");
+  const receivedClaims = uploadedItems.filter(item => item.status === "Returned");
+  const rejectedClaims = uploadedItems.filter(item => item.status === "Reject");
 
   return (
     <Box sx={{
@@ -152,6 +151,18 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                 sx={{
                   color: value === 2 ? '#4CAF50' : '#888',
                   fontWeight: value === 2 ? 'bold' : 'normal',
+                }}
+              />
+              <Tab
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <ThumbUpAltIcon sx={{ color: value === 3 ? '#4CAF50' : '#888' }} />
+                    Rejected
+                  </Box>
+                }
+                sx={{
+                  color: value === 3 ? '#4CAF50' : '#888',
+                  fontWeight: value === 3 ? 'bold' : 'normal',
                 }}
               />
             </Tabs>
@@ -381,7 +392,83 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                             rowGap: 1.5,
                             columnGap: 2,
                           }}>
-                            <b>Status:</b>{item.status}
+                            <b>Status:</b>{item.status === "Returned" ? "Received" : "Approved"}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  );
+                })
+              )}
+            </Grid>
+          )}
+
+          {value === 3 && (
+            <Grid container spacing={3} justifyContent={rejectedClaims.length === 0 ? "center" : "flex-start"}>
+              {rejectedClaims.length === 0 ? (
+                <Typography sx={{ mt: 6 }}>No Rejected claims.</Typography>
+              ) : (
+                rejectedClaims.map((item, index) => {
+                  const cardBackgroundColor = item.isActive ? '#C1E1C1' : '#C1E1C1';
+                  const cardHoverColor = item.isActive ? '#A5D6A7' : '#A5D6A7';
+                  return (
+                    <Grid item xs={12} sm={6} md={4} key={index}>
+                      <Card
+                        sx={{
+                          cursor: 'pointer',
+                          boxShadow: 3,
+                          height: '230px',
+                          backgroundColor: cardBackgroundColor,
+                          '&:hover': {
+                            backgroundColor: cardHoverColor,
+                          },
+                        }}
+                        onClick={() => handleCardClick(item)}
+                      >
+                        <CardMedia>
+                          <ImageDisplay
+                            imageId={item.itemPhoto}
+                            style={{
+                              width: '100px',
+                              height: '100px',
+                              objectFit: 'cover',
+                              margin: '15px 0px 0px 0px',
+                            }}
+                          />
+                        </CardMedia>
+                        <CardContent>
+                          <Typography sx={{
+                            textAlign: 'left',
+                            margin: '0px 10px',
+                            display: '-webkit-box',
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            WebkitLineClamp: 2,
+                            textOverflow: 'ellipsis',
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2,
+                          }}>
+                            <b>Description:</b> <span style={{
+                              display: '-webkit-box',
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              WebkitLineClamp: 2,
+                              textOverflow: 'ellipsis',
+                            }}>
+                              {item.description}
+                            </span>
+                          </Typography>
+                          <Typography sx={{
+                            textAlign: 'left',
+                            margin: '0px 10px',
+                            display: 'grid',
+                            gridTemplateColumns: '80px auto',
+                            rowGap: 1.5,
+                            columnGap: 2,
+                          }}>
+                            <b>Status:</b>{item.status === "Reject" ? "Rejected" : "Pending"}
                           </Typography>
                         </CardContent>
                       </Card>
@@ -487,12 +574,11 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                     }}
                   >
                     <Box
-                     sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flex: 1,
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'space-between',
+                        flex: 1,
                       }}
                     >
                       <ImageDisplay
@@ -508,11 +594,6 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                           marginLeft: '60px',
                         }}
                       />
-
-                      <QRCodeCanvas
-                        value={selectedItem.qrCodeContent}
-                        size={150}
-                        />
                     </Box>
 
                     <CardContent sx={{ flex: 2 }}>
@@ -588,7 +669,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                           <b>Status:</b>
                         </Typography>
                         <Typography sx={{ fontSize: '20px' }}>
-                          {selectedItem.status === 'Approve' ? 'Approve' : 'Pending'}
+                          {selectedItem.status === 'Approve' ? 'Approve' : (selectedItem.status === 'Reject' ? "Rejected" : "Pending")}
                         </Typography>
                       </Box>
                     </CardContent>

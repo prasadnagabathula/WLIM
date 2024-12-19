@@ -132,7 +132,7 @@ const Claims = ({ isDrawerOpen, qrData }) => {
         setUploadedItems(userClaims);
         setClaim(userClaims.filter(data => data.status === "Claimed"));
         setApproved(userClaims.filter(data => data.status === "Approve"));
-        setReturned(userClaims.filter(data => data.status === "Resolved"));
+        setReturned(userClaims.filter(data => data.status === "Returned"));
         setReject(userClaims.filter(data => data.status === "Reject"));
       } catch (error) {
         console.error('Error fetching claims:', error);
@@ -755,6 +755,15 @@ marginTop: '30px',
                           <DateFormat date={selectedItem.createdDate} />
                         </Typography>
 
+                        {selectedItem.status === "Returned" && (
+                          <>
+                            <Typography variant="h6"><b>Status:</b></Typography>
+                            <Typography sx={{ fontSize: '20px' }}>
+                              {selectedItem.status}
+                            </Typography>
+                          </>
+                        )}
+                        
                         {selectedItem.status === "Approve" && (
                           <>
                             <Typography variant="h6"><b>Status:</b></Typography>
