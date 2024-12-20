@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
-import { InputLabel, Box, Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, Typography, TextField, Button, Grid, Snackbar, Alert, FormControl, Select, MenuItem, Paper, Divider } from '@mui/material';
+import { InputLabel, Box, CardMedia, Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, Typography, TextField, Button, Grid, Snackbar, Alert, FormControl, Select, MenuItem, Paper, Divider } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { height, styled } from '@mui/system';
 import ImageDisplay from '../imageDisplay';
 import _ from 'lodash';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 function ConfirmReceipt({ isDrawerOpen, userName }) {
   const [marginLeft, setMarginLeft] = useState(100);
@@ -21,6 +22,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
   const [category, setCategory] = useState('');
   const [tags, setTags] = useState();
   const [itemDescription, setItemDescription] = useState(null);
+  const [itemPhoto, setItemPhoto] = useState(null);
   const [itemobject, setItemobject] = useState([]);
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
   const [selectedItemDetails, setSelectedItemDetails] = useState({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
@@ -28,12 +30,11 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
   const [severity, setSeverity] = useState('success');
   const [location, setLocation] = useState('');
   const [locationOptions, setLocationOptions] = useState([]);
+  
 
   const [marginRight, setMarginRight] = useState(100);
 
-  // Azure Computer Vision API endpoint and key
-  const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
-  const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
+ 
 
   const [currentItemLostRequest, setCurrentItemLostRequest] = useState({
     description: '',
@@ -97,34 +98,6 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
     setItemSelected(false);
   };
 
-  const analyzeImage = async (imageData, file) => {
-    const apiUrl = `${endpoint}/vision/v3.1/analyze?visualFeatures=Categories,Description,Objects`;
-
-    try {
-      const response = await axios.post(apiUrl, imageData, {
-        headers: {
-          'Ocp-Apim-Subscription-Key': subscriptionKey,
-          'Content-Type': 'application/octet-stream',
-        },
-      });
-
-      if (response.status === 200) {
-        {
-          const imageTags = response.data.description.tags;
-          setImageTags(imageTags);
-          setItemDescription(response.data.description.captions[0].text);
-          const itemDesc = response.data.description.captions[0].text;
-          const objects = response.data.objects;
-          const objectCategory = objects && objects.length > 0 ? objects[0].object : "unknown";
-          searchImage(file, imageTags, itemDesc, objectCategory);
-        }
-      } else {
-        console.log('Error analyzing image');
-      }
-    } catch (error) {
-      console.error('Error analyzing image:', error);
-    }
-  };
 
 
   const ThumbnailBox = styled(Box)(({ theme }) => ({
@@ -201,7 +174,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
         const imageUrl = URL.createObjectURL(file);
         setUploadedImage(imageUrl);
         const arrayBuffer = reader.result;
-        analyzeImage(arrayBuffer, file);
+       // analyzeImage(arrayBuffer, file);
       };
       reader.readAsArrayBuffer(file);
     }
@@ -428,6 +401,88 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
     },
   };
 
+  const [qrValue, setQrValue] = useState("");
+  const scannerRef = useRef(null);
+
+  const startScanner = () => {
+    if (scannerRef.current) {
+      scannerRef.current.clear(); // Clear the previous instance
+    }
+
+    const scanner = new Html5QrcodeScanner("reader", {
+      fps: 10,
+      qrbox: { width: 250, height: 250 },
+    });
+
+    scanner.render(
+      (decodedText) => {
+        setQrValue(decodedText);
+        getItemDetails();
+        scanner.clear(); // Stop the scanner after scanning
+        scannerRef.current = null;
+      },
+      (error) => {
+        console.error("QR Code Scan Error:", error);
+      }
+    );
+
+    scannerRef.current = scanner;
+  };
+
+  useEffect(() => {
+    startScanner();
+    return () => {
+      if (scannerRef.current) {
+        scannerRef.current.clear();
+      }
+    };
+  }, []);
+
+  const handleReset = () => {
+    setQrValue("");
+    startScanner(); // Restart the scanner
+  };
+
+  const getItemDetails = async () => 
+  {
+    const itemId = qrValue.substring(0,36);    
+
+    try {
+      //const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
+        const response = await fetch(`http://localhost:7298/api/getById/${itemId}`, {
+        
+        method: 'GET',
+      });
+
+      if (response.status === 200) {
+        const result = await response.json();
+
+        
+        setItemDescription(result.itemDescription);
+        setItemPhoto(result.itemPhoto)
+        //const filePaths = result.map(item => item.filePath);
+
+        // const filePaths = result.map(item => ({
+        //   id: item.id,
+        //   itemDescription: item.itemDescription,
+        //   comments: item.comments,
+        //   warehouseLocation: item.warehouseLocation,
+        //   filePath: item.filePath
+        // }));
+
+        // setResults(filePaths || []);
+       // setResultResponseMessage(result.message);
+      } else {
+        setResultResponseMessage('No matching images found');
+        setItemSelected(false);
+      }
+    } catch (error) {
+      console.error('Error during fetch:', error);
+      setResultResponseMessage('Error occurred while fetching data');
+    }
+
+  }
+
   return (
     <Box sx={{
       display: 'flex',
@@ -445,7 +500,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
         fontWeight: 'bold',
         mt:2
       }}>
-      Search Lost Item
+      Scan to Confirm
       </Typography>
       <Divider sx={{ 
         width: '90%', 
@@ -468,274 +523,90 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
           }}
         >
           <FormControl sx={{ width: { xs: '250px', sm: '400px', md: '250px' },marginTop: '10px', mb: 3 }}>
-            <InputLabel id="location-label">Location</InputLabel>   
-            <Select
-              labelId="location-label"
-              id="location"
-              value={location}
-              onChange={(e) => {
-                setLocation(e.target.value); 
-                setResults([]); 
-                setSearchText(''); 
-                setSelectedThumbnail(null); 
-              }}
-              label="Location"
-            >
-              {locationOptions.map((loc, index) => (
-                <MenuItem key={index} value={loc}>
-                  {loc}
-                </MenuItem>
-              ))}
-            </Select>
+          <Box sx={{ padding: 3, textAlign: "center", maxWidth: "400px", margin: "0 auto" }}>
+              <InputLabel
+                id="location-label"
+                sx={{ fontSize: "1.2rem", fontWeight: "bold", marginBottom: 2 }}
+              >
+                Scan QR
+              </InputLabel>
+
+              <Box
+                id="reader"
+                sx={{
+                  margin: "20px auto",
+                  width: "300px",
+                  height: "300px",
+                  border: "2px dashed #1976d2",
+                  borderRadius: "8px",
+                  position: "relative",
+                  backgroundColor: "#f9f9f9",
+                }}
+              ></Box>
+
+              {qrValue && (
+                <Box sx={{ marginTop: 3, textAlign: "center" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ marginBottom: 2, color: "#333", fontWeight: "bold" }}
+                  >
+                    Details:
+                  </Typography>
+                  <Typography
+                    sx={{
+                      padding: "10px 15px",
+                      backgroundColor: "#f0f0f0",
+                      borderRadius: "8px",
+                      border: "1px solid #ccc",
+                      display: "inline-block",
+                      fontFamily: "monospace",
+                      fontSize: "1rem",
+                    }}
+                  >
+                    {itemDescription}
+                  </Typography>
+                  {/* <CardMedia>
+                            <ImageDisplay imageId={itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
+                          </CardMedia> */}
+                </Box>
+              )}
+
+              <Box sx={{ marginTop: 4, display: "flex", justifyContent: "center", gap: 2 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    padding: "10px 20px",
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    textTransform: "none",
+                  }}
+                  onClick={() => alert("Confirm action triggered!")}
+                >
+                  Confirm
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  sx={{
+                    padding: "10px 20px",
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    textTransform: "none",
+                  }}
+                  onClick={handleReset}
+                >
+                  Reset
+                </Button>
+              </Box>
+            </Box>
           </FormControl>
 
-          <Button
-            variant="contained"
-            component="label"
-            fullWidth
-            startIcon={!uploadedImage && <CloudUploadIcon />}
-            sx={{
-              width: '250px',
-              height: '250px',
-              border: '2px dashed #888',
-              borderRadius: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: uploadedImage ? 'transparent' : '#fff',
-              backgroundImage: uploadedImage ? `url(${uploadedImage})` : 'none',
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              cursor: 'pointer',
-              marginTop: '10px',
-              marginBottom: '20px',
-              color: 'black',
-              transition: 'all 0.3s ease-in-out',
-              '&:hover': {
-                border: '2px dashed #333',
-              },
-            }}
-          >
-            {!uploadedImage && 'Search by Photo'}
-            <input
-              id="upload-image"
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={handleImageChange}
-            />
-          </Button>
+         
         </Box>
-
-        {/* </Grid> */}
-        {/* <Grid item xs={6}> */}
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'center'
-        }}>
-          <Box component='form' sx={{
-            width: { xs: '90%', sm: '90%' },
-          }}>
-            <Box sx={{
-              flex: "1",
-              display: "flex",
-              flexDirection: "column",
-              // alignItems: "flex-start",
-              width: { xs: '100%', sm: '100%', md: 500 },
-              height: '100%',
-            }}>
-              <TextField
-                label="Search"
-                variant="outlined"
-                fullWidth
-                value={searchText}
-                onChange={handleSearchChange}
-                style={{ marginBottom: '20px', marginTop: '10px' }}
-              />
-              {/* Display results count */}
-              {searchText && (
-                <Typography variant="body2" color="textSecondary" style={{ marginBottom: '20px', color: '#89023e' }}>
-                  {results.length > 0 ? `Showing ${results.length} result${results.length > 1 ? 's' : ''}` : 'No results found'}
-                </Typography>
-              )}
-              <Box
-                display="flex"
-                flexWrap="wrap"
-                justifyContent="center"
-                sx={{
-                  backgroundColor: '#eee',
-                  maxHeight: '270px',
-                  overflowY: 'auto',
-                  '&::-webkit-scrollbar': {
-                    width: '5px',
-                  },
-                  '&::-webkit-scrollbar-thumb': {
-                    backgroundColor: '#0d416b',
-                    borderRadius: '4px',
-                  },
-                  '&::-webkit-scrollbar-track': {
-                    backgroundColor: 'lightgrey',
-                  },
-                }}
-              >
-                {results.length > 0 ? (results.map((item, index) => (
-                  <Box key={index} position="relative">
-                    <ThumbnailBox onClick={
-                      //() => handleMouseEnter(img, index),
-                      () => handleThumbnailClick(item)
-                    }
-                      style={{
-                        border: selectedThumbnail === item.filePath ? '2px solid #2196F3' : 'none', // Highlight selected thumbnail
-                      }}
-                    >
-                      <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
-                    </ThumbnailBox>
-
-                    {/* Hovered Image Popup */}
-                    {/* {hoveredImage && hoveredIndex === index && (
-                          <HoveredImagePopup>
-                            <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
-                          </HoveredImagePopup>
-                        )} */}
-
-
-                  </Box>
-
-                ))) : <Typography>{resultResponseMessage}</Typography>}
-              </Box>
-
-              {itemSelected && (<Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                width: '100%',
-                mt: 2
-              }}  >
-                <Box 
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column', // Stacks the items in rows
-                    alignItems: 'flex-start', // Aligns items to the start of the box
-                    fontFamily: 'Lato',                    
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#229954', }}>
-                    <DoneAllIcon />
-                    <Typography variant="body1" component="div" fontWeight="bold">
-                      Selected Item:
-                    </Typography>                    
-                  </Box>
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body1" component="div" fontWeight="bold">
-                      Description:
-                    </Typography>
-                    <Typography variant="body1" component="span">
-                      {selectedItemDetails.itemDescription}
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body1" component="div" fontWeight="bold">
-                      Comments:
-                    </Typography>
-                    <Typography variant="body1" component="span">
-                      {selectedItemDetails.comments}
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body1" component="div" fontWeight="bold">
-                      Warehouse Location:
-                    </Typography>
-                    <Typography variant="body1" component="span">
-                      {selectedItemDetails.warehouseLocation}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box height="40px" sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  width: '100%',
-                  mt: 2
-                }} >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleDialogOpen}
-                    disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
-                    width="300px"
-                  >
-                    Claim the Item
-                  </Button>
-                </Box>
-              </Box>
-              )}
-            </Box>
-          </Box>
         </Box>
-      </Box>
-
+    
       </Paper>
-      
-      <Dialog
-        open={snackbarOpen}
-        onClose={handleCloseSnackbar}
-        sx={{ height: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <DialogTitle>Alert</DialogTitle>
-        <DialogContent sx={{ width: { xs: '300px', sm: '300px', md: '500px' } }}>
-          <Alert severity={severity}>{responseMessage}</Alert>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseSnackbar} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={dialogOpen} onClose={handleDialogClose} PaperProps={{ sx: dialogPaperStyles }}>
-      <DialogTitle sx={dialogTitleStyles}>Fill in the Details Below</DialogTitle>
-      <DialogContent sx={dialogContentStyles}>
-        {[ 
-          { label: 'Description', name: 'description', maxLength: 50 },
-          { label: 'Color', name: 'color', maxLength: 50 },
-          { label: 'Brand', name: 'brand', maxLength: 50 },
-          { label: 'Distinguishing Features', name: 'distinguishingFeatures', maxLength: 100 },
-          { label: 'Date and Time of Loss', name: 'dateTimeWhenLost', type: 'datetime-local' },
-          { label: 'Location / Area of Loss', name: 'location', maxLength: 100 },
-          { label: 'Other Details for Communication', name: 'otherRelevantDetails', maxLength: 200 },          
-          { label: 'Address', name: 'address', maxLength: 500 },          
-        ].map(({ label, name, maxLength, type = 'text', inputProps = {} }) => (
-          <React.Fragment key={name}>
-            <InputLabel>{label}</InputLabel>
-            <TextField
-              margin="dense"
-              name={name}
-              value={currentItemLostRequest[name]}
-              onChange={handleChange}
-              fullWidth
-              inputProps={{ maxLength, ...inputProps }}
-              type={type}
-              sx={textFieldStyles}
-            />
-          </React.Fragment>
-        ))}
-      </DialogContent>
-      <DialogActions sx={dialogActionsStyles}>
-        <Button onClick={handleDialogClose} color="secondary" sx={cancelButtonStyles}>
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit}
-          sx={submitButtonStyles}
-        >
-          Submit
-        </Button>
-      </DialogActions>
-    </Dialog>
     </Box>
   );
 }
