@@ -686,10 +686,12 @@ marginTop: '30px',
 
 
   
+ { selectedItem.proofofOwnership && (
   <QRCodeCanvas
-  value={selectedItem.qrCodeContent}
-  size={150}
-  />
+    value={selectedItem.proofofOwnership}
+    size={150}
+  />) 
+  }
 
 </Box>
 
