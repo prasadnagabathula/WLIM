@@ -1,40 +1,24 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { InputLabel, Box, CardMedia, Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, Typography, TextField, Button, Grid, Snackbar, Alert, FormControl, Select, MenuItem, Paper, Divider } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { height, styled } from '@mui/system';
-import ImageDisplay from '../imageDisplay';
+import { InputLabel, Box, Typography, Button,  FormControl, Paper, Divider } from '@mui/material';
+
+import { styled } from '@mui/system';
 import _ from 'lodash';
-import DoneAllIcon from '@mui/icons-material/DoneAll';
 import { Html5QrcodeScanner } from "html5-qrcode";
+import {  useLocation } from 'react-router-dom';
 
 function ConfirmReceipt({ isDrawerOpen, userName }) {
-  const [marginLeft, setMarginLeft] = useState(100);
-  const [itemLostRequests, setItemLostRequests] = useState([]); 
-
   const [results, setResults] = useState([]);
-  const [imageTags, setImageTags] = useState([]);
-  const [searchText, setSearchText] = useState('');
-  const [hoveredImage, setHoveredImage] = useState(null); // To store hovered thumbnail image
-  const [hoveredIndex, setHoveredIndex] = useState(null); // Track which thumbnail is hovered
-  const [message, setMessage] = useState('');
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [category, setCategory] = useState('');
-  const [tags, setTags] = useState();
+  const [marginLeft, setMarginLeft] = useState(100);
+  const [hoveredImage, ] = useState(null); // To store hovered thumbnail image
   const [itemDescription, setItemDescription] = useState(null);
-  const [itemPhoto, setItemPhoto] = useState(null);
-  const [itemobject, setItemobject] = useState([]);
-  const [selectedThumbnail, setSelectedThumbnail] = useState(null);
-  const [selectedItemDetails, setSelectedItemDetails] = useState({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
-  const [itemSelected, setItemSelected] = useState(false);
-  const [severity, setSeverity] = useState('success');
   const [location, setLocation] = useState('');
-  const [locationOptions, setLocationOptions] = useState([]);
-  
+  const [itemIdValue, setItemIdValue] = useState('');
+  const [severity, setSeverity] = useState('success');
+  const [itemPhoto, setItemPhoto] = useState(null);
+  const [itemSelected, setItemSelected] = useState(false);
 
   const [marginRight, setMarginRight] = useState(100);
-
- 
 
   const [currentItemLostRequest, setCurrentItemLostRequest] = useState({
     description: '',
@@ -45,9 +29,9 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
     distinguishingFeatures: '',
     itemCategory: '',
     serialNumber: '',
-    dateTimeWhenLost: '',
+    dateTimeWhenLost: null,
     location: '',
-    itemValue: '',
+    itemValue: null,
     itemPhoto: '',
     proofOfOwnership: '',
     howTheItemLost: '',
@@ -58,6 +42,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
     requestedBy: userName,
     claimId:'',
   });
+
   const [uploadedImage, setUploadedImage] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [resultResponseMessage, setResultResponseMessage] = useState('');
@@ -65,73 +50,39 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const handleDialogOpen = () => setDialogOpen(true);
   const handleDialogClose = () => setDialogOpen(false);
+  
 
-
-  useEffect(() => {
-    const fetchItemLostRequests = async () => {
-      try {
-        //const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
-        const response = await axios.get('http://localhost:7237/api/LostItemRequest');
+  // useEffect(() => {
+  //   const fetchItemLostRequests = async () => {
+  //     try {
+  //       //const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
+  //       const response = await axios.get('http://localhost:7237/api/LostItemRequest');
         
-        setItemLostRequests(response.data);
-      } catch (error) {
-        console.error('Error fetching item lost requests:', error);
-      }
-    };
-    fetchItemLostRequests();
-  }, []);
+  //       setItemLostRequests(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching item lost requests:', error);
+  //     }
+  //   };
+  //   fetchItemLostRequests();
+  // }, []);
 
-  useEffect(() => {
-    //axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
-    axios.get('http://localhost:7237/api/LostItemRequest/Locations')
-    .then(response => {
-      console.log(response);
-      setLocationOptions(response.data.map(data => data.locations));
-    }).catch(error => {
-      console.log(error);
-    });
-  }, []);
+  // useEffect(() => {
+  //   //axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
+  //   axios.get('http://localhost:7237/api/LostItemRequest/Locations')
+  //   .then(response => {
+  //     console.log(response);
+  //     setLocationOptions(response.data.map(data => data.locations));
+  //   }).catch(error => {
+  //     console.log(error);
+  //   });
+  // }, []);
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-    setSearchText('');
-    setItemSelected(false);
-  };
+  // const handleCloseSnackbar = () => {
+  //   setSnackbarOpen(false);
+  //   setSearchText('');
+  //   setItemSelected(false);
+  // };
 
-
-
-  const ThumbnailBox = styled(Box)(({ theme }) => ({
-    position: 'relative',
-    width: '100px',
-    height: '100px',
-    margin: '10px',
-    borderRadius: '15px',
-    overflow: 'hidden',
-    cursor: 'pointer',
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-    '&:hover': {
-      transform: 'scale(1.05)',
-      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.3)',
-    },
-    backgroundColor: '#ffffff',
-  }));
-
-  // Hovered Image Popup (with position fixed for overlay)
-  const HoveredImagePopup = styled(Box)(({ theme }) => ({
-    position: 'absolute', // Ensures the pop-up doesn't scroll with the container
-    top: '20px', // Adjust as needed to avoid overlap
-    left: '20px', // Adjust as needed for alignment
-    width: '200px',
-    height: '200px',
-    backgroundColor: '#ffffff',
-    borderRadius: '15px',
-    border: '2px solid #2196F3',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-    zIndex: 1000,
-    display: hoveredImage ? 'block' : 'none',
-    transition: 'all 0.3s ease',
-  }));
 
   //setSelectedImageId(item.id);
   useEffect(() => {
@@ -139,160 +90,21 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
 
+ 
 
-  // Function to handle selecting a thumbnail and submitting it via API
-  const handleThumbnailClick = async (item) => {
-    //console.log(item.filePath);
-    console.log(item.id)
-
-    setSelectedThumbnail(item.filePath); // Set the selected image
-    setSelectedItemDetails({ id: item.id, itemDescription: item.itemDescription, comments: item.comments, warehouseLocation: item.warehouseLocation }); // Capture id and description
-    setItemSelected(true);
-    //setSelectedImageId(item.id);
-
-    setCurrentItemLostRequest({
-      description: item.itemDescription,
-      requestedBy: userName,
-      claimId: item.id,
-    });
-
-  };
-
-
-  const handleImageChange = (e) => {
-    setSearchText('');
-    setResults([]);
-    setItemSelected(false);
-    setSelectedItemDetails({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
-    console.log(e);
-    const file = e.target.files[0];
-    //console.log(file);
-    if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const imageUrl = URL.createObjectURL(file);
-        setUploadedImage(imageUrl);
-        const arrayBuffer = reader.result;
-       // analyzeImage(arrayBuffer, file);
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  };
-
-  const searchImage = (file, imgTags, itemDesc, category) => {
-    //setResults([]);   
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('category', category);
-    formData.append('tags', imgTags);
-    formData.append('itemDescription', itemDesc);
-    formData.append('warehouseLocation', location);
-
-    try {
-      //axios.post('http://172.17.31.61:5280/api/search', formData, {
-        axios.post('http://localhost:7298/api/search', formData, {        
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-        .then((response) => {
-          //console.log(response)
-
-          if (response.status === 200) {
-            setResults([]);
-            setResultResponseMessage('');
-            const filePaths = response.data.filesMatched.map(item => ({
-              id: item.id,
-              itemDescription: item.itemDescription,
-              comments: item.comments,
-              warehouseLocation: item.warehouseLocation,
-              filePath: item.filePath
-            }));
-            setResults(filePaths);
-          } else {
-            setMessage('No items found');
-
-          }
-        });
-
-    } catch (error) {
-      console.error("Error occurred while searching:", error);
-    };
-  };
-
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCurrentItemLostRequest((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchText(value);
-
-    setResults([]);
-    setItemSelected(false);
-    setSelectedItemDetails({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
-
-    // Trigger the debounced search
-    if (value) {
-      debouncedSearch(value);
-    } else {
-      setResults([]);
-      setResultResponseMessage('');
-      setItemSelected(false);
-    }
-
-  };
-
-  const handleMouseEnter = (image, index) => {
-    setHoveredImage(image);
-    setHoveredIndex(index); // Set the index to track hovered thumbnail
-  };
-
-  const debouncedSearch = useCallback(
-    _.debounce(async (query) => {
-
-      try {
-        //const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
-          const response = await fetch(`http://localhost:7298/api/images/search/${query}`, {
-          
-          method: 'GET',
-        });
-
-        if (response.status === 200) {
-          const result = await response.json();
-          //console.log(result);
-          //const filePaths = result.map(item => item.filePath);
-
-          const filePaths = result.map(item => ({
-            id: item.id,
-            itemDescription: item.itemDescription,
-            comments: item.comments,
-            warehouseLocation: item.warehouseLocation,
-            filePath: item.filePath
-          }));
-
-          setResults(filePaths || []);
-          setResultResponseMessage(result.message);
-        } else {
-          setResultResponseMessage('No matching images found');
-          setItemSelected(false);
-        }
-      } catch (error) {
-        console.error('Error during search:', error);
-        setResultResponseMessage('Error occurred while searching');
-      }
-    }, 300), // 300ms delay
-    []
-  );
-
-  const handleSubmit = async () => {
-    try {
-      console.log(currentItemLostRequest);
+  const handleConfirm = async () => {
+    try {      
+      currentItemLostRequest.id = itemIdValue;
       //const response = await axios.post('http://172.17.31.61:5291/api/LostItemRequest/Claim', currentItemLostRequest);
-      const response = await axios.post('http://localhost:7237/api/LostItemRequest/Claim', currentItemLostRequest);
+      //const response = await axios.patch(`http://localhost:7237/api/LostItemRequest/confirm-receipt/${itemIdValue}`, currentItemLostRequest);
+      const response = await axios.patch(
+        `http://localhost:7237/api/LostItemRequest/confirm-receipt/${itemIdValue}`,
+        currentItemLostRequest,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
       if (response.status === 200) {
         setSeverity('success');
         setResults([]);
@@ -308,9 +120,9 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
           distinguishingFeatures: '',
           itemCategory: '',
           serialNumber: '',
-          dateTimeWhenLost: '',
+          dateTimeWhenLost: null,
           location: '',
-          itemValue: '',
+          itemValue: null,
           itemPhoto: '',
           proofOfOwnership: '',
           howTheItemLost: '',
@@ -403,6 +215,9 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
 
   const [qrValue, setQrValue] = useState("");
   const scannerRef = useRef(null);
+  
+  //const navigate = useNavigate();
+  const isInitialRender = useRef(true);
 
   const startScanner = () => {
     if (scannerRef.current) {
@@ -438,50 +253,71 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
     };
   }, []);
 
+  
+
   const handleReset = () => {
     setQrValue("");
     startScanner(); // Restart the scanner
   };
 
-  const getItemDetails = async () => 
-  {
-    const itemId = qrValue.substring(0,36);    
-
-    try {
-      //const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
-        const response = await fetch(`http://localhost:7298/api/getById/${itemId}`, {
-        
-        method: 'GET',
-      });
-
-      if (response.status === 200) {
-        const result = await response.json();
-
-        
-        setItemDescription(result.itemDescription);
-        setItemPhoto(result.itemPhoto)
-        //const filePaths = result.map(item => item.filePath);
-
-        // const filePaths = result.map(item => ({
-        //   id: item.id,
-        //   itemDescription: item.itemDescription,
-        //   comments: item.comments,
-        //   warehouseLocation: item.warehouseLocation,
-        //   filePath: item.filePath
-        // }));
-
-        // setResults(filePaths || []);
-       // setResultResponseMessage(result.message);
-      } else {
-        setResultResponseMessage('No matching images found');
-        setItemSelected(false);
-      }
-    } catch (error) {
-      console.error('Error during fetch:', error);
-      setResultResponseMessage('Error occurred while fetching data');
+  
+  useEffect(() => {
+    // Skip the first render
+    if (isInitialRender.current) {
+      isInitialRender.current = false; // Mark as not initial
+      return;
     }
 
-  }
+    // Handle navigation changes
+    if (scannerRef.current) {
+      scannerRef.current.clear() // Clear scanner on route change
+        .catch((err) => console.error("Failed to clear scanner:", err));
+    }
+  }, [location.pathname]); // Only runs when the pathname changes
+
+
+  const getItemDetails = async () => 
+    {
+      const itemId = qrValue.substring(0,36);    
+      setItemIdValue(itemId);
+
+      console.log(itemIdValue);
+  
+      try {
+        //const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
+          const response = await fetch(`http://localhost:7298/api/getById/${itemId}`, {
+          
+          method: 'GET',
+        });
+  
+        if (response.status === 200) {
+          const result = await response.json();
+  
+          
+          setItemDescription(result.itemDescription);
+          setItemPhoto(result.itemPhoto)
+          //const filePaths = result.map(item => item.filePath);
+  
+          // const filePaths = result.map(item => ({
+          //   id: item.id,
+          //   itemDescription: item.itemDescription,
+          //   comments: item.comments,
+          //   warehouseLocation: item.warehouseLocation,
+          //   filePath: item.filePath
+          // }));
+  
+          // setResults(filePaths || []);
+         // setResultResponseMessage(result.message);
+        } else {
+          setResultResponseMessage('No matching images found');
+          setItemSelected(false);
+        }
+      } catch (error) {
+        console.error('Error during fetch:', error);
+        setResultResponseMessage('Error occurred while fetching data');
+      }
+  
+    }
 
   return (
     <Box sx={{
@@ -581,7 +417,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
                     fontWeight: "bold",
                     textTransform: "none",
                   }}
-                  onClick={() => alert("Confirm action triggered!")}
+                  onClick={() => handleConfirm()}
                 >
                   Confirm
                 </Button>

@@ -317,7 +317,6 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
   const handleSubmit = async () => {
     try {
-      console.log(currentItemLostRequest);
       //const response = await axios.post('http://172.17.31.61:5291/api/LostItemRequest/Claim', currentItemLostRequest);
       const response = await axios.post('http://localhost:7237/api/LostItemRequest/Claim', currentItemLostRequest);
       if (response.status === 200) {
