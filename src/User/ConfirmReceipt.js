@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { InputLabel, Box, Typography, Button,  FormControl, Paper, Divider } from '@mui/material';
-
+import {Snackbar, Alert,InputLabel, Box, Typography, Button, FormControl, Paper, Divider,Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, } from '@mui/material';
 import { styled } from '@mui/system';
 import _ from 'lodash';
 import { Html5QrcodeScanner } from "html5-qrcode";
-import {  useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 function ConfirmReceipt({ isDrawerOpen, userName }) {
   const [results, setResults] = useState([]);
@@ -45,58 +44,23 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
 
   const [uploadedImage, setUploadedImage] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [resultResponseMessage, setResultResponseMessage] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const handleDialogOpen = () => setDialogOpen(true);
   const handleDialogClose = () => setDialogOpen(false);
-  
-
-  // useEffect(() => {
-  //   const fetchItemLostRequests = async () => {
-  //     try {
-  //       //const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
-  //       const response = await axios.get('http://localhost:7237/api/LostItemRequest');
-        
-  //       setItemLostRequests(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching item lost requests:', error);
-  //     }
-  //   };
-  //   fetchItemLostRequests();
-  // }, []);
-
-  // useEffect(() => {
-  //   //axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
-  //   axios.get('http://localhost:7237/api/LostItemRequest/Locations')
-  //   .then(response => {
-  //     console.log(response);
-  //     setLocationOptions(response.data.map(data => data.locations));
-  //   }).catch(error => {
-  //     console.log(error);
-  //   });
-  // }, []);
-
-  // const handleCloseSnackbar = () => {
-  //   setSnackbarOpen(false);
-  //   setSearchText('');
-  //   setItemSelected(false);
-  // };
-
-
-  //setSelectedImageId(item.id);
-  useEffect(() => {
+   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 260 : 0);
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
 
  
-
   const handleConfirm = async () => {
-    try {      
+    try {
+      // const itemIdValue = itemIdValue; 
       currentItemLostRequest.id = itemIdValue;
-      //const response = await axios.post('http://172.17.31.61:5291/api/LostItemRequest/Claim', currentItemLostRequest);
-      //const response = await axios.patch(`http://localhost:7237/api/LostItemRequest/confirm-receipt/${itemIdValue}`, currentItemLostRequest);
+
       const response = await axios.patch(
         `http://localhost:7237/api/LostItemRequest/confirm-receipt/${itemIdValue}`,
         currentItemLostRequest,
@@ -104,13 +68,14 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
           headers: {
             'Content-Type': 'application/json',
           },
-        });
+        }
+      );
+
       if (response.status === 200) {
         setSeverity('success');
-        setResults([]);
-        setResponseMessage(response.data.message);
+        setSnackbarMessage('Details confirmed successfully!');
         setSnackbarOpen(true);
-        // Clear form data and close dialog on successful submission
+
         setCurrentItemLostRequest({
           description: '',
           color: '',
@@ -133,12 +98,20 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
           requestedBy: 'userName',
           claimId: '',
         });
+
+        // Additional actions on success, e.g., closing a dialog
         handleDialogClose();
-        // Handle success actions like showing snackbar
       }
     } catch (error) {
-      console.error('Error submitting the lost item request:', error);
+      console.error('Error confirming the details:', error);
+      setSeverity('error');
+      setSnackbarMessage('Error confirming the details. Please try again.');
+      setSnackbarOpen(true);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   const dialogPaperStyles = {
@@ -284,7 +257,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
       console.log(itemIdValue);
   
       try {
-        //const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
+        //const response = await fetch(`http://172.17.31.61:5280/api/getById/${itemId}`, {
           const response = await fetch(`http://localhost:7298/api/getById/${itemId}`, {
           
           method: 'GET',
@@ -318,8 +291,8 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
       }
   
     }
-
-  return (
+    
+    return (
     <Box sx={{
       display: 'flex',
       flexDirection: 'column',
@@ -358,15 +331,14 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
             alignItems: 'center',
           }}
         >
-          <FormControl sx={{ width: { xs: '250px', sm: '400px', md: '250px' },marginTop: '10px', mb: 3 }}>
-          <Box sx={{ padding: 3, textAlign: "center", maxWidth: "400px", margin: "0 auto" }}>
-              <InputLabel
+          <InputLabel
                 id="location-label"
-                sx={{ fontSize: "1.2rem", fontWeight: "bold", marginBottom: 2 }}
+                sx={{ fontSize: "1.2rem", fontWeight: "bold" }}
               >
-                Scan QR
+                Please Scan Your QR
               </InputLabel>
-
+          <FormControl sx={{ width: '400px',marginTop: '5px', mb: 2 }}>
+          {/* <Box sx={{ padding: 3, maxWidth: "400px", margin: "0 auto" }}> */}
               <Box
                 id="reader"
                 sx={{
@@ -407,22 +379,50 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
                 </Box>
               )}
 
-              <Box sx={{ marginTop: 4, display: "flex", justifyContent: "center", gap: 2 }}>
+              <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center", gap: 3 }}>
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="success"
                   sx={{
-                    padding: "10px 20px",
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    textTransform: "none",
+                    padding: '10px 20px',
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
                   }}
-                  onClick={() => handleConfirm()}
+                    onClick={handleConfirm}
                 >
                   Confirm
                 </Button>
+                <Dialog
+                  open={snackbarOpen}
+                  onClose={handleSnackbarClose}
+                  sx={{ height: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <DialogTitle>Alert</DialogTitle>
+                  <DialogContent sx={{ width: { xs: '300px', sm: '300px', md: '500px' } }}>
+                    <Alert severity={severity}>{snackbarMessage}</Alert>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleSnackbarClose} color="primary">
+                      Close
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+                {/* <Snackbar
+                  open={snackbarOpen}
+                  autoHideDuration={6000}
+                  onClose={handleSnackbarClose}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'start' }}
+                >
+                  <Alert
+                    onClose={handleSnackbarClose}
+                    severity={severity}
+                    sx={{ width: '100%' }}
+                  >
+                    {snackbarMessage}
+                  </Alert>
+                </Snackbar> */}
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   color="secondary"
                   sx={{
                     padding: "10px 20px",
@@ -435,7 +435,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
                   Reset
                 </Button>
               </Box>
-            </Box>
+            {/* </Box> */}
           </FormControl>
 
          
@@ -448,4 +448,3 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
 }
 
 export default ConfirmReceipt;
-

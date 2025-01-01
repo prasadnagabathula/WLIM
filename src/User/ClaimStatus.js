@@ -8,6 +8,7 @@ import DateFormat from '../Components/DateFormat';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
   const [marginLeft, setMarginLeft] = useState(100);
@@ -38,7 +39,8 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
   useEffect(() => {
     const fetchClaims = async () => {
       try {
-        const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
+        //const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
+        const response = await axios.get('http://localhost:5291/api/LostItemRequest');
         // const response = await axios.get('http://localhost:7237/api/LostItemRequest');
         console.log("Fetched claims:", response.data);
         const userClaims = response.data.filter(item => item.createdBy === userName);
@@ -51,7 +53,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
     if (userName) fetchClaims(); // Fetch claims only if `userName` is set
   }, [userName]);
 
-  const handleCardClick = (item) => {
+  const handleCardClick = (item) => {    
     setSelectedItem(item);
     setOpenModal(true);
   };
@@ -72,7 +74,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
   const approvedClaims = uploadedItems.filter(item => item.status === "Approve");
   const receivedClaims = uploadedItems.filter(item => item.status === "Returned");
   const rejectedClaims = uploadedItems.filter(item => item.status === "Reject");
-
+  
   return (
     <Box sx={{
       display: 'flex',
@@ -156,7 +158,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
               <Tab
                 label={
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <ThumbUpAltIcon sx={{ color: value === 3 ? '#4CAF50' : '#888' }} />
+                    <CancelIcon sx={{ color: value === 3 ? '#D2042D' : '#888' }} />
                     Rejected
                   </Box>
                 }
@@ -251,7 +253,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
             </Grid>
           )}
 
-          {/* Tab Panel for Resolved Claims */}
+{/* Tab Panel for Resolved Claims */}
           {value === 1 && (
             <Grid container spacing={3} justifyContent={approvedClaims.length === 0 ? "center" : "flex-start"}>
               {approvedClaims.length === 0 ? (
@@ -409,8 +411,8 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                 <Typography sx={{ mt: 6 }}>No Rejected claims.</Typography>
               ) : (
                 rejectedClaims.map((item, index) => {
-                  const cardBackgroundColor = item.isActive ? '#C1E1C1' : '#C1E1C1';
-                  const cardHoverColor = item.isActive ? '#A5D6A7' : '#A5D6A7';
+                  const cardBackgroundColor = item.isActive ? '#F2D2BD' : '#F2D2BD';
+                  const cardHoverColor = item.isActive ? '#FBCEB1' : '#F3C39A';
                   return (
                     <Grid item xs={12} sm={6} md={4} key={index}>
                       <Card
@@ -478,8 +480,8 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
               )}
             </Grid>
           )}
-
-          {/* Modal for item details */}
+	  
+	  {/* Modal for item details */}
           <Modal open={openModal} onClose={handleClose}>
             <Box
               sx={{
@@ -561,14 +563,14 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                       background: '#d3eaf5',
                       height: '100vh',
                       overflowY: 'scroll',
-                      '&::-webkit-scrollbar': {
+                      '&:ebkit-scrollbar': {
                         width: '5px',
                       },
-                      '&::-webkit-scrollbar-thumb': {
+                      '&:ebkit-scrollbar-thumb': {
                         backgroundColor: '#0d416b',
                         borderRadius: '4px',
                       },
-                      '&::-webkit-scrollbar-track': {
+                      '&:ebkit-scrollbar-track': {
                         backgroundColor: 'lightgrey',
                       },
                     }}
@@ -658,10 +660,24 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                         {!selectedItem.isActive && (
                           <>
                             <Typography variant="h6">
-                              <b>Resolved Date:</b>
+                              <b>Approved Date:</b>
                             </Typography>
                             <Typography sx={{ fontSize: '20px' }}>
                               <DateFormat date={selectedItem.updatedDate} />
+                            </Typography>
+                          </>
+                        )}
+                        {selectedItem.status === "Returned" && (
+                          <>
+                            <Typography variant="h6"><b>Received By:</b></Typography>
+                            <Typography sx={{ fontSize: '20px' }}>
+                              {selectedItem.wareHouseItem.receivedBy}
+                            </Typography>
+                            <Typography variant="h6">
+                              <b>Received Date:</b>
+                            </Typography>
+                            <Typography sx={{ fontSize: '20px' }}>
+                              <DateFormat date={selectedItem.wareHouseItem.receivedOn} />
                             </Typography>
                           </>
                         )}
@@ -669,7 +685,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                           <b>Status:</b>
                         </Typography>
                         <Typography sx={{ fontSize: '20px' }}>
-                          {selectedItem.status === 'Approve' ? 'Approve' : (selectedItem.status === 'Reject' ? "Rejected" : "Pending")}
+                          {selectedItem.status === 'Approve' ? 'Approve' : (selectedItem.status === 'Reject' ? "Rejected" : (selectedItem.status === 'Claimed' ? "Pending" : "Received"))}
                         </Typography>
                       </Box>
                     </CardContent>
