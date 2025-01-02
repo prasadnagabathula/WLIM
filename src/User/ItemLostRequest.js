@@ -9,7 +9,7 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 
 function ItemLostRequest({ isDrawerOpen, userName }) {
   const [marginLeft, setMarginLeft] = useState(100);
-  const [itemLostRequests, setItemLostRequests] = useState([]); 
+  const [itemLostRequests, setItemLostRequests] = useState([]);
 
   const [results, setResults] = useState([]);
   const [imageTags, setImageTags] = useState([]);
@@ -23,11 +23,13 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const [itemDescription, setItemDescription] = useState(null);
   const [itemobject, setItemobject] = useState([]);
   const [selectedThumbnail, setSelectedThumbnail] = useState(null);
-  const [selectedItemDetails, setSelectedItemDetails] = useState({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
+  const [selectedItemDetails, setSelectedItemDetails] = useState({ id: null, itemDescription: '', comments: '', warehouseLocation: '' });
   const [itemSelected, setItemSelected] = useState(false);
   const [severity, setSeverity] = useState('success');
   const [location, setLocation] = useState('');
   const [locationOptions, setLocationOptions] = useState([]);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [confirmdialogOpen, setConfirmDialogOpen] = useState(false);
 
   const [marginRight, setMarginRight] = useState(100);
 
@@ -55,7 +57,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     address: '',
     otherRelevantDetails: '',
     requestedBy: userName,
-    claimId:'',
+    claimId: '',
   });
   const [uploadedImage, setUploadedImage] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -71,7 +73,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       try {
         //const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
         const response = await axios.get('http://localhost:7237/api/LostItemRequest');
-        
+
         setItemLostRequests(response.data);
       } catch (error) {
         console.error('Error fetching item lost requests:', error);
@@ -83,12 +85,12 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   useEffect(() => {
     //axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
     axios.get('http://localhost:7237/api/LostItemRequest/Locations')
-    .then(response => {
-      console.log(response);
-      setLocationOptions(response.data.map(data => data.locations));
-    }).catch(error => {
-      console.log(error);
-    });
+      .then(response => {
+        console.log(response);
+        setLocationOptions(response.data.map(data => data.locations));
+      }).catch(error => {
+        console.log(error);
+      });
   }, []);
 
   const handleCloseSnackbar = () => {
@@ -190,7 +192,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     setSearchText('');
     setResults([]);
     setItemSelected(false);
-    setSelectedItemDetails({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
+    setSelectedItemDetails({ id: null, itemDescription: '', comments: '', warehouseLocation: '' });
     console.log(e);
     const file = e.target.files[0];
     //console.log(file);
@@ -218,7 +220,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
     try {
       //axios.post('http://172.17.31.61:5280/api/search', formData, {
-        axios.post('http://localhost:7298/api/search', formData, {        
+      axios.post('http://localhost:7298/api/search', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -251,8 +253,20 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCurrentItemLostRequest((prev) => ({ ...prev, [name]: value }));
-  };
+    setCurrentItemLostRequest({ ...currentItemLostRequest, [name]: value });
+    if (name === "color") {
+      if (value) {
+        setCurrentItemLostRequest((prevErrors) => ({ ...prevErrors, name: "" }));
+      }
+    }
+
+    if (name === "brand") {
+      if (value) {
+        setCurrentItemLostRequest((prevErrors) => ({ ...prevErrors, name: "" }));
+      }
+    }
+
+  }
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -260,7 +274,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
     setResults([]);
     setItemSelected(false);
-    setSelectedItemDetails({ id: null, itemDescription: '', comments:'', warehouseLocation: '' });
+    setSelectedItemDetails({ id: null, itemDescription: '', comments: '', warehouseLocation: '' });
 
     // Trigger the debounced search
     if (value) {
@@ -283,8 +297,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
       try {
         //const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
-          const response = await fetch(`http://localhost:7298/api/images/search/${query}`, {
-          
+        const response = await fetch(`http://localhost:7298/api/images/search/${query}`, {
+
           method: 'GET',
         });
 
@@ -315,8 +329,42 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     []
   );
 
+  const handleClick = (e) => {
+    let errors = {};
+    // Validation for required fields
+    if (!currentItemLostRequest.color) {
+      errors.color = 'Color is required';
+    }
+    if (!currentItemLostRequest.brand) {
+      errors.brand = 'Brand is required';
+    }
+    if (!currentItemLostRequest.distinguishingFeatures) {
+      errors.distinguishingFeatures = 'Distinguishing Features are required';
+    }
+    if (!currentItemLostRequest.dateTimeWhenLost) {
+      errors.dateTimeWhenLost = 'Date and Time of Loss are required';
+    }
+    if (!currentItemLostRequest.location) {
+      errors.location = 'Location is required';
+    }
+    if (!currentItemLostRequest.otherRelevantDetails) {
+      errors.otherRelevantDetails = 'Other Details for Communication are required';
+    }
+
+    // If there are validation errors, set them and stop form submission
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+    // If no errors, clear validation errors and proceed
+    setValidationErrors({});
+    setCurrentItemLostRequest({});
+    setConfirmDialogOpen(true);
+  };
+
   const handleSubmit = async () => {
     try {
+      console.log(currentItemLostRequest);
       //const response = await axios.post('http://172.17.31.61:5291/api/LostItemRequest/Claim', currentItemLostRequest);
       const response = await axios.post('http://localhost:7237/api/LostItemRequest/Claim', currentItemLostRequest);
       if (response.status === 200) {
@@ -359,33 +407,33 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     width: '600px',
     maxWidth: '800px',
     background: 'linear-gradient(to left,#1a1a2e, #16213e,#e0e0e0)',
-    padding: 2, 
+    padding: 2,
   };
-  
+
   const dialogTitleStyles = {
     fontWeight: 'bold',
     color: '#fff',
     fontSize: '1.5rem',
     borderBottom: '2px solid #ddd',
     paddingBottom: 1,
-    display:'flex',
-    justifyContent:'center'
+    display: 'flex',
+    justifyContent: 'center'
   };
-  
+
   const dialogContentStyles = {
     paddingTop: 2,
     paddingBottom: 2,
     backgroundColor: '#fff',
     borderRadius: '6px',
   };
-  
+
   const textFieldStyles = {
     marginBottom: 2,
     '& .MuiInputBase-root': {
       borderRadius: '8px',
       border: '1px solid #ccc',
       '&:hover': {
-        borderColor: '#1976d2', 
+        borderColor: '#1976d2',
       },
     },
     '& .MuiInputLabel-root': {
@@ -403,7 +451,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       },
     },
   };
-  
+
   const dialogActionsStyles = {
     padding: 1,
     justifyContent: 'flex-end',
@@ -411,14 +459,14 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     borderTop: '1px solid #ddd',
     borderRadius: '0 0 8px 8px',
   };
-  
+
   const cancelButtonStyles = {
     color: '#f44336',
     '&:hover': {
       backgroundColor: '#ffebee',
     },
   };
-  
+
   const submitButtonStyles = {
     backgroundColor: '#1976d2',
     color: '#fff',
@@ -434,251 +482,251 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       alignItems: 'center',
       textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s'
     }}>
-    
-    <Paper  elevation={5} sx={{width:'100%', height:'100vh'}}>
-      <Typography variant="h4" gutterBottom sx={{
-        backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
-        WebkitBackgroundClip: 'text',
-        backgroundClip: 'text',
-        color: 'transparent',
-        fontWeight: 'bold',
-        mt:2
-      }}>
-      Search Lost Item
-      </Typography>
-      <Divider sx={{ 
-        width: '90%', 
-        margin: 'auto', 
-        mb: 2,
-      }} />
-      <Box sx={{
-        mt:2,
-        display: 'flex',
-        flexDirection: { xs: 'column', sm: 'column', md: 'row' },
-        justifyContent: 'center',
-        gap: 2,
-        width: { xs: '100%', sm: '100%', md: 'auto' },
-      }}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <FormControl sx={{ width: { xs: '250px', sm: '400px', md: '250px' },marginTop: '10px', mb: 3 }}>
-            <InputLabel id="location-label">Location</InputLabel>   
-            <Select
-              labelId="location-label"
-              id="location"
-              value={location}
-              onChange={(e) => {
-                setLocation(e.target.value); 
-                setResults([]); 
-                setSearchText(''); 
-                setSelectedThumbnail(null); 
-              }}
-              label="Location"
-            >
-              {locationOptions.map((loc, index) => (
-                <MenuItem key={index} value={loc}>
-                  {loc}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
 
-          <Button
-            variant="contained"
-            component="label"
-            fullWidth
-            startIcon={!uploadedImage && <CloudUploadIcon />}
+      <Paper elevation={5} sx={{ width: '100%', height: '100vh' }}>
+        <Typography variant="h4" gutterBottom sx={{
+          backgroundImage: 'linear-gradient(to left, #00aae7,#770737,#2368a0 )',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+          color: 'transparent',
+          fontWeight: 'bold',
+          mt: 2
+        }}>
+          Search Lost Item
+        </Typography>
+        <Divider sx={{
+          width: '90%',
+          margin: 'auto',
+          mb: 2,
+        }} />
+        <Box sx={{
+          mt: 2,
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'column', md: 'row' },
+          justifyContent: 'center',
+          gap: 2,
+          width: { xs: '100%', sm: '100%', md: 'auto' },
+        }}>
+          <Box
             sx={{
-              width: '250px',
-              height: '250px',
-              border: '2px dashed #888',
-              borderRadius: '10px',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: uploadedImage ? 'transparent' : '#fff',
-              backgroundImage: uploadedImage ? `url(${uploadedImage})` : 'none',
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              cursor: 'pointer',
-              marginTop: '10px',
-              marginBottom: '20px',
-              color: 'black',
-              transition: 'all 0.3s ease-in-out',
-              '&:hover': {
-                border: '2px dashed #333',
-              },
             }}
           >
-            {!uploadedImage && 'Search by Photo'}
-            <input
-              id="upload-image"
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={handleImageChange}
-            />
-          </Button>
-        </Box>
-
-        {/* </Grid> */}
-        {/* <Grid item xs={6}> */}
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'center'
-        }}>
-          <Box component='form' sx={{
-            width: { xs: '90%', sm: '90%' },
-          }}>
-            <Box sx={{
-              flex: "1",
-              display: "flex",
-              flexDirection: "column",
-              // alignItems: "flex-start",
-              width: { xs: '100%', sm: '100%', md: 500 },
-              height: '100%',
-            }}>
-              <TextField
-                label="Search"
-                variant="outlined"
-                fullWidth
-                value={searchText}
-                onChange={handleSearchChange}
-                style={{ marginBottom: '20px', marginTop: '10px' }}
-              />
-              {/* Display results count */}
-              {searchText && (
-                <Typography variant="body2" color="textSecondary" style={{ marginBottom: '20px', color: '#89023e' }}>
-                  {results.length > 0 ? `Showing ${results.length} result${results.length > 1 ? 's' : ''}` : 'No results found'}
-                </Typography>
-              )}
-              <Box
-                display="flex"
-                flexWrap="wrap"
-                justifyContent="center"
-                sx={{
-                  backgroundColor: '#eee',
-                  maxHeight: '270px',
-                  overflowY: 'auto',
-                  '&::-webkit-scrollbar': {
-                    width: '5px',
-                  },
-                  '&::-webkit-scrollbar-thumb': {
-                    backgroundColor: '#0d416b',
-                    borderRadius: '4px',
-                  },
-                  '&::-webkit-scrollbar-track': {
-                    backgroundColor: 'lightgrey',
-                  },
+            <FormControl sx={{ width: { xs: '250px', sm: '400px', md: '250px' }, marginTop: '10px', mb: 3 }}>
+              <InputLabel id="location-label">Location</InputLabel>
+              <Select
+                labelId="location-label"
+                id="location"
+                value={location}
+                onChange={(e) => {
+                  setLocation(e.target.value);
+                  setResults([]);
+                  setSearchText('');
+                  setSelectedThumbnail(null);
                 }}
+                label="Location"
               >
-                {results.length > 0 ? (results.map((item, index) => (
-                  <Box key={index} position="relative">
-                    <ThumbnailBox onClick={
-                      //() => handleMouseEnter(img, index),
-                      () => handleThumbnailClick(item)
-                    }
-                      style={{
-                        border: selectedThumbnail === item.filePath ? '2px solid #2196F3' : 'none', // Highlight selected thumbnail
-                      }}
-                    >
-                      <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
-                    </ThumbnailBox>
+                {locationOptions.map((loc, index) => (
+                  <MenuItem key={index} value={loc}>
+                    {loc}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-                    {/* Hovered Image Popup */}
-                    {/* {hoveredImage && hoveredIndex === index && (
+            <Button
+              variant="contained"
+              component="label"
+              fullWidth
+              startIcon={!uploadedImage && <CloudUploadIcon />}
+              sx={{
+                width: '250px',
+                height: '250px',
+                border: '2px dashed #888',
+                borderRadius: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: uploadedImage ? 'transparent' : '#fff',
+                backgroundImage: uploadedImage ? `url(${uploadedImage})` : 'none',
+                backgroundSize: 'contain',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                cursor: 'pointer',
+                marginTop: '10px',
+                marginBottom: '20px',
+                color: 'black',
+                transition: 'all 0.3s ease-in-out',
+                '&:hover': {
+                  border: '2px dashed #333',
+                },
+              }}
+            >
+              {!uploadedImage && 'Search by Photo'}
+              <input
+                id="upload-image"
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleImageChange}
+              />
+            </Button>
+          </Box>
+
+          {/* </Grid> */}
+          {/* <Grid item xs={6}> */}
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'center'
+          }}>
+            <Box component='form' sx={{
+              width: { xs: '90%', sm: '90%' },
+            }}>
+              <Box sx={{
+                flex: "1",
+                display: "flex",
+                flexDirection: "column",
+                // alignItems: "flex-start",
+                width: { xs: '100%', sm: '100%', md: 500 },
+                height: '100%',
+              }}>
+                <TextField
+                  label="Search"
+                  variant="outlined"
+                  fullWidth
+                  value={searchText}
+                  onChange={handleSearchChange}
+                  style={{ marginBottom: '20px', marginTop: '10px' }}
+                />
+                {/* Display results count */}
+                {searchText && (
+                  <Typography variant="body2" color="textSecondary" style={{ marginBottom: '20px', color: '#89023e' }}>
+                    {results.length > 0 ? `Showing ${results.length} result${results.length > 1 ? 's' : ''}` : 'No results found'}
+                  </Typography>
+                )}
+                <Box
+                  display="flex"
+                  flexWrap="wrap"
+                  justifyContent="center"
+                  sx={{
+                    backgroundColor: '#eee',
+                    maxHeight: '270px',
+                    overflowY: 'auto',
+                    '&::-webkit-scrollbar': {
+                      width: '5px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      backgroundColor: '#0d416b',
+                      borderRadius: '4px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      backgroundColor: 'lightgrey',
+                    },
+                  }}
+                >
+                  {results.length > 0 ? (results.map((item, index) => (
+                    <Box key={index} position="relative">
+                      <ThumbnailBox onClick={
+                        //() => handleMouseEnter(img, index),
+                        () => handleThumbnailClick(item)
+                      }
+                        style={{
+                          border: selectedThumbnail === item.filePath ? '2px solid #2196F3' : 'none', // Highlight selected thumbnail
+                        }}
+                      >
+                        <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                      </ThumbnailBox>
+
+                      {/* Hovered Image Popup */}
+                      {/* {hoveredImage && hoveredIndex === index && (
                           <HoveredImagePopup>
                             <ImageDisplay imageId={hoveredImage} style={{ width: '200px', height: '200px' }} />
                           </HoveredImagePopup>
                         )} */}
 
 
-                  </Box>
+                    </Box>
 
-                ))) : <Typography>{resultResponseMessage}</Typography>}
-              </Box>
-
-              {itemSelected && (<Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                width: '100%',
-                mt: 2
-              }}  >
-                <Box 
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column', // Stacks the items in rows
-                    alignItems: 'flex-start', // Aligns items to the start of the box
-                    fontFamily: 'Lato',                    
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#229954', }}>
-                    <DoneAllIcon />
-                    <Typography variant="body1" component="div" fontWeight="bold">
-                      Selected Item:
-                    </Typography>                    
-                  </Box>
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body1" component="div" fontWeight="bold">
-                      Description:
-                    </Typography>
-                    <Typography variant="body1" component="span">
-                      {selectedItemDetails.itemDescription}
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body1" component="div" fontWeight="bold">
-                      Comments:
-                    </Typography>
-                    <Typography variant="body1" component="span">
-                      {selectedItemDetails.comments}
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body1" component="div" fontWeight="bold">
-                      Warehouse Location:
-                    </Typography>
-                    <Typography variant="body1" component="span">
-                      {selectedItemDetails.warehouseLocation}
-                    </Typography>
-                  </Box>
+                  ))) : <Typography>{resultResponseMessage}</Typography>}
                 </Box>
-                <Box height="40px" sx={{
+
+                {itemSelected && (<Box sx={{
                   display: 'flex',
+                  flexDirection: 'column',
                   justifyContent: 'center',
-                  alignItems: 'center',
                   width: '100%',
                   mt: 2
-                }} >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleDialogOpen}
-                    disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
-                    width="300px"
+                }}  >
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column', // Stacks the items in rows
+                      alignItems: 'flex-start', // Aligns items to the start of the box
+                      fontFamily: 'Lato',
+                    }}
                   >
-                    Claim the Item
-                  </Button>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#229954', }}>
+                      <DoneAllIcon />
+                      <Typography variant="body1" component="div" fontWeight="bold">
+                        Selected Item:
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body1" component="div" fontWeight="bold">
+                        Description:
+                      </Typography>
+                      <Typography variant="body1" component="span">
+                        {selectedItemDetails.itemDescription}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body1" component="div" fontWeight="bold">
+                        Comments:
+                      </Typography>
+                      <Typography variant="body1" component="span">
+                        {selectedItemDetails.comments}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body1" component="div" fontWeight="bold">
+                        Warehouse Location:
+                      </Typography>
+                      <Typography variant="body1" component="span">
+                        {selectedItemDetails.warehouseLocation}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box height="40px" sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                    mt: 2
+                  }} >
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleDialogOpen}
+                      disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
+                      width="300px"
+                    >
+                      Claim the Item
+                    </Button>
+                  </Box>
                 </Box>
+                )}
               </Box>
-              )}
             </Box>
           </Box>
         </Box>
-      </Box>
 
       </Paper>
-      
+
       <Dialog
         open={snackbarOpen}
         onClose={handleCloseSnackbar}
@@ -694,47 +742,63 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
         </DialogActions>
       </Dialog>
       <Dialog open={dialogOpen} onClose={handleDialogClose} PaperProps={{ sx: dialogPaperStyles }}>
-      <DialogTitle sx={dialogTitleStyles}>Fill in the Details Below</DialogTitle>
-      <DialogContent sx={dialogContentStyles}>
-        {[ 
-          { label: 'Description', name: 'description', maxLength: 50 },
-          { label: 'Color', name: 'color', maxLength: 50 },
-          { label: 'Brand', name: 'brand', maxLength: 50 },
-          { label: 'Distinguishing Features', name: 'distinguishingFeatures', maxLength: 100 },
-          { label: 'Date and Time of Loss', name: 'dateTimeWhenLost', type: 'datetime-local' },
-          { label: 'Location / Area of Loss', name: 'location', maxLength: 100 },
-          { label: 'Other Details for Communication', name: 'otherRelevantDetails', maxLength: 200 },          
-          { label: 'Address', name: 'address', maxLength: 500 },          
-        ].map(({ label, name, maxLength, type = 'text', inputProps = {} }) => (
-          <React.Fragment key={name}>
-            <InputLabel>{label}</InputLabel>
-            <TextField
-              margin="dense"
-              name={name}
-              value={currentItemLostRequest[name]}
-              onChange={handleChange}
-              fullWidth
-              inputProps={{ maxLength, ...inputProps }}
-              type={type}
-              sx={textFieldStyles}
-            />
-          </React.Fragment>
-        ))}
-      </DialogContent>
-      <DialogActions sx={dialogActionsStyles}>
-        <Button onClick={handleDialogClose} color="secondary" sx={cancelButtonStyles}>
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit}
-          sx={submitButtonStyles}
-        >
-          Submit
-        </Button>
-      </DialogActions>
-    </Dialog>
+        <DialogTitle sx={dialogTitleStyles}>Fill in the Details Below</DialogTitle>
+        <DialogContent sx={dialogContentStyles}>
+          {[
+            { label: 'Description', name: 'description', maxLength: 50 },
+            { label: 'Color', name: 'color', maxLength: 50 },
+            { label: 'Brand', name: 'brand', maxLength: 50 },
+            { label: 'Distinguishing Features', name: 'distinguishingFeatures', maxLength: 100 },
+            { label: 'Date and Time of Loss', name: 'dateTimeWhenLost', type: 'datetime-local' },
+            { label: 'Location / Area of Loss', name: 'location', maxLength: 100 },
+            { label: 'Other Details for Communication', name: 'otherRelevantDetails', maxLength: 200 },
+            { label: 'Address', name: 'address', maxLength: 500 },
+          ].map(({ label, name, maxLength, type = 'text', inputProps = {} }) => (
+            <React.Fragment key={name}>
+              <InputLabel>{label}</InputLabel>
+              <TextField
+                margin="dense"
+                name={name}
+                value={currentItemLostRequest[name]}
+                error={!!validationErrors[name]} // If there's an error for this field
+                helperText={validationErrors[name]} // Show the error message if any
+                onChange={handleChange}
+                fullWidth
+                inputProps={{ maxLength, ...inputProps }}
+                type={type}
+                sx={textFieldStyles}
+              />
+            </React.Fragment>
+          ))}
+        </DialogContent>
+        <DialogActions sx={dialogActionsStyles}>
+          <Button onClick={handleDialogClose} color="secondary" sx={cancelButtonStyles}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={(e) => { handleClick(e); }}
+            sx={submitButtonStyles}
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={confirmdialogOpen} onClose={() => setConfirmDialogOpen(false)}>
+        <DialogTitle>Confirm Action</DialogTitle>
+        <DialogContent>
+          <Typography>
+            {"Are you sure you want Submit the Details?"}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDialogOpen(false)}>Cancel</Button>
+          <Button onClick={(e) => { handleSubmit(e); setConfirmDialogOpen(false) }} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

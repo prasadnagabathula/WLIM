@@ -71,9 +71,13 @@ const Claims = ({ isDrawerOpen, qrData }) => {
   const [message, setMessage] = useState('');
   const [severity, setSeverity] = useState('success');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
   const [currentClaimReq, setCurrentCliamReq] = useState({
     isActive: '',
-    additionalInformation: ''
+    additionalInformation: '',
+    status: '',
+    comments: ''
   });
 
   const [claim, setClaim] = useState([]);
@@ -101,7 +105,7 @@ const Claims = ({ isDrawerOpen, qrData }) => {
   }, [isDrawerOpen]);
 
   const calculateDaysAgo = (createdDate, updatedDate) => {
-    const startDate = dayjs(createdDate);    
+    const startDate = dayjs(createdDate);
     const endDate = updatedDate ? dayjs(updatedDate) : dayjs(); // Use updatedDate or current date if not provided
 
     const diffInMinutes = endDate.diff(startDate, 'minute');
@@ -171,9 +175,9 @@ const Claims = ({ isDrawerOpen, qrData }) => {
         // alert('Form submitted successfully!');
         setUploadedItems(prevItems =>
           prevItems.map(item =>
-          item.id === selectedItemId ? { ...item, ...selectedClaim } : item
+            item.id === selectedItemId ? { ...item, ...selectedClaim } : item
           )
-          );
+        );
         setDialog(true);
         if (response.status === 200) {
           setMessage('Updated successfully!');
@@ -203,6 +207,24 @@ const Claims = ({ isDrawerOpen, qrData }) => {
     }));
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCurrentCliamReq({ ...currentClaimReq, [name]: value });
+
+    if (name === "status") {
+      if (value) {
+        setCurrentCliamReq((prevErrors) => ({ ...prevErrors, status: "" }));
+      }
+    }
+
+    if (name === "comments") {
+      if (value) {
+        setCurrentCliamReq((prevErrors) => ({ ...prevErrors, comments: "" }));
+      }
+    }
+
+  }
+
   const handleCardClick = (item) => {
     setDialogName(item.status === "Claimed" ? 'Claim Approval' : 'Claim Status');
     setSelectedItem(item);
@@ -221,6 +243,22 @@ const Claims = ({ isDrawerOpen, qrData }) => {
   };
 
   const [tabs, setTabs] = React.useState(0);
+
+  const handleClick = () => {
+    let validationErrors = {};
+    if (!status) {
+      validationErrors.status = "Status  is Required";
+    }
+    if (!comments) {
+      validationErrors.comments = "Comments is Required";
+    }
+    if (Object.keys(validationErrors).length > 0) {
+      setCurrentCliamReq(validationErrors);
+      return;
+    }
+    setCurrentCliamReq({});
+    setDialogOpen(true);
+  };
 
   return (
     <Box sx={{
@@ -663,37 +701,37 @@ const Claims = ({ isDrawerOpen, qrData }) => {
                     }}
                   >
                     <Box
-sx={{
-display: 'flex',
-flexDirection: 'column',
-justifyContent: 'space-between',
-alignItems: 'center',
-flex: 1,
-}}
->
-<ImageDisplay
-imageId={selectedItem.itemPhoto}
-style={{
-width: '300px',
-height: '300px',
-objectFit: 'cover',
-borderRadius: '8px',
-boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-border: '2px solid #e0e0e0',
-marginTop: '30px',
-}}
-/>
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flex: 1,
+                      }}
+                    >
+                      <ImageDisplay
+                        imageId={selectedItem.itemPhoto}
+                        style={{
+                          width: '300px',
+                          height: '300px',
+                          objectFit: 'cover',
+                          borderRadius: '8px',
+                          boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+                          border: '2px solid #e0e0e0',
+                          marginTop: '30px',
+                        }}
+                      />
 
 
-  
- { selectedItem.proofofOwnership && (
-  <QRCodeCanvas
-    value={selectedItem.proofofOwnership}
-    size={150}
-  />) 
-  }
 
-</Box>
+                      {selectedItem.proofofOwnership && (
+                        <QRCodeCanvas
+                          value={selectedItem.proofofOwnership}
+                          size={150}
+                        />)
+                      }
+
+                    </Box>
 
                     <CardContent sx={{ flex: 2, fontFamily: 'Lato' }}>
                       {/* <Typography variant="h5" gutterBottom>
@@ -765,7 +803,7 @@ marginTop: '30px',
                             </Typography>
                           </>
                         )}
-                        
+
                         {selectedItem.status === "Approve" && (
                           <>
                             <Typography variant="h6"><b>Status:</b></Typography>
@@ -829,8 +867,16 @@ marginTop: '30px',
                           <TextField
                             select
                             label="Status"
+                            name="status"
                             value={status}
-                            onChange={handleStatusChange}
+                            //onChange={handleStatusChange}
+                            onChange={(e) => {
+                              handleStatusChange(e); // Handle specific logic for status change
+                              handleChange(e); // Handle other changes (if needed)
+                            }}
+                            fullWidth
+                            error={!!currentClaimReq.status}
+                            helperText={currentClaimReq.status}
                             sx={{ mt: 4, minWidth: '450px' }}
                           >
                             {['Approve', 'Reject'].map((option) => (
@@ -844,6 +890,10 @@ marginTop: '30px',
                             multiline
                             rows={2}
                             value={comments}
+                            fullWidth
+                            error={!!currentClaimReq.comments}
+                            helperText={currentClaimReq.comments}
+                            name="comments"
                             onChange={(e) => setComments(e.target.value)}
                             sx={{ mt: 3, minWidth: '450px' }}
                           />
@@ -889,6 +939,22 @@ marginTop: '30px',
                   </Box>
                 </Box>
               )}
+
+              <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                <DialogTitle>Confirm Action</DialogTitle>
+                <DialogContent>
+                  <Typography>
+                    {"Are you sure you want Submit the Details?"}
+                  </Typography>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+                  <Button onClick={(e) => { handleSubmit(e); setDialogOpen(false) }} color="primary">
+                    Confirm
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
               <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={6000}
