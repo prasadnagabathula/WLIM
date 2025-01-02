@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import {Snackbar, Alert,InputLabel, Box, Typography, Button, FormControl, Paper, Divider,Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, } from '@mui/material';
+import {Snackbar, Alert,InputLabel, Box, Typography, Button,  FormControl, Paper, Divider,Dialog, DialogActions, AlertDialog, DialogContent, DialogTitle, } from '@mui/material';
 import { styled } from '@mui/system';
 import _ from 'lodash';
 import { Html5QrcodeScanner } from "html5-qrcode";
-import { useLocation } from 'react-router-dom';
+import {  useLocation } from 'react-router-dom';
 
 function ConfirmReceipt({ isDrawerOpen, userName }) {
   const [results, setResults] = useState([]);
@@ -19,28 +19,8 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
 
   const [marginRight, setMarginRight] = useState(100);
 
-  const [currentItemLostRequest, setCurrentItemLostRequest] = useState({
-    description: '',
-    color: '',
-    size: '',
-    brand: '',
-    model: '',
-    distinguishingFeatures: '',
-    itemCategory: '',
-    serialNumber: '',
-    dateTimeWhenLost: null,
-    location: '',
-    itemValue: null,
-    itemPhoto: '',
-    proofOfOwnership: '',
-    howTheItemLost: '',
-    referenceNumber: '',
-    additionalInformation: '',
-    address: '',
-    otherRelevantDetails: '',
-    requestedBy: userName,
-    claimId:'',
-  });
+  const [currentItemLostRequest, setCurrentItemLostRequest] = useState({ description: '' });
+ 
 
   const [uploadedImage, setUploadedImage] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -50,7 +30,11 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const handleDialogOpen = () => setDialogOpen(true);
   const handleDialogClose = () => setDialogOpen(false);
-   useEffect(() => {
+  
+
+  
+
+  useEffect(() => {
     setMarginLeft(isDrawerOpen ? 260 : 0);
     setMarginRight(isDrawerOpen ? 50 : 0);
   }, [isDrawerOpen]);
@@ -61,8 +45,10 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
       // const itemIdValue = itemIdValue; 
       currentItemLostRequest.id = itemIdValue;
 
+
       const response = await axios.patch(
-        `http://localhost:7237/api/LostItemRequest/confirm-receipt/${itemIdValue}`,
+         `http://localhost:7237/api/LostItemRequest/confirm-receipt/${itemIdValue}`,
+        //`http://localhost:5291/api/LostItemRequest/confirm-receipt/${itemIdValue}`,
         currentItemLostRequest,
         {
           headers: {
@@ -70,34 +56,14 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
           },
         }
       );
-
-      if (response.status === 200) {
+      
+      if (response.status === 204) {
         setSeverity('success');
         setSnackbarMessage('Details confirmed successfully!');
         setSnackbarOpen(true);
 
-        setCurrentItemLostRequest({
-          description: '',
-          color: '',
-          size: '',
-          brand: '',
-          model: '',
-          distinguishingFeatures: '',
-          itemCategory: '',
-          serialNumber: '',
-          dateTimeWhenLost: null,
-          location: '',
-          itemValue: null,
-          itemPhoto: '',
-          proofOfOwnership: '',
-          howTheItemLost: '',
-          referenceNumber: '',
-          additionalInformation: '',
-          address: '',
-          otherRelevantDetails: '',
-          requestedBy: 'userName',
-          claimId: '',
-        });
+        setCurrentItemLostRequest({ description: '' });
+     
 
         // Additional actions on success, e.g., closing a dialog
         handleDialogClose();
@@ -113,6 +79,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+  
 
   const dialogPaperStyles = {
     width: '600px',
@@ -193,6 +160,8 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
   const isInitialRender = useRef(true);
 
   const startScanner = () => {
+
+ 
     if (scannerRef.current) {
       scannerRef.current.clear(); // Clear the previous instance
     }
@@ -205,6 +174,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
     scanner.render(
       (decodedText) => {
         setQrValue(decodedText);
+ 
         getItemDetails();
         scanner.clear(); // Stop the scanner after scanning
         scannerRef.current = null;
@@ -216,8 +186,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
 
     scannerRef.current = scanner;
   };
-
-  useEffect(() => {
+useEffect(() => {
     startScanner();
     return () => {
       if (scannerRef.current) {
@@ -252,12 +221,13 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
   const getItemDetails = async () => 
     {
       const itemId = qrValue.substring(0,36);    
+      
       setItemIdValue(itemId);
 
       console.log(itemIdValue);
   
       try {
-        //const response = await fetch(`http://172.17.31.61:5280/api/getById/${itemId}`, {
+        // const response = await fetch(`http://172.17.31.61:5280/api/getById/${itemId}`, {
           const response = await fetch(`http://localhost:7298/api/getById/${itemId}`, {
           
           method: 'GET',
@@ -265,6 +235,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
   
         if (response.status === 200) {
           const result = await response.json();
+         
   
           
           setItemDescription(result.itemDescription);
@@ -291,13 +262,14 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
       }
   
     }
-    
-    return (
+
+  return (
     <Box sx={{
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s'
+      textAlign: 'center', mt: 2, ml: { xs: 0, sm: 0, md: `${marginLeft}px` }, mr: `${marginRight}px`, transition: 'margin-left 0.3s',
+      height:'100vh'
     }}>
     
     <Paper  elevation={5} sx={{width:'100%', height:'100vh'}}>
@@ -323,12 +295,14 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
         justifyContent: 'center',
         gap: 2,
         width: { xs: '100%', sm: '100%', md: 'auto' },
+        height:'100vh'
       }}>
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            height:'100vh'
           }}
         >
           <InputLabel
@@ -338,7 +312,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
                 Please Scan Your QR
               </InputLabel>
           <FormControl sx={{ width: '400px',marginTop: '5px', mb: 2 }}>
-          {/* <Box sx={{ padding: 3, maxWidth: "400px", margin: "0 auto" }}> */}
+          
               <Box
                 id="reader"
                 sx={{
@@ -349,11 +323,11 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
                   borderRadius: "8px",
                   position: "relative",
                   backgroundColor: "#f9f9f9",
-                }}
-              ></Box>
-
-              {qrValue && (
-                <Box sx={{ marginTop: 3, textAlign: "center" }}>
+                }}></Box>
+                
+                <Box sx={{height:'100%'}}>
+                  {qrValue && (
+                <Box sx={{ marginTop: 3, textAlign: "center"}}>
                   <Typography
                     variant="h6"
                     sx={{ marginBottom: 2, color: "#333", fontWeight: "bold" }}
@@ -377,71 +351,68 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
                             <ImageDisplay imageId={itemPhoto} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0px 0px 0px' }} />
                           </CardMedia> */}
                 </Box>
-              )}
-
-              <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center", gap: 3 }}>
-                <Button
-                  variant="contained"
-                  color="success"
-                  sx={{
-                    padding: '10px 20px',
-                    fontSize: '1rem',
-                    fontWeight: 'bold',
-                    textTransform: 'none',
-                  }}
-                    onClick={handleConfirm}
-                >
-                  Confirm
-                </Button>
-                <Dialog
-                  open={snackbarOpen}
-                  onClose={handleSnackbarClose}
-                  sx={{ height: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                  <DialogTitle>Alert</DialogTitle>
-                  <DialogContent sx={{ width: { xs: '300px', sm: '300px', md: '500px' } }}>
-                    <Alert severity={severity}>{snackbarMessage}</Alert>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleSnackbarClose} color="primary">
-                      Close
+              )} 
+                <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center", gap: 3}}>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      sx={{
+                        padding: '10px 20px',
+                        fontSize: '1rem',
+                        fontWeight: 'bold',
+                        textTransform: 'none',
+                      }}
+                        onClick={handleConfirm}
+                    >
+                      Confirm
                     </Button>
-                  </DialogActions>
-                </Dialog>
-                {/* <Snackbar
-                  open={snackbarOpen}
-                  autoHideDuration={6000}
-                  onClose={handleSnackbarClose}
-                  anchorOrigin={{ vertical: 'bottom', horizontal: 'start' }}
-                >
-                  <Alert
-                    onClose={handleSnackbarClose}
-                    severity={severity}
-                    sx={{ width: '100%' }}
-                  >
-                    {snackbarMessage}
-                  </Alert>
-                </Snackbar> */}
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  sx={{
-                    padding: "10px 20px",
-                    fontSize: "1rem",
-                    fontWeight: "bold",
-                    textTransform: "none",
-                  }}
-                  onClick={handleReset}
-                >
-                  Reset
-                </Button>
-              </Box>
-            {/* </Box> */}
-          </FormControl>
-
-         
+                    <Dialog
+                      open={snackbarOpen}
+                      onClose={handleSnackbarClose}
+                      sx={{ height: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <DialogTitle>Alert</DialogTitle>
+                      <DialogContent sx={{ width: { xs: '300px', sm: '300px', md: '500px' } }}>
+                        <Alert severity={severity}>{snackbarMessage}</Alert>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button onClick={handleSnackbarClose} color="primary">
+                          Close
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                    {/* <Snackbar
+                      open={snackbarOpen}
+                      autoHideDuration={6000}
+                      onClose={handleSnackbarClose}
+                      anchorOrigin={{ vertical: 'bottom', horizontal: 'start' }}
+                    >
+                      <Alert
+                        onClose={handleSnackbarClose}
+                        severity={severity}
+                        sx={{ width: '100%' }}
+                      >
+                        {snackbarMessage}
+                      </Alert>
+                    </Snackbar> */}
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      sx={{
+                        padding: "10px 20px",
+                        fontSize: "1rem",
+                        fontWeight: "bold",
+                        textTransform: "none",
+                      }}
+                      onClick={handleReset}
+                    >
+                      Reset
+                    </Button>
+                
+            </Box>
+            </Box>             
+         </FormControl>
         </Box>
         </Box>
-    
       </Paper>
     </Box>
   );
