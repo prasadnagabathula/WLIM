@@ -29,10 +29,7 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
   const [responseMessage, setResponseMessage] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const handleDialogOpen = () => setDialogOpen(true);
-  const handleDialogClose = () => setDialogOpen(false);
-  
-
-  
+  const handleDialogClose = () => setDialogOpen(false);  
 
   useEffect(() => {
     setMarginLeft(isDrawerOpen ? 260 : 0);
@@ -175,7 +172,9 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
       (decodedText) => {
         setQrValue(decodedText);
  
-        getItemDetails();
+       
+          getItemDetails();
+          
         scanner.clear(); // Stop the scanner after scanning
         scannerRef.current = null;
       },
@@ -186,14 +185,23 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
 
     scannerRef.current = scanner;
   };
+
+  useEffect(() => {
+    if (qrValue) {
+    getItemDetails();
+    }
+    }, [qrValue]);
+
 useEffect(() => {
+  if (qrValue) {
     startScanner();
+  }
     return () => {
       if (scannerRef.current) {
         scannerRef.current.clear();
       }
     };
-  }, []);
+  }, [qrValue]);
 
   
 
@@ -218,50 +226,84 @@ useEffect(() => {
   }, [location.pathname]); // Only runs when the pathname changes
 
 
-  const getItemDetails = async () => 
-    {
-      const itemId = qrValue.substring(0,36);    
+  // const getItemDetails = async () => 
+  //   {
+  //     const itemId = qrValue.substring(0,36);    
       
-      setItemIdValue(itemId);
+  //     setItemIdValue(itemId);
 
-      console.log(itemIdValue);
+  //     console.log(itemIdValue);
   
-      try {
-        // const response = await fetch(`http://172.17.31.61:5280/api/getById/${itemId}`, {
-          const response = await fetch(`http://localhost:7298/api/getById/${itemId}`, {
+  //     try {
+  //       // const response = await fetch(`http://172.17.31.61:5280/api/getById/${itemId}`, {
+  //         const response = await fetch(`http://localhost:7298/api/getById/${itemId}`, {
           
-          method: 'GET',
-        });
+  //         method: 'GET',
+  //       });
   
-        if (response.status === 200) {
-          const result = await response.json();
+  //       if (response.status === 200) {
+  //         const result = await response.json();
          
   
           
-          setItemDescription(result.itemDescription);
-          setItemPhoto(result.itemPhoto)
-          //const filePaths = result.map(item => item.filePath);
+  //         setItemDescription(result.itemDescription);
+  //         setItemPhoto(result.itemPhoto)
+  //         //const filePaths = result.map(item => item.filePath);
   
-          // const filePaths = result.map(item => ({
-          //   id: item.id,
-          //   itemDescription: item.itemDescription,
-          //   comments: item.comments,
-          //   warehouseLocation: item.warehouseLocation,
-          //   filePath: item.filePath
-          // }));
+  //         // const filePaths = result.map(item => ({
+  //         //   id: item.id,
+  //         //   itemDescription: item.itemDescription,
+  //         //   comments: item.comments,
+  //         //   warehouseLocation: item.warehouseLocation,
+  //         //   filePath: item.filePath
+  //         // }));
   
-          // setResults(filePaths || []);
-         // setResultResponseMessage(result.message);
-        } else {
-          setResultResponseMessage('No matching images found');
-          setItemSelected(false);
-        }
-      } catch (error) {
-        console.error('Error during fetch:', error);
-        setResultResponseMessage('Error occurred while fetching data');
-      }
+  //         // setResults(filePaths || []);
+  //        // setResultResponseMessage(result.message);
+  //       } else {
+  //         setResultResponseMessage('No matching images found');
+  //         setItemSelected(false);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error during fetch:', error);
+  //       setResultResponseMessage('Error occurred while fetching data');
+  //     }
   
+  //   }
+
+  const getItemDetails = async () => {
+    if (!qrValue || qrValue.length < 36) {
+    console.error('Invalid QR value:', qrValue);
+    setResultResponseMessage('Invalid QR code scanned');
+    return;
     }
+    
+    const itemId = qrValue.substring(0, 36);
+    setItemIdValue(itemId);
+    
+    console.log("Extracted Item ID:", itemId);
+    
+    try {
+      const response = await fetch(`http://localhost:7298/api/getById/${itemId}`, {
+    method: 'GET',
+    });
+    
+    if (response.status === 200) {
+    const result = await response.json();
+    
+    setItemDescription(result.itemDescription);
+    setItemPhoto(result.itemPhoto);
+    setItemSelected(true);
+    } else {
+    setResultResponseMessage('No matching images found');
+    setItemSelected(false);
+    }
+    } catch (error) {
+    console.error('Error during fetch:', error);
+    setResultResponseMessage('Error occurred while fetching data');
+    }
+    };
+
 
   return (
     <Box sx={{
