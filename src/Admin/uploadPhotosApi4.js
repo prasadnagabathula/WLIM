@@ -163,6 +163,25 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     });
   }, []);
 
+  // useEffect(() => {
+  //   const setupCamera = async () => {
+  //     try {
+  //       if (videoRef.current) {
+  //         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  //         videoRef.current.srcObject = stream;
+  //         videoRef.current.play();
+  //         setIsCameraActive(true);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error accessing camera:', error);
+  //       setErrorMessage('No camera detected or permission denied.');
+  //       setIsCameraActive(false);
+  //     }
+  //   };
+  
+  //   setupCamera();
+  // }, []); 
+
   const navigate = useNavigate();
 
   const handleIdentifiedDateChange = (value) => {
@@ -208,6 +227,13 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
     setMessage('');
     setIdentifiedLocation('');
     setIdentifiedDate('');
+    setIsCameraActive(false);
+    setPhotoData(null);
+  };
+
+  const handleCancel = () => {
+      setIsCameraActive(false);
+      setPhotoData(null);
   };
 
   const toInitialCapitalCase = (str) => {
@@ -265,6 +291,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
 
     // Create an object URL
     const imageUrl = URL.createObjectURL(file);
+    console.log(imageUrl);
     setSelectedImage(imageUrl);
 
     const reader = new FileReader();
@@ -407,13 +434,14 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   
   const handleTakePicture = async () => {
     try {
+      setIsCameraActive(true); // Camera is active
       // Request camera access
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.play();
       }
-      setIsCameraActive(true); // Camera is active
+      
       setErrorMessage('');
     } catch (error) {
       console.error('Error accessing camera:', error);
@@ -427,8 +455,29 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
       const context = PictureRef.current.getContext('2d');
       context.drawImage(videoRef.current, 0, 0, PictureRef.current.width, PictureRef.current.height);
       const photo = PictureRef.current.toDataURL('image/png'); // Get image as data URL
+      
       setPhotoData(photo); // Set photo data
       setIsCameraActive(false); // Stop showing the video after capturing the photo
+
+      // Convert Data URL to Blob
+const byteString = atob(photo.split(',')[1]); // Decode Base64
+const mimeString = photo.split(',')[0].split(':')[1].split(';')[0]; // Extract MIME type
+const ab = new ArrayBuffer(byteString.length);
+const ia = new Uint8Array(ab);
+
+for (let i = 0; i < byteString.length; i++) {
+  ia[i] = byteString.charCodeAt(i);
+}
+
+// Create Blob
+const blob = new Blob([ab], { type: mimeString });
+
+// Generate Object URL from Blob
+const photoUrl = URL.createObjectURL(blob);
+setSelectedImage(photoUrl);
+setSelectedFile(blob);
+
+console.log(photoUrl); // Logs a Blob URL like 'blob:http://example.com/abcd'
 
       // Stop the video stream
       const stream = videoRef.current.srcObject;
@@ -507,6 +556,8 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
             >
               Unleashing the Power of Visual Recognition
             </Typography>
+            {!isCameraActive && !photoData &&(<Box>
+
             <label htmlFor="upload-image">
                 <UploadBox
                   sx={{
@@ -543,7 +594,45 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                 hidden
                 onChange={handleFileChange}                
               />  
+</Box>)}
+            
+{isCameraActive && !photoData &&(
+                <Box>
+                  <video
+                    ref={videoRef}
+                    style={{
+                      width: '100%',
+                      maxWidth: '500px',
+                      border: '1px solid #ccc',
+                      borderRadius: '8px',
+                      display: 'block',
+                      marginBottom: 2,
+                    }}
+                    autoPlay
+                    onClick={handleCapturePhoto} 
+                  ></video>
+                </Box>
+              )}
+              {/* Display captured photo */}
+              {photoData && (
+                <Box sx={{ marginTop: 3, textAlign: 'center' }}>
+                  <img
+                    src={photoData}
+                    alt="Captured"
+                    style={{
+                      width: '100%',
+                      maxWidth: '500px',
+                      border: '1px solid #ccc',
+                      borderRadius: '8px',
+                    }}
+                  />
+                  <Typography sx={{ marginTop: 2 }}>Photo captured successfully!</Typography>
+                </Box>
+              )}
 
+              {/* Hidden canvas for photo capture */}
+               <canvas ref={PictureRef} style={{ display: 'none' }} width={500} height={375}></canvas>
+               
               <Typography variant='subtitle1' sx={{fontFamily:'Lato', mb:2}}><b>(OR)</b></Typography>
 
               {/* Button to open camera */}
@@ -564,6 +653,23 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
                 </Button>
               )}
 
+{(isCameraActive  || photoData) && (
+                <Button
+                  variant="contained"
+                  startIcon={<CameraAltIcon />}
+                  onClick={handleCancel}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 1,
+                    padding: '10px 20px',
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
+
               {/* Error message */}
               {errorMessage && (
                 <Typography color="error" sx={{ marginTop: 2}}>
@@ -572,43 +678,7 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
               )}
 
               {/* Video feed to capture photo */}
-              {isCameraActive && !photoData && (
-                <Box>
-                  <video
-                    ref={videoRef}
-                    style={{
-                      width: '100%',
-                      maxWidth: '500px',
-                      border: '1px solid #ccc',
-                      borderRadius: '8px',
-                      display: 'block',
-                      marginBottom: 2,
-                    }}
-                    autoPlay
-                    onClick={handleCapturePhoto} 
-                  ></video>
-                </Box>
-              )}
-
-              {/* Display captured photo */}
-              {photoData && (
-                <Box sx={{ marginTop: 3, textAlign: 'center' }}>
-                  <img
-                    src={photoData}
-                    alt="Captured"
-                    style={{
-                      width: '100%',
-                      maxWidth: '500px',
-                      border: '1px solid #ccc',
-                      borderRadius: '8px',
-                    }}
-                  />
-                  <Typography sx={{ marginTop: 2 }}>Photo captured successfully!</Typography>
-                </Box>
-              )}
-
-              {/* Hidden canvas for photo capture */}
-               <canvas ref={PictureRef} style={{ display: 'none' }} width={500} height={375}></canvas>
+              
           </Box>
           <Box
             sx={{

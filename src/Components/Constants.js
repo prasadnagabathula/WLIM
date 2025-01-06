@@ -9,7 +9,7 @@ export const CATEGORY_OPTIONS = [
     "Phone",
     "Bottle",
     "Book",
-    "Vallet",
+    "Wallet",
     "Camera",
     "Key",
     "Jacket",

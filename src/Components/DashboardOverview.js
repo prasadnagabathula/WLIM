@@ -74,7 +74,7 @@ const DashboardOverview = ({ location }) => {
     "Phone": "#97FA9A",
     "Bottle": "#F7ADC3",
     "Book": "#FCC5D9",
-    "Vallet": "#FADDE3",
+    "Wallet": "#FADDE3",
     "Camera": "#FFDBFA",
     "Key": "#FECCFF",
     "Jacket": "#D8BBFF",

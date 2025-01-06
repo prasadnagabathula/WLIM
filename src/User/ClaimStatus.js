@@ -40,8 +40,8 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
     const fetchClaims = async () => {
       try {
         //const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
-        const response = await axios.get('http://localhost:5291/api/LostItemRequest');
-        // const response = await axios.get('http://localhost:7237/api/LostItemRequest');
+        //const response = await axios.get('http://localhost:5291/api/LostItemRequest');
+        const response = await axios.get('http://localhost:7237/api/LostItemRequest');
         console.log("Fetched claims:", response.data);
         const userClaims = response.data.filter(item => item.createdBy === userName);
         console.log("Filtered claims for user:", userClaims);
@@ -611,13 +611,13 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                       >
                         {/* Content Items */}
                         <Typography variant="h6"><b>Item Description:</b></Typography>
-                        <Typography variant="h5" gutterBottom>
-                          {selectedItem.itemDescription}
+                        <Typography sx={{ fontSize: '20px', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
+                        {selectedItem.description}
                         </Typography>
 
                         <Typography variant="h6"><b>Item Category:</b></Typography>
                         <Typography sx={{ fontSize: '20px', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
-                          {selectedItem.itemCategory}
+                        {selectedItem.itemCategory ? selectedItem.itemCategory : 'No category specified'}
                         </Typography>
 
                         <Typography variant="h6"><b>Color:</b></Typography>

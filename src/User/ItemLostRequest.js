@@ -331,25 +331,28 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
 
   const handleClick = (e) => {
     let errors = {};
+    if (!currentItemLostRequest.description) {
+      errors.description = 'Description is required';
+    }
     // Validation for required fields
-    if (!currentItemLostRequest.color) {
-      errors.color = 'Color is required';
-    }
-    if (!currentItemLostRequest.brand) {
-      errors.brand = 'Brand is required';
-    }
-    if (!currentItemLostRequest.distinguishingFeatures) {
-      errors.distinguishingFeatures = 'Distinguishing Features are required';
-    }
+    // if (!currentItemLostRequest.color) {
+    //   errors.color = 'Color is required';
+    // }
+    // if (!currentItemLostRequest.brand) {
+    //   errors.brand = 'Brand is required';
+    // }
+    // if (!currentItemLostRequest.distinguishingFeatures) {
+    //   errors.distinguishingFeatures = 'Distinguishing Features are required';
+    // }
     if (!currentItemLostRequest.dateTimeWhenLost) {
       errors.dateTimeWhenLost = 'Date and Time of Loss are required';
     }
-    if (!currentItemLostRequest.location) {
-      errors.location = 'Location is required';
-    }
-    if (!currentItemLostRequest.otherRelevantDetails) {
-      errors.otherRelevantDetails = 'Other Details for Communication are required';
-    }
+    // if (!currentItemLostRequest.location) {
+    //   errors.location = 'Location is required';
+    // }
+    // if (!currentItemLostRequest.otherRelevantDetails) {
+    //   errors.otherRelevantDetails = 'Other Details for Communication are required';
+    // }
 
     // If there are validation errors, set them and stop form submission
     if (Object.keys(errors).length > 0) {
@@ -357,8 +360,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
       return;
     }
     // If no errors, clear validation errors and proceed
-    setValidationErrors({});
-    setCurrentItemLostRequest({});
+    setValidationErrors({});    
     setConfirmDialogOpen(true);
   };
 
@@ -711,7 +713,7 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={handleDialogOpen}
+                      onClick={() => {handleDialogOpen(); setValidationErrors({}); } }
                       disabled={!selectedThumbnail} // Disable button if no thumbnail is selected
                       width="300px"
                     >
