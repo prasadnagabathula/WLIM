@@ -126,6 +126,7 @@ const ExpiredItems = ({ isDrawerOpen }) => {
                         setSeverity('success');
                         setSnackbarOpen(true);
                         setSelectedItems([]);
+                        setSelectAll(false);
                     }
                 });
                 // Wait for all update operations to complete
@@ -169,6 +170,7 @@ const ExpiredItems = ({ isDrawerOpen }) => {
                         setSeverity('success');
                         setSnackbarOpen(true);
                         setSelectedItems([]);
+                        setSelectAll(false);
                     }
                 });
 
@@ -231,13 +233,13 @@ const ExpiredItems = ({ isDrawerOpen }) => {
 
         const handleSelectAllChange = (event) => {
             if (event.target.checked) {
-                setSelectedItems(claims); 
+                setSelectedItems(claims);
             } else {
-                setSelectedItems([]); 
+                setSelectedItems([]);
             }
-            setSelectAll(event.target.checked); 
+            setSelectAll(event.target.checked);
         };
-        
+
         return (
             <>
                 <FormControlLabel
@@ -284,10 +286,10 @@ const ExpiredItems = ({ isDrawerOpen }) => {
                                 '&:hover': {
                                     backgroundColor: item.donated ? '#A5D6A7' : '#C5E1F2'
                                 },
-                                position: 'relative', 
-                                overflow: 'visible', 
+                                position: 'relative',
+                                overflow: 'visible',
 
-                            }} onClick={(event) => {                                
+                            }} onClick={(event) => {
                                 if (event.target.type !== 'checkbox') {
                                     handleCardClick(item);
                                 }
@@ -300,7 +302,7 @@ const ExpiredItems = ({ isDrawerOpen }) => {
                                         position: 'absolute',
                                         top: 8,
                                         left: 8,
-                                        zIndex: 1, 
+                                        zIndex: 1,
                                     }}
                                 />
                                 <CardMedia>
