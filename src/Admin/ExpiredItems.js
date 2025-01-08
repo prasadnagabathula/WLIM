@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container, Alert, Snackbar, Paper } from '@mui/material';
+import { Box, IconButton, Typography, Card, CardMedia, CardContent, Modal, Grid, Button, Container, Alert, Snackbar, Paper, Checkbox, FormControlLabel } from '@mui/material';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import CloseIcon from '@mui/icons-material/Close';
@@ -12,6 +12,9 @@ import ImageDisplay from '../imageDisplay';
 import DateFormat from '../Components/DateFormat';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import RedoIcon from '@mui/icons-material/Redo';
+import UndoIcon from '@mui/icons-material/Undo';
+
 
 
 function CustomTabPanel(props) {
@@ -93,34 +96,42 @@ const ExpiredItems = ({ isDrawerOpen }) => {
             }
         };
         fetchClaims();
-    }, []);
+        setSelectedItems([]);
+    }, [tabs]);
 
     const handleDonate = async () => {
-        if (selectedItemId) {
+        if (selectedItems.length > 0) {
             try {
-                const response = await axios.patch(
-                    `http://172.17.31.61:5280/api/update-donated/${selectedItemId}`,
-                    JSON.stringify(true), // Send the boolean as JSON
-                    {
-                        headers: {
-                            'Content-Type': 'application/json', // Use application/json
-                        },
-                    }
-                );
+                // Iterate over selected items and update them
+                const updatePromises = selectedItems.map(async (item) => {
+                    const response = await axios.patch(
+                        `http://172.17.31.61:5280/api/update-donated/${item.id}`,
+                        JSON.stringify(true), // Send the boolean as JSON
+                        {
+                            headers: {
+                                'Content-Type': 'application/json', // Use application/json
+                            },
+                        }
+                    );
 
-                if (response.status === 200) {
-                    setUserClaims((prevClaims) =>
-                        prevClaims.map((claim) =>
-                        claim.id === selectedItemId
-                        ? { ...claim, donated: true }
-                        : claim
-                        )
+                    if (response.status === 200) {
+                        setUserClaims((prevClaims) =>
+                            prevClaims.map((claim) =>
+                                claim.id === item.id
+                                    ? { ...claim, donated: true }
+                                    : claim
+                            )
                         );
-                    setMessage('Donated status updated successfully!');
-                    setSeverity('success');
-                    setSnackbarOpen(true);
-                }
-                handleClose(); // Close modal after submitting
+                        setMessage('Donated status updated successfully!');
+                        setSeverity('success');
+                        setSnackbarOpen(true);
+                        setSelectedItems([]);
+                    }
+                });
+                // Wait for all update operations to complete
+                await Promise.all(updatePromises);
+
+                // handleClose(); // Close modal after submitting
             } catch (error) {
                 console.error('Error updating donated status:', error);
                 setMessage('Failed to update donated status. Please try again.');
@@ -133,31 +144,35 @@ const ExpiredItems = ({ isDrawerOpen }) => {
     };
 
     const handleExpired = async () => {
-        if (selectedItemId) {
+        if (selectedItems.length > 0) {
             try {
-                const response = await axios.patch(
-                    `http://172.17.31.61:5280/api/update-donated/${selectedItemId}`,
-                    JSON.stringify(false), // Send the boolean as JSON
-                    {
-                        headers: {
-                            'Content-Type': 'application/json', // Use application/json
-                        },
-                    }
-                );
+                const updatePromises = selectedItems.map(async (item) => {
+                    const response = await axios.patch(
+                        `http://172.17.31.61:5280/api/update-donated/${item.id}`,
+                        JSON.stringify(false), // Send the boolean as JSON
+                        {
+                            headers: {
+                                'Content-Type': 'application/json', // Use application/json
+                            },
+                        }
+                    );
 
-                if (response.status === 200) {
-                    setUserClaims((prevClaims) =>
-                        prevClaims.map((claim) =>
-                        claim.id === selectedItemId
-                        ? { ...claim, donated: false }
-                        : claim
-                        )
+                    if (response.status === 200) {
+                        setUserClaims((prevClaims) =>
+                            prevClaims.map((claim) =>
+                                claim.id === item.id
+                                    ? { ...claim, donated: false }
+                                    : claim
+                            )
                         );
-                    setMessage('Donated status updated successfully!');
-                    setSeverity('success');
-                    setSnackbarOpen(true);
-                }
-                handleClose(); // Close modal after submitting
+                        setMessage('Donated status updated successfully!');
+                        setSeverity('success');
+                        setSnackbarOpen(true);
+                        setSelectedItems([]);
+                    }
+                });
+
+                // handleClose(); // Close modal after submitting
             } catch (error) {
                 console.error('Error updating donated status:', error);
                 setMessage('Failed to update donated status. Please try again.');
@@ -201,30 +216,110 @@ const ExpiredItems = ({ isDrawerOpen }) => {
         setSelectedItem(null);
     };
 
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
     const renderClaims = (claims) => {
-        return claims.map((item, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card sx={{
-                    cursor: 'pointer',
-                    boxShadow: 3,
-                    backgroundColor: item.donated ? '#C1E1C1' : '#D6ECF5',
-                    '&:hover': {
-                        backgroundColor: item.donated ? '#A5D6A7' : '#C5E1F2'
+
+        const handleCheckboxChange = (item, event) => {
+            event.stopPropagation();
+            setSelectedItems((prev) =>
+                prev.includes(item)
+                    ? prev.filter((selectedItem) => selectedItem !== item)
+                    : [...prev, item]
+            );
+        };
+
+        const handleSelectAllChange = (event) => {
+            if (event.target.checked) {
+                setSelectedItems(claims); 
+            } else {
+                setSelectedItems([]); 
+            }
+            setSelectAll(event.target.checked); 
+        };
+        
+        return (
+            <>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={selectAll}
+                            onChange={handleSelectAllChange}
+                            inputProps={{ 'aria-label': 'select all' }}
+                        />
                     }
-                }} onClick={() => handleCardClick(item)}>
-                    <CardMedia>
-                        <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0' }} />
-                    </CardMedia>
-                    <CardContent>
-                        <Typography sx={{ textAlign: 'left', margin: '0 10px', display: 'grid', gridTemplateColumns: '80px auto', rowGap: 1.5, columnGap: 2 }}>
-                            <b>Description:</b> <span style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', WebkitLineClamp: 2, textOverflow: 'ellipsis' }}>
-                                {item.itemDescription}
-                            </span>
-                        </Typography>
-                    </CardContent>
-                </Card>
-            </Grid>
-        ));
+                    label="Select All"
+                />
+
+                {tabs === 0 ? (
+                    <IconButton
+                        color="primary"
+                        onClick={handleDonate}
+                        disabled={selectedItems.length === 0}
+                        sx={{ marginLeft: 2 }}
+                    >
+                        <RedoIcon />
+                        <Typography sx={{ marginLeft: 1 }}>Donate</Typography>
+                    </IconButton>
+                ) : (
+                    <IconButton
+                        color="secondary"
+                        onClick={handleExpired}
+                        disabled={selectedItems.length === 0}
+                        sx={{ marginLeft: 2 }}
+                    >
+                        <UndoIcon />
+                        <Typography sx={{ marginLeft: 1 }}>Back to Expired</Typography>
+                    </IconButton>
+                )}
+
+                <Grid container spacing={3} justifyContent="flex-start">
+                    {claims.map((item, index) => (
+
+                        <Grid item xs={12} sm={6} md={4} key={index}>
+                            <Card sx={{
+                                cursor: 'pointer',
+                                boxShadow: 3,
+                                backgroundColor: item.donated ? '#C1E1C1' : '#D6ECF5',
+                                '&:hover': {
+                                    backgroundColor: item.donated ? '#A5D6A7' : '#C5E1F2'
+                                },
+                                position: 'relative', 
+                                overflow: 'visible', 
+
+                            }} onClick={(event) => {                                
+                                if (event.target.type !== 'checkbox') {
+                                    handleCardClick(item);
+                                }
+                            }}>
+                                <Checkbox
+                                    checked={selectedItems.includes(item)}
+                                    onChange={(event) => handleCheckboxChange(item, event)}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                    sx={{
+                                        position: 'absolute',
+                                        top: 8,
+                                        left: 8,
+                                        zIndex: 1, 
+                                    }}
+                                />
+                                <CardMedia>
+                                    <ImageDisplay imageId={item.filePath} style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '15px 0' }} />
+                                </CardMedia>
+                                <CardContent>
+                                    <Typography sx={{ textAlign: 'left', margin: '0 10px', display: 'grid', gridTemplateColumns: '80px auto', rowGap: 1.5, columnGap: 2 }}>
+                                        <b>Description:</b> <span style={{ display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden', WebkitLineClamp: 2, textOverflow: 'ellipsis' }}>
+                                            {item.itemDescription}
+                                        </span>
+                                    </Typography>
+
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))}
+                </Grid>
+            </>
+        );
     };
 
     return (
