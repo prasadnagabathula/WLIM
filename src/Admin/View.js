@@ -67,8 +67,8 @@ function View({ isDrawerOpen }) {
     const fetchUploadedItems = async () => {
       try {
         setLoading(true); // Set loading to true before the API call
-        //const response = await fetch('http://172.17.31.61:5280/api/getAll', {
-        const response = await fetch('http://localhost:7298/api/getAll', {
+        const response = await fetch('http://172.17.31.61:5280/api/getAll', {
+        //const response = await fetch('http://localhost:7298/api/getAll', {
           method: 'GET'
         });
         if (!response.ok) {
@@ -165,14 +165,16 @@ function View({ isDrawerOpen }) {
 
 
   const handleSave = async () => {
-    if (updateItems.id) {
-      const response = await axios.put(`http://localhost:7298/api/Upload/${updateItems.id}`, UpdateItemsToSave);
+    if (updateItems.id) {      
+      const response = await axios.put(`http://172.17.31.61:5280/api/Upload/${updateItems.id}`, UpdateItemsToSave);
+      //const response = await axios.put(`http://localhost:7298/api/Upload/${updateItems.id}`, UpdateItemsToSave);
       setEmployees(Employees.map(emp => emp.id === updateItems.id ? response.data : emp));
       if (response.status == 200) {
         setupdateItems({ ItemDescription: '', Category: '', Tags: '', Comments: '' }); // Reset the Items fields
         setErrors({ ItemDescription: '', Category: '', Tags: '', Comments: '' }); // Reset the error state
         setOpen(false);
-        const response = await fetch('http://localhost:7298/api/getAll', {
+        const response = await fetch('http://172.17.31.61:5280/api/getAll', {
+        //const response = await fetch('http://localhost:7298/api/getAll', {          
           method: 'GET'
         });
         if (!response.ok) {

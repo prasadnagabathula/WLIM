@@ -39,9 +39,9 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
   useEffect(() => {
     const fetchClaims = async () => {
       try {
-        //const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
+        const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
         //const response = await axios.get('http://localhost:5291/api/LostItemRequest');
-        const response = await axios.get('http://localhost:7237/api/LostItemRequest');
+        //const response = await axios.get('http://localhost:7237/api/LostItemRequest');
         console.log("Fetched claims:", response.data);
         const userClaims = response.data.filter(item => item.createdBy === userName);
         console.log("Filtered claims for user:", userClaims);

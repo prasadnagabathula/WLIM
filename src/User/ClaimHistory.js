@@ -34,8 +34,9 @@ const ClaimHistory = ({ isDrawerOpen }) => {
   useEffect(() => {
     const fetchItemLostRequests = async () => {
       if (!userName) return; // Only fetch when userName is available
-      try {
-        const response = await axios.get('http://localhost:7237/api/LostItemRequest');
+      try {        
+        const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
+        //const response = await axios.get('http://localhost:7237/api/LostItemRequest');
         const userClaims = response.data.filter(item => item.createdBy === userName);
         console.log("Filtered Claims for User:", userClaims); // Debugging statement
         setItemLostRequests(userClaims);

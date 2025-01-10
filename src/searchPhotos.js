@@ -71,8 +71,9 @@ const SearchPhotos = () => {
     const formData = new FormData();
     formData.append('file', selectedFile);
 
-    try {
-      const response = await fetch('http://localhost:7298/api/search', {
+    try {      
+      const response = await fetch('http://172.17.31.61:5280/api/search', {
+      //const response = await fetch('http://localhost:7298/api/search', {
         method: 'POST',
         body: formData,
       });

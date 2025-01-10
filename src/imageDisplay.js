@@ -11,8 +11,9 @@ const ImageDisplay = React.memo(({ imageId, style }) => {
     if (imageCache[imageId]) {
       setImageData(imageCache[imageId]);
     } else {
-      // Otherwise fetch the image data
-      axios.get(`http://localhost:7298/api/images/${imageId}`,{responseType:'blob'})
+      // Otherwise fetch the image data      
+      axios.get(`http://172.17.31.61:5280/api/images/${imageId}`,{responseType:'blob'})
+      //axios.get(`http://localhost:7298/api/images/${imageId}`,{responseType:'blob'})
         .then(response => {
           setImageCache(prevCache => ({ ...prevCache, [imageId]: URL.createObjectURL(response.data) }));
           setImageData(URL.createObjectURL(response.data));

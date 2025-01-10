@@ -71,8 +71,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   useEffect(() => {
     const fetchItemLostRequests = async () => {
       try {
-        //const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
-        const response = await axios.get('http://localhost:7237/api/LostItemRequest');
+        const response = await axios.get('http://172.17.31.61:5291/api/LostItemRequest');
+        //const response = await axios.get('http://localhost:7237/api/LostItemRequest');
 
         setItemLostRequests(response.data);
       } catch (error) {
@@ -83,8 +83,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   }, []);
 
   useEffect(() => {
-    //axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
-    axios.get('http://localhost:7237/api/LostItemRequest/Locations')
+    axios.get('http://172.17.31.61:5291/api/LostItemRequest/Locations')
+    //axios.get('http://localhost:7237/api/LostItemRequest/Locations')
       .then(response => {
         console.log(response);
         setLocationOptions(response.data.map(data => data.locations));
@@ -219,8 +219,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     formData.append('warehouseLocation', location);
 
     try {
-      //axios.post('http://172.17.31.61:5280/api/search', formData, {
-      axios.post('http://localhost:7298/api/search', formData, {
+      axios.post('http://172.17.31.61:5280/api/search', formData, {
+      //axios.post('http://localhost:7298/api/search', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -296,8 +296,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
     _.debounce(async (query) => {
 
       try {
-        //const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
-        const response = await fetch(`http://localhost:7298/api/images/search/${query}`, {
+        const response = await fetch(`http://172.17.31.61:5280/api/images/search/${query}`, {
+        //const response = await fetch(`http://localhost:7298/api/images/search/${query}`, {
 
           method: 'GET',
         });
@@ -367,8 +367,8 @@ function ItemLostRequest({ isDrawerOpen, userName }) {
   const handleSubmit = async () => {
     try {
       console.log(currentItemLostRequest);
-      //const response = await axios.post('http://172.17.31.61:5291/api/LostItemRequest/Claim', currentItemLostRequest);
-      const response = await axios.post('http://localhost:7237/api/LostItemRequest/Claim', currentItemLostRequest);
+      const response = await axios.post('http://172.17.31.61:5291/api/LostItemRequest/Claim', currentItemLostRequest);
+      //const response = await axios.post('http://localhost:7237/api/LostItemRequest/Claim', currentItemLostRequest);
       if (response.status === 200) {
         setSeverity('success');
         setResults([]);

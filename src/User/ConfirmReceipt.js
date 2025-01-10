@@ -43,8 +43,9 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
       currentItemLostRequest.id = itemIdValue;
 
 
-      const response = await axios.patch(
-        `http://localhost:7237/api/LostItemRequest/confirm-receipt/${itemIdValue}`,
+      const response = await axios.patch(        
+        `http://172.17.31.61:5291/api/LostItemRequest/confirm-receipt/${itemIdValue}`,
+        //`http://localhost:7237/api/LostItemRequest/confirm-receipt/${itemIdValue}`,
         //`http://localhost:5291/api/LostItemRequest/confirm-receipt/${itemIdValue}`,
         currentItemLostRequest,
         {
@@ -221,8 +222,9 @@ function ConfirmReceipt({ isDrawerOpen, userName }) {
 
     console.log("Extracted Item ID:", itemId);
 
-    try {
-      const response = await fetch(`http://localhost:7298/api/getById/${itemId}`, {
+    try {      
+      const response = await fetch(`http://172.17.31.61:5280/api/getById/${itemId}`, {
+      //const response = await fetch(`http://localhost:7298/api/getById/${itemId}`, {
         method: 'GET',
       });
 

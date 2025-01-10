@@ -18,9 +18,8 @@ const DashboardOverview = ({ location }) => {
   const [hovered, setHovered] = useState(false);
 
   React.useEffect(() => {
-    //console.log(location);
-    // axios.get(`http://localhost:7237/api/LostItemRequest/DashboardData/${location}`)
     axios.get(`http://172.17.31.61:5291/api/LostItemRequest/DashboardData/${location}`)
+    // axios.get(`http://localhost:7237/api/LostItemRequest/DashboardData/${location}`)
       .then(response => {
         const chartdata = response.data.data;
         const loca = Object.keys(response.data.data);

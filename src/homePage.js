@@ -116,8 +116,9 @@ const HomePage = () => {
       setLoading(true);
       setFadeIn(false); // Reset fade-in effect
 
-      try {
-        const response = await fetch('http://localhost:3000/analyze-image', {
+      try {        
+        const response = await fetch('http://172.17.31.61:5280/analyze-image', {
+        //const response = await fetch('http://localhost:3000/analyze-image', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
