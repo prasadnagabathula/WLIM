@@ -204,7 +204,7 @@ const DashboardOverview = ({ location }) => {
                 <Box sx={{ textAlign: 'center', p: { xs: 5.5, sm: 5.5, md: 3.6, lg: 2.5 }, bgcolor: '#DED6C6', borderRadius: 1 }}>
                   <Typography variant="body1" color="textSecondary">Expired Items</Typography>
                   <Typography variant="h5" fontWeight="bold">
-                    {expiredCount || 0}
+                    {dataCount.expiredItemsCount || 0}
                   </Typography>
                 </Box>
               </Grid>
@@ -214,7 +214,7 @@ const DashboardOverview = ({ location }) => {
                 <Box sx={{ textAlign: 'center', p: { xs: 5.5, sm: 5.5, md: 3.6, lg: 2.5 }, bgcolor: '#FAEDCB', borderRadius: 1 }}>
                   <Typography variant="body1" color="textSecondary">Donated Items</Typography>
                   <Typography variant="h5" fontWeight="bold">
-                    {donatedCount || 0}
+                    {dataCount.donatedItemsCount || 0}
                   </Typography>
                 </Box>
               </Grid>

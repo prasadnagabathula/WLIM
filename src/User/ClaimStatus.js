@@ -53,7 +53,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
     if (userName) fetchClaims(); // Fetch claims only if `userName` is set
   }, [userName]);
 
-  const handleCardClick = (item) => {    
+  const handleCardClick = (item) => {
     setSelectedItem(item);
     setOpenModal(true);
   };
@@ -74,7 +74,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
   const approvedClaims = uploadedItems.filter(item => item.status === "Approve");
   const receivedClaims = uploadedItems.filter(item => item.status === "Returned");
   const rejectedClaims = uploadedItems.filter(item => item.status === "Reject");
-  
+
   return (
     <Box sx={{
       display: 'flex',
@@ -253,7 +253,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
             </Grid>
           )}
 
-{/* Tab Panel for Resolved Claims */}
+          {/* Tab Panel for Resolved Claims */}
           {value === 1 && (
             <Grid container spacing={3} justifyContent={approvedClaims.length === 0 ? "center" : "flex-start"}>
               {approvedClaims.length === 0 ? (
@@ -319,7 +319,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                             rowGap: 1.5,
                             columnGap: 2,
                           }}>
-                            <b>Status:</b>{item.status}
+                            <b>Status:</b>{item.status}d
                           </Typography>
                         </CardContent>
                       </Card>
@@ -480,8 +480,8 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
               )}
             </Grid>
           )}
-	  
-	  {/* Modal for item details */}
+
+          {/* Modal for item details */}
           <Modal open={openModal} onClose={handleClose}>
             <Box
               sx={{
@@ -612,12 +612,12 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                         {/* Content Items */}
                         <Typography variant="h6"><b>Item Description:</b></Typography>
                         <Typography sx={{ fontSize: '20px', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
-                        {selectedItem.description}
+                          {selectedItem.description}
                         </Typography>
 
                         <Typography variant="h6"><b>Item Category:</b></Typography>
                         <Typography sx={{ fontSize: '20px', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>
-                        {selectedItem.itemCategory ? selectedItem.itemCategory : 'No category specified'}
+                          {selectedItem.itemCategory ? selectedItem.itemCategory : 'No category specified'}
                         </Typography>
 
                         <Typography variant="h6"><b>Color:</b></Typography>
@@ -657,7 +657,7 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                         <Typography sx={{ fontSize: '20px', width: '100%', }}>
                           <DateFormat date={selectedItem.createdDate} />
                         </Typography>
-                        {!selectedItem.isActive && (
+                        {/* {!selectedItem.isActive && (
                           <>
                             <Typography variant="h6">
                               <b>Approved Date:</b>
@@ -680,12 +680,12 @@ const ClaimStatus = ({ isDrawerOpen, tabChange }) => {
                               <DateFormat date={selectedItem.wareHouseItem.receivedOn} />
                             </Typography>
                           </>
-                        )}
+                        )} */}
                         <Typography variant="h6" sx={{ mb: 3 }}>
                           <b>Status:</b>
                         </Typography>
                         <Typography sx={{ fontSize: '20px' }}>
-                          {selectedItem.status === 'Approve' ? 'Approve' : (selectedItem.status === 'Reject' ? "Rejected" : (selectedItem.status === 'Claimed' ? "Pending" : "Received"))}
+                          {selectedItem.status === 'Approve' ? 'Approved' : (selectedItem.status === 'Reject' ? "Rejected" : (selectedItem.status === 'Claimed' ? "Pending" : "Received"))}
                         </Typography>
                       </Box>
                     </CardContent>

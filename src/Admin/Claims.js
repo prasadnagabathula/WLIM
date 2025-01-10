@@ -459,7 +459,7 @@ const Claims = ({ isDrawerOpen, qrData }) => {
                               gridTemplateColumns: '80px auto',
                               rowGap: 1.5,
                               columnGap: 2,
-                            }}><b>Status:</b> {item.status}</Typography>
+                            }}><b>Status:</b> {item.status}d</Typography>
                             <Typography sx={{
                               textAlign: 'left',
                               margin: '0px 10px',
@@ -525,7 +525,7 @@ const Claims = ({ isDrawerOpen, qrData }) => {
                               gridTemplateColumns: '80px auto',
                               rowGap: 1.5,
                               columnGap: 2,
-                            }}><b>Status:</b> {item.status}</Typography>
+                            }}><b>Status:</b> {item.status}ed</Typography>
                             <Typography sx={{
                               textAlign: 'left',
                               margin: '0px 10px',
