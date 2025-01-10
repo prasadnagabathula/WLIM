@@ -25,8 +25,12 @@ const SearchItems = () => {
   const [isDisabled, setIsDisabled] = useState(false);
 
   // Azure Computer Vision API endpoint and key
-  const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
-  const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
+  // const subscriptionKey = '2df0c7e47bc14b538b8534fb58937522';
+  // const endpoint = 'https://cvpicfinderai.cognitiveservices.azure.com/';
+
+  //trial subscription
+  const subscriptionKey = '9fm2l80HHsSlSjP0KjzoByXgVpqRCqVBhisF6foePsMqeyAg4iufJQQJ99BAACYeBjFXJ3w3AAAFACOGXpfg';
+  const endpoint = 'https://cvwlimv40eustrail.cognitiveservices.azure.com/';
 
   useEffect(() => {
     loadThumbNails();

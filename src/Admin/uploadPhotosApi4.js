@@ -75,8 +75,13 @@ const UploadPhotosApi4 = ({ isDrawerOpen }) => {
   const { AzureKeyCredential } = require('@azure/core-auth');
 
   //New East US
-  const endpoint = 'https://cvwlimv40eus.cognitiveservices.azure.com/';
-  const key = 'B1ZBQc0A2DHqj9AYmgaJXK1r7kbKsyddhDgX6Qzr0F5qeai2pOQaJQQJ99AKACYeBjFXJ3w3AAAFACOG8VEg';
+  // const endpoint = 'https://cvwlimv40eus.cognitiveservices.azure.com/';
+  // const key = 'B1ZBQc0A2DHqj9AYmgaJXK1r7kbKsyddhDgX6Qzr0F5qeai2pOQaJQQJ99AKACYeBjFXJ3w3AAAFACOG8VEg';
+ 
+  //trial version
+  const endpoint = 'https://cvwlimv40eustrail.cognitiveservices.azure.com/';
+  const key = 'BVd0t8IeEiVJixjmtEiChd9NQW674sJK9tuPCsOzEhhcHaAk6C1UJQQJ99BAACYeBjFXJ3w3AAAFACOGKoil';
+ 
  
   const credential = new AzureKeyCredential(key);
   const client = createClient(endpoint, credential);
