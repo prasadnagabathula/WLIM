@@ -100,6 +100,41 @@ const ExpiredItems = ({ isDrawerOpen }) => {
     }, [tabs]);
 
     const handleDonate = async () => {
+        if (selectedItems.length === 0) {
+            try {
+                if (selectedItemId) {
+                    const response = await axios.patch(
+                        `http://172.17.31.61:5280/api/update-donated/${selectedItemId}`,
+                        JSON.stringify(true), // Send the boolean as JSON
+                        {
+                            headers: {
+                                'Content-Type': 'application/json', // Use application/json
+                            },
+                        }
+                    );
+                    if (response.status === 200) {
+                        setUserClaims((prevClaims) =>
+                            prevClaims.map((claim) =>
+                                claim.id === selectedItemId
+                                    ? { ...claim, donated: true }
+                                    : claim
+                            )
+                        );
+                    }
+                }
+                handleClose(); // Close modal after submitting
+                setMessage('Donated status updated successfully!');
+                setSeverity('success');
+                // setSnackbarOpen(true);
+                setSelectedItems([]);
+                setSelectAll(false);
+            } catch (error) {
+                console.error('Error updating donated status:', error);
+                setMessage('Failed to update donated status. Please try again.');
+                setSeverity('error');
+                // setSnackbarOpen(true);
+            }
+        }
         if (selectedItems.length > 0) {
             try {
                 // Iterate over selected items and update them
@@ -124,7 +159,7 @@ const ExpiredItems = ({ isDrawerOpen }) => {
                         );
                         setMessage('Donated status updated successfully!');
                         setSeverity('success');
-                        setSnackbarOpen(true);
+                        // setSnackbarOpen(true);
                         setSelectedItems([]);
                         setSelectAll(false);
                     }
@@ -137,7 +172,7 @@ const ExpiredItems = ({ isDrawerOpen }) => {
                 console.error('Error updating donated status:', error);
                 setMessage('Failed to update donated status. Please try again.');
                 setSeverity('error');
-                setSnackbarOpen(true);
+                // setSnackbarOpen(true);
             }
         } else {
             console.log('Item ID is not defined');
@@ -145,6 +180,41 @@ const ExpiredItems = ({ isDrawerOpen }) => {
     };
 
     const handleExpired = async () => {
+        if (selectedItems.length === 0) {
+            try {
+                if (selectedItemId) {
+                    const response = await axios.patch(
+                        `http://172.17.31.61:5280/api/update-donated/${selectedItemId}`,
+                        JSON.stringify(false), // Send the boolean as JSON
+                        {
+                            headers: {
+                                'Content-Type': 'application/json', // Use application/json
+                            },
+                        }
+                    );
+                    if (response.status === 200) {
+                        setUserClaims((prevClaims) =>
+                            prevClaims.map((claim) =>
+                                claim.id === selectedItemId
+                                    ? { ...claim, donated: false }
+                                    : claim
+                            )
+                        );
+                    }
+                }
+                handleClose(); // Close modal after submitting
+                setMessage('Donated status updated successfully!');
+                setSeverity('success');
+                // setSnackbarOpen(true);
+                setSelectedItems([]);
+                setSelectAll(false);
+            } catch (error) {
+                console.error('Error updating donated status:', error);
+                setMessage('Failed to update donated status. Please try again.');
+                setSeverity('error');
+                // setSnackbarOpen(true);
+            }
+        }
         if (selectedItems.length > 0) {
             try {
                 const updatePromises = selectedItems.map(async (item) => {
@@ -168,7 +238,7 @@ const ExpiredItems = ({ isDrawerOpen }) => {
                         );
                         setMessage('Donated status updated successfully!');
                         setSeverity('success');
-                        setSnackbarOpen(true);
+                        // setSnackbarOpen(true);
                         setSelectedItems([]);
                         setSelectAll(false);
                     }
@@ -179,7 +249,7 @@ const ExpiredItems = ({ isDrawerOpen }) => {
                 console.error('Error updating donated status:', error);
                 setMessage('Failed to update donated status. Please try again.');
                 setSeverity('error');
-                setSnackbarOpen(true);
+                // setSnackbarOpen(true);
             }
         } else {
             console.log('Item ID is not defined');
